@@ -224,16 +224,15 @@ class Simplesitemap {
   }
 
   /**
-   * Returns the whole sitemap, a requested sitemap chunk,
-   * or the sitemap index file.
+   * Returns a sitemap variant, its index, or its requested chunk.
    *
    * @param int $delta
    *
    * @return string|false
-   *  If no sitemap delta is provided, either a sitemap index is returned, or the
-   *  whole sitemap variant, if the amount of links does not exceed the max
-   *  links setting. If a sitemap delta is provided, a sitemap chunk is returned.
-   *  Returns false if the sitemap is not retrievable from the database.
+   *  If no chunk delta is provided, either the sitemap variant is returned,
+   *  or its index in case of a chunked sitemap.
+   *  If a chunk delta is provided, the relevant chunk is returned.
+   *  Returns false if the sitemap variant is not retrievable from the database.
    */
   public function getSitemap($delta = NULL) {
     $chunk_info = $this->fetchSitemapVariantInfo();

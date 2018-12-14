@@ -70,13 +70,13 @@ If you wish for the sitemap to reflect the new configuration instantly, check
 'Regenerate sitemaps after clicking save'. This setting only appears if a change
 in the settings has been detected.
 
-As the sitemap is accessible to anonymous users, bear in mind that only links
+As the sitemaps are accessible to anonymous users, bear in mind that only links
 will be included which are accessible to anonymous users. There are no access
 checks for links added through the module's hooks (see below).
 
 ### CUSTOM LINKS ###
 
-To include custom links into the sitemap, visit
+To include custom links into a sitemap, visit
 /admin/config/search/simplesitemap/custom.
 
 ### SETTINGS ###
@@ -128,7 +128,6 @@ programmatic sitemap generation. These include:
  * setBundleSettings
  * getBundleSettings
  * removeBundleSettings
- * supplementDefaultSettings
  * setEntityInstanceSettings
  * getEntityInstanceSettings
  * removeEntityInstanceSettings
@@ -164,9 +163,9 @@ $generator
   ->saveSetting('remove_duplicates', TRUE)
   ->enableEntityType('node')
   ->setVariants(['default', 'test'])
-  ->setBundleSettings('node', 'page', ['index' => TRUE, 'priority' = 0.5])
+  ->setBundleSettings('node', 'page', ['index' => TRUE, 'priority' => 0.5])
   ->removeCustomLinks()
-  ->addCustomLink('/some/view/page', ['priority' = 0.5])
+  ->addCustomLink('/some/view/page', ['priority' => 0.5])
   ->generateSitemap();
 ```
 
@@ -189,13 +188,13 @@ use of `hook_simple_sitemap_attributes_alter(&$attributes){}` and
 `hook_simple_sitemap_index_attributes_alter(&$index_attributes){}`.
 
 Altering URL generators is possible through
-the use of `hook_simple_sitemap_url_generators_alter(&$generators){}`.
+the use of `hook_simple_sitemap_url_generators_alter(&$url_generators){}`.
 
 Altering sitemap generators is possible through
-the use of `hook_simple_sitemap_sitemap_generators_alter(&$generators){}`.
+the use of `hook_simple_sitemap_sitemap_generators_alter(&$sitemap_generators){}`.
 
 Altering sitemap types is possible through
-the use of `hook_simple_sitemap_sitemap_types_alter(&$generators){}`.
+the use of `hook_simple_sitemap_sitemap_types_alter(&$sitemap_types){}`.
 
 ### WRITING PLUGINS ###
 
