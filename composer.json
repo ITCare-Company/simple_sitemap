@@ -18,23 +18,9 @@
   },
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
-  "repositories": [
-    {
-      "type": "package",
-      "package": {
-        "name": "mottie/tablesorter",
-        "version": "master",
-        "type": "drupal-library",
-        "dist": {
-          "url": "https://github.com/Mottie/tablesorter/archive/master.zip",
-          "type": "zip"
-        }
-      }
-    }
-  ],
   "require": {
     "ext-xmlwriter": "*",
-    "mottie/tablesorter": "master"
+    "mottie/tablesorter": "^2.31"
   },
   "extra": {
     "drush": {
