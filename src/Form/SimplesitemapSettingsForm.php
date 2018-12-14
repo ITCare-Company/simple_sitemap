@@ -237,6 +237,13 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       ],
     ];
 
+    $form['simple_sitemap_settings']['settings']['xsl'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Include a stylesheet in the sitemaps for humans'),
+      '#description' => $this->t('When enabled, this will add formatting and tables with sorting to make it easier to view the XML sitemap data instead of viewing raw XML output. Search engines will ignore this.'),
+      '#default_value' => $this->generator->getSetting('xsl', TRUE),
+    ];
+
     $form['simple_sitemap_settings']['settings']['languages'] = [
       '#type' => 'details',
       '#title' => $this->t('Language settings'),
@@ -363,6 +370,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
                'cron_generate_interval',
                'remove_duplicates',
                'skip_untranslated',
+               'xsl',
                'base_url',
                'default_variant'] as $setting_name) {
       $this->generator->saveSetting($setting_name, $form_state->getValue($setting_name));

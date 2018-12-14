@@ -148,6 +148,10 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $this->writer->openMemory();
     $this->writer->setIndent(TRUE);
     $this->writer->startDocument(self::XML_VERSION, self::ENCODING);
+    // Add the XML stylesheet to document if necessary.
+    if ($this->settings['xsl']) {
+      $this->writer->writeXsl();
+    }
     $this->writer->writeComment(self::GENERATED_BY);
     $this->writer->startElement('sitemapindex');
 
@@ -300,4 +304,5 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $customBaseUrl = $this->settings['base_url'];
     return !empty($customBaseUrl) ? $customBaseUrl : $GLOBALS['base_url'];
   }
+
 }

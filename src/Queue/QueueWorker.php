@@ -193,6 +193,7 @@ class QueueWorker {
 
     $this->generatorSettings = [
       'base_url' => $this->settings->getSetting('base_url', ''),
+      'xsl' => $this->settings->getSetting('xsl', TRUE),
       'default_variant' => $this->settings->getSetting('default_variant', NULL),
       'skip_untranslated' => $this->settings->getSetting('skip_untranslated', FALSE),
       'remove_duplicates' => $this->settings->getSetting('remove_duplicates', TRUE),
