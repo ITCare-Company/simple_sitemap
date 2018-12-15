@@ -175,17 +175,17 @@ Drupal\simple_sitemap\Simplesitemap for further details.
 ### API HOOKS ###
 
 It is possible to hook into link generation by implementing
-`hook_simple_sitemap_links_alter(&$links){}` in a custom module and altering the
+`hook_simple_sitemap_links_alter(&$links, $sitemap_variant){}` in a custom module and altering the
 link array shortly before it is transformed to XML.
 
 Adding arbitrary links is possible through the use of
-`hook_simple_sitemap_arbitrary_links_alter(&$arbitrary_links){}`. There are no
+`hook_simple_sitemap_arbitrary_links_alter(&$arbitrary_links, $sitemap_variant){}`. There are no
 checks performed on these links (i.e. if they are internal/valid/accessible)
 and parameters like priority/lastmod/changefreq have to be added manually.
 
 Altering sitemap attributes and sitemap index attributes is possible through the
-use of `hook_simple_sitemap_attributes_alter(&$attributes){}` and
-`hook_simple_sitemap_index_attributes_alter(&$index_attributes){}`.
+use of `hook_simple_sitemap_attributes_alter(&$attributes, $sitemap_variant){}` and
+`hook_simple_sitemap_index_attributes_alter(&$index_attributes, $sitemap_variant){}`.
 
 Altering URL generators is possible through
 the use of `hook_simple_sitemap_url_generators_alter(&$url_generators){}`.

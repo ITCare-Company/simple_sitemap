@@ -226,7 +226,7 @@ class Simplesitemap {
   /**
    * Returns a sitemap variant, its index, or its requested chunk.
    *
-   * @param int $delta
+   * @param int|null $delta
    *
    * @return string|false
    *  If no chunk delta is provided, either the sitemap variant is returned,
