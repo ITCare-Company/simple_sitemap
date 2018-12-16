@@ -19,8 +19,7 @@
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "require": {
-    "ext-xmlwriter": "*",
-    "mottie/tablesorter": "^2.31"
+    "ext-xmlwriter": "*"
   },
   "extra": {
     "drush": {

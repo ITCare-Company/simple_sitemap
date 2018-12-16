@@ -134,7 +134,6 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
 
     $sitemap_manager = $this->generator->getSitemapManager();
     $sitemap_statuses = $this->fetchSitemapInstanceStatuses();
-
     foreach ($sitemap_manager->getSitemapTypes() as $type_name => $type_definition) {
       if (!empty($variants = $sitemap_manager->getSitemapVariants($type_name, FALSE))) {
         $form['simple_sitemap_settings']['status']['types'][$type_name] = [
@@ -239,8 +238,8 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
 
     $form['simple_sitemap_settings']['settings']['xsl'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Include a stylesheet in the sitemaps for humans'),
-      '#description' => $this->t('When enabled, this will add formatting and tables with sorting to make it easier to view the XML sitemap data instead of viewing raw XML output. Search engines will ignore this.'),
+      '#title' => $this->t('Add styling and sorting to sitemaps'),
+      '#description' => $this->t('If checked, sitemaps will be displayed as tables with sortable entries and thus become much friendlier towards human visitors. Search engines will not care.'),
       '#default_value' => $this->generator->getSetting('xsl', TRUE),
     ];
 
@@ -250,13 +249,6 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       '#open' => FALSE,
     ];
 
-    $language_options = [];
-    foreach ($this->languageManager->getLanguages() as $language) {
-      if (!$language->isDefault()) {
-        $language_options[$language->getId()] = $language->getName();
-      }
-    }
-
     $form['simple_sitemap_settings']['settings']['languages']['skip_untranslated'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Skip non-existent translations'),
@@ -264,6 +256,12 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       '#default_value' => $this->generator->getSetting('skip_untranslated', FALSE),
     ];
 
+    $language_options = [];
+    foreach ($this->languageManager->getLanguages() as $language) {
+      if (!$language->isDefault()) {
+        $language_options[$language->getId()] = $language->getName();
+      }
+    }
     $form['simple_sitemap_settings']['settings']['languages']['excluded_languages'] = [
       '#title' => $this->t('Exclude languages'),
       '#type' => 'checkboxes',
