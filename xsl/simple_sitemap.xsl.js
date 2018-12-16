@@ -55,7 +55,7 @@
     }
     else {
       // Options for sitemap table.
-      options.sortList = [[3, 0]];
+      options.sortList = [[3, 1], [0, 0]];
       options.headers = {
         2: {sorter: 'changefreq'},
         4: {sorter: false },
