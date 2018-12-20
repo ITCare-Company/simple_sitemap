@@ -13,6 +13,7 @@
         <title>[title]</title>
         <script type="text/javascript" src="[jquery]"/>
         <script type="text/javascript" src="[jquery-tablesorter]"/>
+        <script type="text/javascript" src="[parser-date-iso8601]"/>
         <script type="text/javascript" src="[xsl-js]"/>
         <link href="[xsl-css]" type="text/css" rel="stylesheet"/>
       </head>

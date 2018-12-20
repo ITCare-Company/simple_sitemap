@@ -92,6 +92,7 @@ class SimplesitemapController extends ControllerBase {
       '[images]' => $this->t('Images'),
       '[jquery]' => base_path() . 'core/assets/vendor/jquery/jquery.min.js',
       '[jquery-tablesorter]' => base_path() . $module_path . '/xsl/jquery.tablesorter.min.js',
+      '[parser-date-iso8601]' => base_path() . $module_path . '/xsl/parser-date-iso8601.min.js',
       '[xsl-js]' => base_path() . $module_path . '/xsl/simple_sitemap.xsl.js',
       '[xsl-css]' => base_path() . $module_path . '/xsl/simple_sitemap.xsl.css',
     ];
