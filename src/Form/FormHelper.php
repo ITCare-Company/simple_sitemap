@@ -231,7 +231,7 @@ class FormHelper {
       '#default_value' => FALSE,
     ];
     if ($this->generator->getSetting('cron_generate')) {
-      $form_fragment['simple_sitemap_regenerate_now']['#description'] .= '</br>' . $this->t('Otherwise the sitemap will be regenerated during a future cron run.');
+      $form_fragment['simple_sitemap_regenerate_now']['#description'] .= '<br/>' . $this->t('Otherwise the sitemap will be regenerated during a future cron run.');
     }
   }
 
