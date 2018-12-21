@@ -127,7 +127,6 @@ class QueueWorker {
   public function rebuildQueue($variants = NULL) {
     $all_data_sets = [];
     $sitemap_variants = $this->manager->getSitemapVariants();
-
     $type_definitions = $this->manager->getSitemapTypes();
     $this->deleteQueue();
 

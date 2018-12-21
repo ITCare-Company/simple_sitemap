@@ -1,6 +1,6 @@
 /**
  * @file
- * JavaScript file for sitemap.
+ * Alters jquery.tablesorter behaviour.
  */
 
 (function ($) {

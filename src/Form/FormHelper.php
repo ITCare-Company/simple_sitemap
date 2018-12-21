@@ -500,7 +500,7 @@ class FormHelper {
    */
   public function getChangefreqSelectValues() {
     $options = ['' => $this->t('- Not specified -')];
-    foreach (self::$changefreqValues as $setting) {
+    foreach (self::getChangefreqOptions() as $setting) {
       $options[$setting] = $this->t($setting);
     }
     return $options;

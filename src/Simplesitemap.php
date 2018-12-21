@@ -703,7 +703,7 @@ class Simplesitemap {
    *
    * @return array|false
    *  Array of entity instance settings or the settings of its bundle. False if
-   *  entity type does not exist.
+   *  entity type or variant does not exist.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
