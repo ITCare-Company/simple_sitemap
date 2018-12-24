@@ -1,0 +1,8 @@
+views:
+  version: VERSION
+  js:
+    js/simple_sitemap.views.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
