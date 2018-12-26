@@ -7,14 +7,15 @@
 
 namespace Drupal\simple_sitemap_views\Plugin\simple_sitemap\UrlGenerator;
 
-use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorBase;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\EntityUrlGeneratorBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\simple_sitemap_views\SimpleSitemapViews;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
-use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Database\Query\Condition;
 use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\EntityHelper;
 use Drupal\simple_sitemap\Logger;
 use Drupal\views\Views;
 use Drupal\Core\Url;
@@ -28,21 +29,7 @@ use Drupal\Core\Url;
  *   description = @Translation("Generates URLs for views."),
  * )
  */
-class ViewsUrlGenerator extends UrlGeneratorBase {
-
-  /**
-   * An associative array of languages, keyed by the language code.
-   *
-   * @var \Drupal\Core\Language\LanguageInterface[]
-   */
-  protected $languages;
-
-  /**
-   * An account implementation representing an anonymous user.
-   *
-   * @var \Drupal\Core\Session\AnonymousUserSession
-   */
-  protected $anonUser;
+class ViewsUrlGenerator extends EntityUrlGeneratorBase {
 
   /**
    * Views sitemap data.
@@ -71,12 +58,16 @@ class ViewsUrlGenerator extends UrlGeneratorBase {
    *   The simple_sitemap.generator service.
    * @param \Drupal\simple_sitemap\Logger $logger
    *   The simple_sitemap.logger service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\simple_sitemap\EntityHelper $entity_helper
+   *   The simple_sitemap.entity_helper service.
    * @param \Drupal\simple_sitemap_views\SimpleSitemapViews $sitemap_views
    *   Views sitemap data.
    * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
    *   The route provider.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
    */
   public function __construct(
     array $configuration,
@@ -84,13 +75,22 @@ class ViewsUrlGenerator extends UrlGeneratorBase {
     $plugin_definition,
     Simplesitemap $generator,
     Logger $logger,
+    LanguageManagerInterface $language_manager,
+    EntityTypeManagerInterface $entity_type_manager,
+    EntityHelper $entity_helper,
     SimpleSitemapViews $sitemap_views,
-    RouteProviderInterface $route_provider,
-    LanguageManagerInterface $language_manager
+    RouteProviderInterface $route_provider
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $generator, $logger);
-    $this->languages = $language_manager->getLanguages();
-    $this->anonUser = new AnonymousUserSession();
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $generator,
+      $logger,
+      $language_manager,
+      $entity_type_manager,
+      $entity_helper
+    );
     $this->sitemapViews = $sitemap_views;
     $this->routeProvider = $route_provider;
   }
@@ -105,9 +105,11 @@ class ViewsUrlGenerator extends UrlGeneratorBase {
       $plugin_definition,
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
+      $container->get('language_manager'),
+      $container->get('entity_type.manager'),
+      $container->get('simple_sitemap.entity_helper'),
       $container->get('simple_sitemap.views'),
-      $container->get('router.route_provider'),
-      $container->get('language_manager')
+      $container->get('router.route_provider')
     );
   }
 
@@ -227,21 +229,6 @@ class ViewsUrlGenerator extends UrlGeneratorBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function generate($data_set) {
-    $path_data = $this->processDataSet($data_set);
-    if (isset($path_data['url']) && $path_data['url'] instanceof Url) {
-      $url_object = $path_data['url'];
-      unset($path_data['url']);
-      return $this->getUrlVariants($path_data, $url_object);
-    }
-    else {
-      return FALSE !== $path_data ? [$path_data] : [];
-    }
-  }
-
-  /**
    * Clears the URL from parameters that are not present in the arguments.
    *
    * @param \Drupal\Core\Url $url
@@ -271,43 +258,6 @@ class ViewsUrlGenerator extends UrlGeneratorBase {
       // Set new route params.
       $url->setRouteParameters($parameters);
     }
-  }
-
-  /**
-   * Returns the URL variants for path data.
-   *
-   * @param array $path_data
-   *   The sitemap path data.
-   * @param \Drupal\Core\Url $url_object
-   *   URL object associated with the path data.
-   *
-   * @return array
-   *   An array of URL variants.
-   */
-  protected function getUrlVariants(array $path_data, Url $url_object) {
-    $alternate_urls = [];
-    $url_variants = [];
-
-    // Get alternate URLs for all languages.
-    if ($url_object->access($this->anonUser)) {
-      foreach ($this->languages as $language) {
-        if (!isset($this->settings['excluded_languages'][$language->getId()]) || $language->isDefault()) {
-          $url = $url_object->setOption('language', $language)->toString();
-          $url = $this->replaceBaseUrlWithCustom($url);
-          $alternate_urls[$language->getId()] = $url;
-        }
-      }
-    }
-
-    // Collect URL variants.
-    foreach ($alternate_urls as $langcode => $url) {
-      $url_variants[] = $path_data + [
-          'langcode' => $langcode,
-          'url' => $url,
-          'alternate_urls' => $alternate_urls
-        ];
-    }
-    return $url_variants;
   }
 
 }
