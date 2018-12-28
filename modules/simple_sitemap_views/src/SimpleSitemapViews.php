@@ -122,6 +122,12 @@ class SimpleSitemapViews {
     unset($display_extenders[self::PLUGIN_ID]);
     $config->set('display_extenders', $display_extenders);
     $config->save();
+
+    // Clear the table with indexed arguments.
+    // Clear the garbage collection queue.
+    $this->removeArgumentsFromIndex();
+    $queue = $this->queueFactory->get('simple_sitemap.views.garbage_collector');
+    $queue->deleteQueue();
   }
 
   /**

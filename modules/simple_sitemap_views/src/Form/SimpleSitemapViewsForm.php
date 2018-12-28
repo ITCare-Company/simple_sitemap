@@ -13,6 +13,7 @@ use Drupal\simple_sitemap_views\SimpleSitemapViews;
 use Drupal\simple_sitemap\Form\FormHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\Core\Url;
 
 /**
  * Simple XML Sitemap Views settings form.
@@ -75,10 +76,58 @@ class SimpleSitemapViewsForm extends SimplesitemapFormBase {
       '#title' => $this->t('Enable views support'),
       '#description' => $this->t('Sitemap settings for views can be set on the display editing pages.'),
       '#default_value' => $this->sitemapViews->isEnabled(),
-      '#suffix' => $this->getViewsInfo(),
     ];
-    $this->formHelper->displayRegenerateNow($form['simple_sitemap_views']['views']);
 
+    $indexable_views = $this->sitemapViews->getIndexableViews();
+    if (empty($indexable_views)) {
+      $form['simple_sitemap_views']['views']['info'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#value' => $this->t('No displays are set to be indexed yet.'),
+      ];
+    }
+    else {
+      $table = [
+        '#type' => 'table',
+        '#header' => [
+          $this->t('View'),
+          $this->t('Display'),
+          $this->t('Arguments'),
+          $this->t('Operations'),
+        ],
+      ];
+      foreach ($indexable_views as $index => $view) {
+        $table[$index]['view'] = ['#markup' => $view->storage->label()];
+        $table[$index]['display'] = ['#markup' => $view->display_handler->display['display_title']];
+        // Determine whether view display arguments are indexed.
+        $arguments_status = $this->sitemapViews->getIndexableArguments($view) ? $this->t('Yes') : $this->t('No');
+        $table[$index]['arguments'] = ['#markup' => $arguments_status];
+
+        // Link to view display edit form.
+        $display_edit_url = Url::fromRoute('entity.view.edit_display_form', [
+          'view' => $view->id(),
+          'display_id' => $view->current_display,
+        ]);
+        $table[$index]['operations'] = [
+          '#type' => 'operations',
+          '#links' => [
+            'display_edit' => [
+              'title' => $this->t('Edit'),
+              'url' => $display_edit_url,
+            ],
+          ],
+        ];
+      }
+
+      // Show information about indexed displays.
+      $form['simple_sitemap_views']['views']['info'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Displays set to be indexed'),
+        'table' => $table,
+      ];
+    }
+
+    $this->formHelper->displayRegenerateNow($form['simple_sitemap_views']['views']);
     return parent::buildForm($form, $form_state);
   }
 
@@ -93,42 +142,6 @@ class SimpleSitemapViewsForm extends SimplesitemapFormBase {
     if ($form_state->getValue('simple_sitemap_regenerate_now')) {
       $this->generator->generateSitemap();
     }
-  }
-
-  /**
-   * Returns information about indexed views.
-   *
-   * @return string
-   *   An HTML string representing the output.
-   */
-  protected function getViewsInfo() {
-    $indexed_views = [];
-    // Collect information about indexed views.
-    foreach ($this->sitemapViews->getIndexableViews() as $view) {
-      if (!isset($indexed_views[$view->id()]['label'])) {
-        $indexed_views[$view->id()]['label'] = $view->storage->label();
-      }
-      $indexed_views[$view->id()]['displays'][] = $view->current_display;
-      // Destroy a view instance.
-      $view->destroy();
-    }
-
-    // Form the output.
-    if (empty($indexed_views)) {
-      $views_info = $this->t('No displays are set to be indexed yet.');
-    }
-    else {
-      $views_info = '';
-      foreach ($indexed_views as $view_id => $view_info) {
-        $views_info .= '<div id="indexed-view-displays-' . $view_id . '">';
-        $views_info .= $this->t("<em>@view_label</em> displays set to be indexed: <em>@display_titles</em>", [
-          '@view_label' => ucfirst(strtolower($view_info['label'])),
-          '@display_titles' => implode(', ', $view_info['displays']),
-        ]);
-        $views_info .= '</div>';
-      }
-    }
-    return $views_info;
   }
 
 }
