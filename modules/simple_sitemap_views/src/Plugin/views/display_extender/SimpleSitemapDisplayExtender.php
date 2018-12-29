@@ -192,7 +192,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
       }
 
       // Attaching script to form.
-      $form['#attached']['library'][] = 'simple_sitemap_views/views';
+      $form['#attached']['library'][] = 'simple_sitemap_views/viewsUi';
     }
   }
 

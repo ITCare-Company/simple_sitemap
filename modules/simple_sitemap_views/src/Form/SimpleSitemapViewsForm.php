@@ -80,7 +80,7 @@ class SimpleSitemapViewsForm extends SimplesitemapFormBase {
 
     $indexable_views = $this->sitemapViews->getIndexableViews();
     if (empty($indexable_views)) {
-      $form['simple_sitemap_views']['views']['info'] = [
+      $form['simple_sitemap_views']['views']['indexed_displays'] = [
         '#type' => 'html_tag',
         '#tag' => 'div',
         '#value' => $this->t('No displays are set to be indexed yet.'),
@@ -120,14 +120,21 @@ class SimpleSitemapViewsForm extends SimplesitemapFormBase {
       }
 
       // Show information about indexed displays.
-      $form['simple_sitemap_views']['views']['info'] = [
+      $form['simple_sitemap_views']['views']['indexed_displays'] = [
         '#type' => 'details',
         '#title' => $this->t('Displays set to be indexed'),
         'table' => $table,
       ];
+      // A warning message that is controlled by JavaScript.
+      $form['simple_sitemap_views']['views']['warning'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#value' => $this->t('<strong>Warning:</strong> The views sitemap data will be deleted after hitting <em>Save</em>.'),
+      ];
     }
 
     $this->formHelper->displayRegenerateNow($form['simple_sitemap_views']['views']);
+    $form['#attached']['library'][] = 'simple_sitemap_views/sitemapViews';
     return parent::buildForm($form, $form_state);
   }
 

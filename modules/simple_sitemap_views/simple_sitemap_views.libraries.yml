@@ -1,7 +1,15 @@
-views:
+viewsUi:
   version: VERSION
   js:
-    js/simple_sitemap.views.js: {}
+    js/simple_sitemap.viewsUi.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
+sitemapViews:
+  version: VERSION
+  js:
+    js/simple_sitemap.sitemapViews.js: {}
   dependencies:
     - core/jquery
     - core/drupal
