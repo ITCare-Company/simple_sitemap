@@ -173,9 +173,16 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
     try {
       // Trying to get an instance of the view.
       $view = Views::getView($view_id);
-      if (empty($view) || !$view->setDisplay($display_id)) {
+      if (empty($view)) {
         throw new \UnexpectedValueException('Failed to get an instance of the view.');
       }
+
+      // Trying to set the view display.
+      $view->initDisplay();
+      if (!$view->displayHandlers->has($display_id) || !$view->setDisplay($display_id)) {
+        throw new \UnexpectedValueException('Failed to set the view display.');
+      }
+
       // Trying to get the sitemap settings.
       $settings = $this->sitemapViews->getSitemapSettings($view);
       if (empty($settings)) {
