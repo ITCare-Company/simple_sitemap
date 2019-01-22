@@ -110,7 +110,7 @@
         <xsl:variable name="url_location">
           <xsl:value-of select="sitemap:loc"/>
         </xsl:variable>
-        <a href="{$url_location}" rel="nofollow">
+        <a href="{$url_location}">
           <xsl:value-of select="$url_location"/>
         </a>
       </td>
@@ -164,7 +164,7 @@
       <xsl:value-of select="$url_language"/>
     </dt>
     <dd>
-      <a href="{$url_location}" rel="nofollow">
+      <a href="{$url_location}">
         <xsl:value-of select="$url_location"/>
       </a>
     </dd>
@@ -176,7 +176,7 @@
       <xsl:value-of select="image:loc"/>
     </xsl:variable>
     <li>
-      <a href="{$image_location}" rel="nofollow">
+      <a href="{$image_location}">
         <xsl:value-of select="$image_location"/>
       </a>
     </li>
