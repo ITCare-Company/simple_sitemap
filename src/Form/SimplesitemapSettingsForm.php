@@ -71,11 +71,12 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     $form['simple_sitemap_settings']['#prefix'] = $this->getDonationText();
+    $form['simple_sitemap_settings']['#attached']['library'][] = 'simple_sitemap/sitemapSettings';
 
     $form['simple_sitemap_settings']['status'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Sitemap status'),
-      '#markup' => '<div class="description">' . $this->t('Sitemaps can be regenerated on demand here.') . '</div>',
+      '#markup' => '<div class="description">' . $this->t('Sitemaps can be regenerated on demand here.<br/> ') . '</div>',
       '#description' => $this->t('Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
     ];
 
