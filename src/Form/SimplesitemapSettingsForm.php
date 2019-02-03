@@ -76,7 +76,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
     $form['simple_sitemap_settings']['status'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Sitemap status'),
-      '#markup' => '<div class="description">' . $this->t('Sitemaps can be regenerated on demand here.<br/> ') . '</div>',
+      '#markup' => '<div class="description">' . $this->t('Sitemaps can be regenerated on demand here.') . '</div>',
       '#description' => $this->t('Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
     ];
 
@@ -125,7 +125,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       $index_progress = [
         '#theme' => 'progress_bar',
         '#percent' => $percent,
-        '#message' => t('@indexed out of @total items have been processed.', ['@indexed' => $indexed_count, '@total' => $total_count]),
+        '#message' => $this->t('@indexed out of @total items have been processed.<br/>Each sitemap variant is published after all of its items have been processed.', ['@indexed' => $indexed_count, '@total' => $total_count]),
       ];
       $form['simple_sitemap_settings']['status']['progress']['bar']['#markup'] = render($index_progress);
     }
@@ -356,7 +356,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
     $base_url = $form_state->getValue('base_url');
     $form_state->setValue('base_url', rtrim($base_url, '/'));
     if ($base_url !== '' && !UrlHelper::isValid($base_url, TRUE)) {
-      $form_state->setErrorByName('base_url', t('The base URL is invalid.'));
+      $form_state->setErrorByName('base_url', $this->t('The base URL is invalid.'));
     }
   }
 

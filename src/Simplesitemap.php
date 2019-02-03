@@ -17,6 +17,7 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGenerato
  * @package Drupal\simple_sitemap
  */
 class Simplesitemap {
+
   /**
    * @var \Drupal\simple_sitemap\EntityHelper
    */
