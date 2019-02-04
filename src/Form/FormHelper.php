@@ -120,6 +120,7 @@ class FormHelper {
     $this->cleanUpFormInfo();
     $this->getEntityDataFromFormEntity();
     $this->negotiateVariant();
+
     return $this->supports();
   }
 
@@ -222,6 +223,7 @@ class FormHelper {
 
   /**
    * @param array $form_fragment
+   * @return $this
    */
   public function displayRegenerateNow(&$form_fragment) {
     $form_fragment['simple_sitemap_regenerate_now'] = [
@@ -233,6 +235,8 @@ class FormHelper {
     if ($this->generator->getSetting('cron_generate')) {
       $form_fragment['simple_sitemap_regenerate_now']['#description'] .= '<br/>' . $this->t('Otherwise the sitemap will be regenerated during a future cron run.');
     }
+
+    return $this;
   }
 
   protected function negotiateVariant() {
@@ -248,6 +252,8 @@ class FormHelper {
    * @param array $form_fragment
    * @param bool $multiple
    * @return $this
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function displayEntitySettings(&$form_fragment, $multiple = FALSE) {
     $prefix = $multiple ? $this->getEntityTypeId() . '_' : '';
@@ -288,7 +294,6 @@ class FormHelper {
         function($variant) { return $this->t($variant['label']); },
         $this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE)
       ),
-      '#default_value' => $this->variant,
       '#states' => [
         'visible' => !$multiple
           ? [':input[name="' . $prefix . 'simple_sitemap_index_content"]' => ['value' => 1]]
@@ -299,6 +304,17 @@ class FormHelper {
       ],
       '#disabled' => $this->getEntityCategory() === 'instance'
     ];
+    // If only one variant is available, set it, otherwise check if a default
+    // variant is provided and set it.
+    $form_fragment[$prefix . 'simple_sitemap_variant']['#default_value'] = NULL === $this->variant
+      ? (1 === count($form_fragment[$prefix . 'simple_sitemap_variant']['#options'])
+        ? array_keys($form_fragment[$prefix . 'simple_sitemap_variant']['#options'])[0]
+        : (!empty($default = $this->generator->getSetting('default_variant'))
+            ? $default
+            : $this->variant
+        )
+      )
+      : $this->variant;
 
     // Priority
     $form_fragment[$prefix . 'simple_sitemap_priority'] = [
@@ -437,7 +453,7 @@ class FormHelper {
    * Needed because this service may contain form info from the previous
    * operation when revived from the container.
    */
-  protected function cleanUpFormInfo() {
+  public function cleanUpFormInfo() {
     $this->entityCategory = NULL;
     $this->entityTypeId = NULL;
     $this->bundleName = NULL;
@@ -474,6 +490,7 @@ class FormHelper {
         return TRUE;
       }
     }
+
     return FALSE;
   }
 
@@ -489,6 +506,7 @@ class FormHelper {
       $value = $this->formatPriority($value / self::PRIORITY_DIVIDER);
       $options[$value] = $value;
     }
+
     return $options;
   }
 
@@ -503,6 +521,7 @@ class FormHelper {
     foreach (self::getChangefreqOptions() as $setting) {
       $options[$setting] = $this->t($setting);
     }
+
     return $options;
   }
 
