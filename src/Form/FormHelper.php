@@ -239,13 +239,18 @@ class FormHelper {
     return $this;
   }
 
-  protected function negotiateVariant() {
+  /**
+   * @return $this
+   */
+  public function negotiateVariant() {
     $all_bundle_settings = $this->generator->setVariants(TRUE)
       ->getBundleSettings($this->getEntityTypeId(), $this->getBundleName(), FALSE, TRUE);
     $this->bundleSettings = NULL !== ($variant = key($all_bundle_settings))
       ? $all_bundle_settings[$variant]
       : [];
     $this->variant = $variant;
+
+    return $this;
   }
 
   /**
@@ -452,6 +457,8 @@ class FormHelper {
    *
    * Needed because this service may contain form info from the previous
    * operation when revived from the container.
+   *
+   * @return $this
    */
   public function cleanUpFormInfo() {
     $this->entityCategory = NULL;
@@ -460,6 +467,8 @@ class FormHelper {
     $this->instanceId = NULL;
     $this->variant = NULL;
     $this->bundleSettings = NULL;
+
+    return $this;
   }
 
   /**
