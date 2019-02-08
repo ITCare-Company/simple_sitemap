@@ -6,6 +6,14 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function simple_sitemap_views_install() {
+  // Enable views display extender plugin.
+  \Drupal::service('simple_sitemap.views')->enable();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function simple_sitemap_views_uninstall() {
