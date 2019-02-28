@@ -17,7 +17,10 @@ abstract class SimpleSitemapViewsTestBase extends SimplesitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['simple_sitemap_views'];
+  public static $modules = [
+    'simple_sitemap_views',
+    'simple_sitemap_views_test',
+  ];
 
   /**
    * Views sitemap data.
