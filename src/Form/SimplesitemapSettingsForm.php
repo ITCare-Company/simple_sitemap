@@ -71,6 +71,8 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     $form['simple_sitemap_settings']['#prefix'] = $this->getDonationText();
+    $form['simple_sitemap_settings']['#attached']['library'][] = 'simple_sitemap/sitemapSettings';
+    $queue_worker = $this->generator->getQueueWorker();
 
     $form['simple_sitemap_settings']['status'] = [
       '#type' => 'fieldset',
@@ -84,24 +86,19 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       '#suffix' => '</div></div>',
     ];
 
-    $form['simple_sitemap_settings']['status']['actions']['regenerate_submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Generate from queue'),
-      '#submit' => ['::generateSitemap'],
-      '#validate' => [],
-    ];
-
-//    $form['simple_sitemap_settings']['status']['actions']['regenerate_backend_submit'] = [
-//      '#type' => 'submit',
-//      '#value' => $this->t('Generate from queue (background)'),
-//      '#submit' => ['::generateSitemapBackend'],
-//      '#validate' => [],
-//    ];
-
     $form['simple_sitemap_settings']['status']['actions']['rebuild_queue_submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Rebuild queue'),
       '#submit' => ['::rebuildQueue'],
+      '#validate' => [],
+    ];
+
+    $form['simple_sitemap_settings']['status']['actions']['regenerate_submit'] = [
+      '#type' => 'submit',
+      '#value' => $queue_worker->generationInProgress()
+        ? $this->t('Resume generation')
+        : $this->t('Rebuild queue & generate'),
+      '#submit' => ['::generateSitemap'],
       '#validate' => [],
     ];
 
@@ -112,7 +109,6 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
 
     $form['simple_sitemap_settings']['status']['progress']['title']['#markup'] = $this->t('Progress of sitemap regeneration');
 
-    $queue_worker = $this->generator->getQueueWorker();
     $total_count = $queue_worker->getInitialElementCount();
     if (!empty($total_count)) {
       $indexed_count = $queue_worker->getProcessedElementCount();
@@ -124,7 +120,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       $index_progress = [
         '#theme' => 'progress_bar',
         '#percent' => $percent,
-        '#message' => t('@indexed out of @total items have been processed.', ['@indexed' => $indexed_count, '@total' => $total_count]),
+        '#message' => $this->t('@indexed out of @total items have been processed.<br/>Each sitemap variant is published after all of its items have been processed.', ['@indexed' => $indexed_count, '@total' => $total_count]),
       ];
       $form['simple_sitemap_settings']['status']['progress']['bar']['#markup'] = render($index_progress);
     }
@@ -355,7 +351,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
     $base_url = $form_state->getValue('base_url');
     $form_state->setValue('base_url', rtrim($base_url, '/'));
     if ($base_url !== '' && !UrlHelper::isValid($base_url, TRUE)) {
-      $form_state->setErrorByName('base_url', t('The base URL is invalid.'));
+      $form_state->setErrorByName('base_url', $this->t('The base URL is invalid.'));
     }
   }
 
@@ -392,16 +388,6 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
   public function generateSitemap(array &$form, FormStateInterface $form_state) {
     $this->generator->generateSitemap();
   }
-
-  /**
-   * @param array $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @throws \Drupal\Component\Plugin\Exception\PluginException
-   */
-  public function generateSitemapBackend (array &$form, FormStateInterface $form_state) {
-    $this->generator->generateSitemap('backend');
-  }
-
 
   /**
    * @param array $form

@@ -103,12 +103,12 @@ function simple_sitemap_entity_form_submit($form, FormStateInterface &$form_stat
     /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
     $generator = \Drupal::service('simple_sitemap.generator');
 
-    $settings = [
-      'index' => (bool) $values['simple_sitemap_index_content'],
-      'priority' => $values['simple_sitemap_priority'],
-      'changefreq' => $values['simple_sitemap_changefreq'],
-      'include_images' => (bool) $values['simple_sitemap_include_images'],
-    ];
+    // Only save other values if indexing is enabled.
+    if ($settings['index'] = (bool) $values['simple_sitemap_index_content']) {
+      $settings['priority'] = $values['simple_sitemap_priority'];
+      $settings['changefreq'] = $values['simple_sitemap_changefreq'];
+      $settings['include_images'] = (bool) $values['simple_sitemap_include_images'];
+    }
 
     // Deleting bundle settings for old bundle.
     // See SimplesitemapEntitiesForm::submitForm().

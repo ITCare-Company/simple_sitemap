@@ -131,10 +131,17 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
       $form['#attached']['drupalSettings']['simple_sitemap']['all_entities'][] = $css_entity_type_id;
 
       if ($atomic_entity_type) {
-        $this->formHelper->setEntityCategory('bundle')
+        $this->formHelper
+          ->cleanUpFormInfo()
+          ->setEntityCategory('bundle')
           ->setEntityTypeId($entity_type_id)
           ->setBundleName($entity_type_id)
-          ->displayEntitySettings($form['simple_sitemap_entities']['entities'][$entity_type_id][$entity_type_id . '_settings'], TRUE);
+          ->negotiateVariant()
+          ->displayEntitySettings(
+            $form['simple_sitemap_entities']['entities'][$entity_type_id][$entity_type_id . '_settings'],
+            TRUE
+          );
+
         $form['#attached']['drupalSettings']['simple_sitemap']['atomic_entities'][] = $css_entity_type_id;
       }
     }
