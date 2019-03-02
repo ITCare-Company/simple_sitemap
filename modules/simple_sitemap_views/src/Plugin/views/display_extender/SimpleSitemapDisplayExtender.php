@@ -140,7 +140,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
         $form['main']['variant'] = [
           '#type' => 'select',
           '#title' => $this->t('Sitemap variant'),
-          '#description' => $this->t('The sitemap variant display is to be indexed in.'),
+          '#description' => $this->t('The sitemap variant this display is to be indexed in.'),
           '#options' => $this->formHelper->getVariantSelectValues(),
           '#default_value' => $this->formHelper->getVariantSelectValuesDefault($settings['variant']),
           '#required' => TRUE,
@@ -149,7 +149,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
         $form['main']['priority'] = [
           '#type' => 'select',
           '#title' => $this->t('Priority'),
-          '#description' => $this->t('The priority displays will have in the eyes of search engine bots.'),
+          '#description' => $this->t('The priority this display will have in the eyes of search engine bots.'),
           '#default_value' => $settings['priority'],
           '#options' => $this->formHelper->getPrioritySelectValues(),
         ];
@@ -180,8 +180,8 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
           // Max links with arguments.
           $form['arguments']['max_links'] = [
             '#type' => 'number',
-            '#title' => $this->t('Maximum links in a sitemap'),
-            '#description' => $this->t('The maximum number of links with different argument values ​​for this display, which will be included in the sitemap. If left blank, all links will be included in the sitemap. Use with caution, since a large number of argument values ​​can lead to a significant increase in the number of links in the sitemap.'),
+            '#title' => $this->t('Maximum display variations'),
+            '#description' => $this->t('The maximum number of link variations to be indexed for this display. If left blank, each argument will create link variations for this display. Use with caution, as a large number of argument values​can significantly increase the number of sitemap links.'),
             '#default_value' => $settings['max_links'],
             '#min' => 1,
           ];

@@ -58,7 +58,7 @@ class SimpleSitemapViewsController extends ControllerBase {
         $this->t('Arguments'),
         $this->t('Operations'),
       ],
-      '#empty' => $this->t('No displays are set to be indexed yet.'),
+      '#empty' => $this->t('No view displays are set to be indexed yet. <a href="@url">Edit a view.</a>', ['@url' => $GLOBALS['base_url'] . '/admin/structure/views']),
     ];
 
     foreach ($this->sitemapViews->getIndexableViews() as $index => $view) {
