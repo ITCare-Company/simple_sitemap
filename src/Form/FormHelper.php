@@ -295,10 +295,8 @@ class FormHelper {
       '#type' => 'select',
       '#title' => $this->t('Sitemap variant'),
       '#description' => $this->t('The sitemap variant entities of this type are to be indexed in.'),
-      '#options' => array_map(
-        function($variant) { return $this->t($variant['label']); },
-        $this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE)
-      ),
+      '#options' => $this->getVariantSelectValues(),
+      '#default_value' => $this->getVariantSelectValuesDefault($this->variant),
       '#states' => [
         'visible' => !$multiple
           ? [':input[name="' . $prefix . 'simple_sitemap_index_content"]' => ['value' => 1]]
@@ -307,19 +305,8 @@ class FormHelper {
           ? [':input[name="' . $prefix . 'simple_sitemap_index_content"]' => ['value' => 1]]
           : [':input[name="' . $prefix . 'enabled"]' => ['checked' => TRUE]],
       ],
-      '#disabled' => $this->getEntityCategory() === 'instance'
+      '#disabled' => $this->getEntityCategory() === 'instance',
     ];
-    // If only one variant is available, set it, otherwise check if a default
-    // variant is provided and set it.
-    $form_fragment[$prefix . 'simple_sitemap_variant']['#default_value'] = NULL === $this->variant
-      ? (1 === count($form_fragment[$prefix . 'simple_sitemap_variant']['#options'])
-        ? array_keys($form_fragment[$prefix . 'simple_sitemap_variant']['#options'])[0]
-        : (!empty($default = $this->generator->getSetting('default_variant'))
-            ? $default
-            : $this->variant
-        )
-      )
-      : $this->variant;
 
     // Priority
     $form_fragment[$prefix . 'simple_sitemap_priority'] = [
@@ -504,10 +491,46 @@ class FormHelper {
   }
 
   /**
+   * Gets the values needed to display the variant dropdown setting.
+   *
+   * @return array
+   */
+  public function getVariantSelectValues() {
+    return array_map(
+      function($variant) { return $this->t($variant['label']); },
+      $this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE)
+    );
+  }
+
+  /**
+   * Returns correct default value for variant select list.
+   *
+   * If only one variant is available, return it, otherwise check if a default
+   * variant is provided and return it.
+   *
+   * @param string|null $default_value
+   *  Actual default value from the database.
+   *
+   * @return string|null
+   *  Value to be set on form.
+   */
+  public function getVariantSelectValuesDefault($default_value) {
+    $options = $this->getVariantSelectValues();
+    return NULL === $default_value
+      ? (1 === count($options)
+        ? array_keys($options)[0]
+        : (!empty($default = $this->generator->getSetting('default_variant'))
+          ? $default
+          : $default_value
+        )
+      )
+      : $default_value;
+  }
+
+  /**
    * Gets the values needed to display the priority dropdown setting.
    *
    * @return array
-   *   Select options.
    */
   public function getPrioritySelectValues() {
     $options = [];
@@ -523,7 +546,6 @@ class FormHelper {
    * Gets the values needed to display the changefreq dropdown setting.
    *
    * @return array
-   *   Select options.
    */
   public function getChangefreqSelectValues() {
     $options = ['' => $this->t('- Not specified -')];

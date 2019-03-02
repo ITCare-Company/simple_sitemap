@@ -141,8 +141,8 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
           '#type' => 'select',
           '#title' => $this->t('Sitemap variant'),
           '#description' => $this->t('The sitemap variant display is to be indexed in.'),
-          '#default_value' => $settings['variant'],
-          '#options' => $this->getVariantOptions(),
+          '#options' => $this->formHelper->getVariantSelectValues(),
+          '#default_value' => $this->formHelper->getVariantSelectValuesDefault($settings['variant']),
           '#required' => TRUE,
         ];
         // The sitemap priority.
@@ -314,20 +314,6 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
   public function isIndexingEnabled() {
     $settings = $this->getSitemapSettings();
     return !empty($settings['index']);
-  }
-
-  /**
-   * Returns available sitemap variant options.
-   *
-   * @return array
-   *   Sitemap variants labels keyed by variant ID.
-   */
-  protected function getVariantOptions() {
-    $variants = $this->sitemapManager->getSitemapVariants(NULL, FALSE);
-    foreach ($variants as $id => &$variant) {
-      $variant = $this->t($variant['label']);
-    }
-    return $variants;
   }
 
   /**
