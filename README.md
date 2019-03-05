@@ -74,6 +74,13 @@ As the sitemaps are accessible to anonymous users, bear in mind that only links
 will be included which are accessible to anonymous users. There are no access
 checks for links added through the module's hooks (see below).
 
+### VIEWS ###
+
+To index views, enable the included, optional module Simple XML Sitemap (Views)
+(simple_sitemap_views). Simple views as well as views with arguments can be
+indexed on the view edit page. For views with arguments, links to all view
+variants will be included in the sitemap.
+
 ### CUSTOM LINKS ###
 
 To include custom links into a sitemap, visit
@@ -93,7 +100,8 @@ configured under admin/config/search/simplesitemap/variants.
 ## USAGE ## 
 
 The sitemaps are accessible to the whole world under [variant name]/sitemap.xml.
-In addition to that, the default sitemap is accessible under /sitemap.xml.
+In addition to that, the default sitemap is accessible under /sitemap.xml. To
+view the XML source, press ctrl+u.
 
 If the cron generation is turned on, the sitemaps will be regenerated according
 to the 'Sitemap generation interval' setting.
