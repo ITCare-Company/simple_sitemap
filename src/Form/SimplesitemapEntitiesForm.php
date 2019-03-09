@@ -165,7 +165,7 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
 
             // Deleting bundle settings for old bundle.
             // See simple_sitemap.module::simple_sitemap_entity_form_submit().
-            // todo: This will not be necessary if "multiple variants pro bundle" is implemented.
+            // todo: Not necessary once https://www.drupal.org/project/simple_sitemap/issues/3014649 is implemented.
             if (isset($form['simple_sitemap_entities']['entities'][$entity_type_id][$entity_type_id . '_settings'][$entity_type_id . '_simple_sitemap_variant']['#default_value'])) {
               $old_variant = $form['simple_sitemap_entities']['entities'][$entity_type_id][$entity_type_id . '_settings'][$entity_type_id . '_simple_sitemap_variant']['#default_value'];
               if ($old_variant !== $values[$entity_type_id . '_simple_sitemap_variant']) {

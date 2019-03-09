@@ -55,7 +55,6 @@ trait BatchTrait {
    * @param $context
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    *
-   * @todo Make sure batch does not run at the same time as cron.
    * @todo Variants into generateSitemap().
    */
   public static function doBatchGenerateSitemap(&$context) {

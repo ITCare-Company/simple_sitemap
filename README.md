@@ -25,7 +25,7 @@ content entity types including:
  * ...
 
 Contributed entity types like commerce products or media entities can be indexed
-as well. On top of that custom links can be added to the sitemap.
+as well. On top of that custom links and view pages can be added to the sitemap.
 
 To learn about XML sitemaps, see https://en.wikipedia.org/wiki/Sitemaps.
 

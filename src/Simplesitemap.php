@@ -439,7 +439,6 @@ class Simplesitemap {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
-   * @todo: enableEntityType automatically
    * @todo multiple variants
    */
   public function setBundleSettings($entity_type_id, $bundle_name = NULL, $settings = ['index' => TRUE]) {
@@ -788,7 +787,7 @@ class Simplesitemap {
    *
    * @return bool
    *
-   * @todo multiple variants?
+   * @todo multiple variants
    */
   public function bundleIsIndexed($entity_type_id, $bundle_name = NULL) {
     $settings = $this->getBundleSettings($entity_type_id, $bundle_name);
