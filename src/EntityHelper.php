@@ -9,25 +9,33 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Url;
 
 /**
- * Class EntityHelper
+ * Helper class for working with entities.
+ *
  * @package Drupal\simple_sitemap
  */
 class EntityHelper {
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The current active database's master connection.
+   *
    * @var \Drupal\Core\Database\Connection
    */
   protected $db;
 
   /**
    * EntityHelper constructor.
+   *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
    * @param \Drupal\Core\Database\Connection $database
+   *   The current active database's master connection.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager, Connection $database) {
     $this->entityTypeManager = $entityTypeManager;
@@ -38,7 +46,10 @@ class EntityHelper {
    * Gets an entity's bundle name.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to get the bundle name for.
+   *
    * @return string
+   *   The bundle of the entity.
    */
   public function getEntityInstanceBundleName(EntityInterface $entity) {
     return $entity->getEntityTypeId() === 'menu_link_content'
@@ -50,7 +61,10 @@ class EntityHelper {
    * Gets the entity type id for a bundle.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to get an entity type id for a bundle.
+   *
    * @return null|string
+   *   The entity type for a bundle or NULL on failure.
    */
   public function getBundleEntityTypeId(EntityInterface $entity) {
     return $entity->getEntityTypeId() === 'menu'
@@ -82,7 +96,10 @@ class EntityHelper {
    * Checks whether an entity type does not provide bundles.
    *
    * @param string $entity_type_id
+   *   The entity type ID.
+   *
    * @return bool
+   *   TRUE if the entity type is atomic and FALSE otherwise.
    */
   public function entityTypeIsAtomic($entity_type_id) {
 
@@ -101,8 +118,14 @@ class EntityHelper {
   }
 
   /**
+   * Gets the entity from URL object.
+   *
    * @param \Drupal\Core\Url $url_object
+   *   The URL object.
+   *
    * @return \Drupal\Core\Entity\EntityInterface|null
+   *   An entity object. NULL if no matching entity is found.
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
@@ -116,9 +139,16 @@ class EntityHelper {
   }
 
   /**
+   * Gets the entity IDs by entity type and bundle.
+   *
    * @param string $entity_type_id
+   *   The entity type ID.
    * @param string|null $bundle_name
-   * @return array|int
+   *   The bundle name.
+   *
+   * @return array
+   *   An array of entity IDs
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
@@ -142,9 +172,15 @@ class EntityHelper {
   }
 
   /**
+   * Gets a list of image URLs for specified entity ID.
+   *
    * @param string $entity_type_name
+   *   The name of the entity type in which the images are used.
    * @param string $entity_id
+   *   The ID of the entity.
+   *
    * @return array
+   *   An array containing the URLs of the images.
    */
   public function getEntityImageUrls($entity_type_name, $entity_id) {
     $query = $this->db->select('file_managed', 'fm');
