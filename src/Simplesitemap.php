@@ -718,6 +718,7 @@ class Simplesitemap {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
    * @todo multiple variants
+   * @todo: May want to use Simplesitemap::supplementDefaultSettings('entity', $settings) inside here instead of calling it everywhere this method is called.
    */
   public function getEntityInstanceSettings($entity_type_id, $id) {
     if (empty($variants = $this->getVariants(FALSE))) {
