@@ -171,30 +171,4 @@ class EntityHelper {
     return $entity_query->execute();
   }
 
-  /**
-   * Gets a list of image URLs for specified entity ID.
-   *
-   * @param string $entity_type_name
-   *   The name of the entity type in which the images are used.
-   * @param string $entity_id
-   *   The ID of the entity.
-   *
-   * @return array
-   *   An array containing the URLs of the images.
-   */
-  public function getEntityImageUrls($entity_type_name, $entity_id) {
-    $query = $this->db->select('file_managed', 'fm');
-    $query->fields('fm', ['uri']);
-    $query->join('file_usage', 'fu', 'fu.fid = fm.fid');
-    $query->condition('fm.filemime', 'image/%', 'LIKE');
-    $query->condition('fu.type', $entity_type_name);
-    $query->condition('fu.id', $entity_id);
-
-    foreach ($query->execute() as $row) {
-      $imageUris[] = file_create_url($row->uri);
-    }
-
-    return !empty($imageUris) ? $imageUris : [];
-  }
-
 }

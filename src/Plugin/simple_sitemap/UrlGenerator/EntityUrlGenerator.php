@@ -165,7 +165,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       'priority' => isset($entity_settings['priority']) ? $entity_settings['priority'] : NULL,
       'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
       'images' => !empty($entity_settings['include_images'])
-        ? $this->getImages($entity_type_name, $entity_id)
+        ? $this->getEntityImageData($entity)
         : [],
 
       // Additional info useful in hooks.
