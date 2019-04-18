@@ -161,7 +161,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
 
     return [
       'url' => $url_object,
-      'lastmod' => method_exists($entity, 'getChangedTime') ? date_iso8601($entity->getChangedTime()) : NULL,
+      'lastmod' => method_exists($entity, 'getChangedTime') ? date('c', $entity->getChangedTime()) : NULL,
       'priority' => isset($entity_settings['priority']) ? $entity_settings['priority'] : NULL,
       'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
       'images' => !empty($entity_settings['include_images'])

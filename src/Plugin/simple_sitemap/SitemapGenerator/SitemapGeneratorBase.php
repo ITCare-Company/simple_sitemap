@@ -166,7 +166,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
       $this->writer->startElement('sitemap');
       $this->writer->writeElement('loc', $this->getCustomBaseUrl()
         . '/' . (!$this->isDefaultVariant() ? ($chunk_data->type . '/') : '') . 'sitemap.xml?page=' . $chunk_data->delta);
-      $this->writer->writeElement('lastmod', date_iso8601($chunk_data->sitemap_created));
+      $this->writer->writeElement('lastmod', date('c', $chunk_data->sitemap_created));
       $this->writer->endElement();
     }
 

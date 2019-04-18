@@ -179,7 +179,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     $path_data = [
       'url' => $url_object,
       'lastmod' => !empty($entity) && method_exists($entity, 'getChangedTime')
-        ? date_iso8601($entity->getChangedTime())
+        ? date('c', $entity->getChangedTime())
         : NULL,
       'priority' => isset($entity_settings['priority']) ? $entity_settings['priority'] : NULL,
       'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
