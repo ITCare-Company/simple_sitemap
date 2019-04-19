@@ -133,9 +133,9 @@
       <xsl:if test="/sitemap:urlset/sitemap:url/xhtml:link">
         <td>
           <xsl:if test="xhtml:link">
-            <dl class="translation-set">
+            <ul class="translation-set">
               <xsl:apply-templates select="xhtml:link"/>
-            </dl>
+            </ul>
           </xsl:if>
         </td>
       </xsl:if>
@@ -154,20 +154,17 @@
 
   <!-- xhtml:link template -->
   <xsl:template match="xhtml:link">
-    <xsl:variable name="url_language">
-      <xsl:value-of select="@hreflang"/>
-    </xsl:variable>
     <xsl:variable name="url_location">
       <xsl:value-of select="@href"/>
     </xsl:variable>
-    <dt>
-      <xsl:value-of select="$url_language"/>
-    </dt>
-    <dd>
+    <li>
+      <span>
+        <xsl:value-of select="@hreflang"/>
+      </span>
       <a href="{$url_location}">
         <xsl:value-of select="$url_location"/>
       </a>
-    </dd>
+    </li>
   </xsl:template>
 
   <!-- image:image template -->
@@ -179,6 +176,20 @@
       <a href="{$image_location}">
         <xsl:value-of select="$image_location"/>
       </a>
+      <!-- Show this element only if image:caption element is present -->
+      <xsl:if test="image:caption">
+        <div>
+          <span>[image-caption]</span>
+          <xsl:value-of select="image:caption"/>
+        </div>
+      </xsl:if>
+      <!-- Show this element only if image:title element is present -->
+      <xsl:if test="image:title">
+        <div>
+          <span>[image-title]</span>
+          <xsl:value-of select="image:title"/>
+        </div>
+      </xsl:if>
     </li>
   </xsl:template>
 
