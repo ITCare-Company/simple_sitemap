@@ -172,24 +172,20 @@
     <xsl:variable name="image_location">
       <xsl:value-of select="image:loc"/>
     </xsl:variable>
+    <xsl:variable name="image_title">
+      <xsl:value-of select="image:title"/>
+    </xsl:variable>
     <li>
-      <a href="{$image_location}">
-        <xsl:value-of select="$image_location"/>
+      <a href="{$image_location}" title="{$image_title}">
+        <xsl:choose>
+          <xsl:when test="image:caption">
+            <xsl:value-of select="image:caption"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$image_location"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </a>
-      <!-- Show this element only if image:caption element is present -->
-      <xsl:if test="image:caption">
-        <div>
-          <span>[image-caption]</span>
-          <xsl:value-of select="image:caption"/>
-        </div>
-      </xsl:if>
-      <!-- Show this element only if image:title element is present -->
-      <xsl:if test="image:title">
-        <div>
-          <span>[image-title]</span>
-          <xsl:value-of select="image:title"/>
-        </div>
-      </xsl:if>
     </li>
   </xsl:template>
 
