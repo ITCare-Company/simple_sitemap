@@ -145,7 +145,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
         ];
         foreach ($variants as $variant_name => $variant_definition) {
           $row = [];
-          $row['name']['data']['#markup'] = '<span title="' . $variant_name . '">' . $variant_definition['label'] . '</span>';
+          $row['name']['data']['#markup'] = '<span title="' . $variant_name . '">' . $this->t($variant_definition['label']) . '</span>';
           if (!isset($sitemap_statuses[$variant_name])) {
             $row['status'] = $this->t('pending');
           }
