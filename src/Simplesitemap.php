@@ -3,7 +3,6 @@
 namespace Drupal\simple_sitemap;
 
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\Core\Path\PathValidator;
@@ -47,11 +46,6 @@ class Simplesitemap {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-
-  /**
-   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
-   */
-  protected $entityTypeBundleInfo;
 
   /**
    * @var \Drupal\Core\Path\PathValidator
@@ -104,7 +98,6 @@ class Simplesitemap {
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    * @param \Drupal\Core\Database\Connection $database
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
    * @param \Drupal\Core\Path\PathValidator $path_validator
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
    * @param \Drupal\Component\Datetime\Time $time
@@ -117,7 +110,6 @@ class Simplesitemap {
     ConfigFactory $config_factory,
     Connection $database,
     EntityTypeManagerInterface $entity_type_manager,
-    EntityTypeBundleInfoInterface $entity_type_bundle_info,
     PathValidator $path_validator,
     DateFormatter $date_formatter,
     Time $time,
@@ -129,7 +121,6 @@ class Simplesitemap {
     $this->configFactory = $config_factory;
     $this->db = $database;
     $this->entityTypeManager = $entity_type_manager;
-    $this->entityTypeBundleInfo = $entity_type_bundle_info;
     $this->pathValidator = $path_validator;
     $this->dateFormatter = $date_formatter;
     $this->time = $time;
@@ -531,14 +522,8 @@ class Simplesitemap {
           ->get("simple_sitemap.bundle_settings.$variant.$entity_type_id.$bundle_name")
           ->get();
 
-        // If not found and entity type is enabled, return default bundle settings.
         if (empty($bundle_settings) && $supplement_defaults) {
-          if (isset($this->entityTypeBundleInfo->getBundleInfo($entity_type_id)[$bundle_name])) {
-            self::supplementDefaultSettings('entity', $bundle_settings);
-          }
-          else {
-            $bundle_settings = NULL;
-          }
+          self::supplementDefaultSettings('entity', $bundle_settings);
         }
       }
       else {
@@ -552,7 +537,7 @@ class Simplesitemap {
         // Supplement default bundle settings for all bundles not found in simple_sitemap.bundle_settings.*.* configuration.
         if ($supplement_defaults) {
           foreach ($this->entityHelper->getSupportedEntityTypes() as $type_id => $type_definition) {
-            foreach($this->entityTypeBundleInfo->getBundleInfo($type_id) as $bundle => $bundle_definition) {
+            foreach($this->entityHelper->getBundleInfo($type_id) as $bundle => $bundle_definition) {
               if (!isset($bundle_settings[$type_id][$bundle])) {
                 self::supplementDefaultSettings('entity', $bundle_settings[$type_id][$bundle]);
               }

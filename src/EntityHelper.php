@@ -48,12 +48,24 @@ class EntityHelper {
   }
 
   /**
-   * @param string $entity_type_name
+   * @param string $entity_type_id
+   * @return array
+   */
+  public function getBundleInfo($entity_type_id) {
+    return $this->entityTypeBundleInfo->getBundleInfo($entity_type_id);
+  }
+
+  /**
+   * @param string $entity_type_id
    * @param string $bundle_name
    * @return mixed
    */
-  public function getBundleLabel($entity_type_name, $bundle_name) {
-    return $this->entityTypeBundleInfo->getBundleInfo($entity_type_name)[$bundle_name]['label'];
+  public function getBundleLabel($entity_type_id, $bundle_name) {
+    $entity_info = $this->getBundleInfo($entity_type_id);
+
+    return isset($entity_info[$bundle_name]['label'])
+      ? $entity_info[$bundle_name]['label']
+      : $bundle_name; // Menu fix.
   }
 
   /**
