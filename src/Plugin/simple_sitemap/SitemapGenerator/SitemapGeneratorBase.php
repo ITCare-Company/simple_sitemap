@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
+use Drupal\Core\Url;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Database\Connection;
@@ -164,8 +165,13 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     // Add sitemap chunk locations to document.
     foreach ($chunk_info as $chunk_data) {
       $this->writer->startElement('sitemap');
-      $this->writer->writeElement('loc', $this->getCustomBaseUrl()
-        . '/' . (!$this->isDefaultVariant() ? ($chunk_data->type . '/') : '') . 'sitemap.xml?page=' . $chunk_data->delta);
+
+      // Build the URL from route to be able to show potentially aliased paths.
+      $url = $this->isDefaultVariant()
+        ? Url::fromRoute('simple_sitemap.sitemap_default', ['page' => $chunk_data->delta])
+        : Url::fromRoute('simple_sitemap.sitemap_variant', ['variant' => $chunk_data->type, 'page' => $chunk_data->delta]);
+
+      $this->writer->writeElement('loc', $this->getCustomBaseUrl() . $url->toString(TRUE)->getGeneratedUrl());
       $this->writer->writeElement('lastmod', date('c', $chunk_data->sitemap_created));
       $this->writer->endElement();
     }
@@ -272,8 +278,9 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
    * @return $this
    */
   public function publish() {
-    $unpublished_chunk = $this->db->query('SELECT MAX(id) FROM {simple_sitemap} WHERE type = :type AND status = :status', [':type' => $this->sitemapVariant, ':status' => 0])
-      ->fetchField();
+    $unpublished_chunk = $this->db->query('SELECT MAX(id) FROM {simple_sitemap} WHERE type = :type AND status = :status', [
+      ':type' => $this->sitemapVariant, ':status' => 0
+    ])->fetchField();
 
     // Only allow publishing a sitemap variant if there is an unpublished
     // sitemap variant, as publishing involves deleting the currently published
