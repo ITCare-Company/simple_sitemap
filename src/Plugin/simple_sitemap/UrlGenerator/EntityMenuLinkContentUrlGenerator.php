@@ -156,7 +156,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     if ($url_object->isRouted()) {
 
       // Do not include paths that have no URL.
-      if($url_object->getRouteName() === '<nolink>') {
+      if (in_array($url_object->getRouteName(), ['<nolink>', '<none>'])) {
         return FALSE;
       }
 
