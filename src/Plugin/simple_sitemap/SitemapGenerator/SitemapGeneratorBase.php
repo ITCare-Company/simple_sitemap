@@ -9,6 +9,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Component\Datetime\Time;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Class SitemapGeneratorBase
@@ -58,6 +59,11 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
   /**
    * @var array
    */
+  protected $sitemapUrlSettings;
+
+  /**
+   * @var array
+   */
   protected static $indexAttributes = [
     'xmlns' => self::XMLNS,
   ];
@@ -90,6 +96,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $this->time = $time;
     $this->writer = $sitemap_writer;
     $this->sitemapVariant = $this->settings['default_variant'];
+
   }
 
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -167,11 +174,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
       $this->writer->startElement('sitemap');
 
       // Build the URL from route to be able to show potentially aliased paths.
-      $url = $this->isDefaultVariant()
-        ? Url::fromRoute('simple_sitemap.sitemap_default', ['page' => $chunk_data->delta])
-        : Url::fromRoute('simple_sitemap.sitemap_variant', ['variant' => $chunk_data->type, 'page' => $chunk_data->delta]);
-
-      $this->writer->writeElement('loc', $this->getCustomBaseUrl() . $url->toString(TRUE)->getGeneratedUrl());
+      $this->writer->writeElement('loc', $this->getSitemapUrl($chunk_data->delta, $chunk_data->type));
       $this->writer->writeElement('lastmod', date('c', $chunk_data->sitemap_created));
       $this->writer->endElement();
     }
@@ -299,6 +302,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
    */
   public function setSettings(array $settings) {
     $this->settings = $settings;
+
     return $this;
   }
 
@@ -307,7 +311,33 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
    */
   protected function getCustomBaseUrl() {
     $customBaseUrl = $this->settings['base_url'];
+
     return !empty($customBaseUrl) ? $customBaseUrl : $GLOBALS['base_url'];
+  }
+
+  protected function getSitemapUrlSettings() {
+    if (NULL === $this->sitemapUrlSettings) {
+      $this->sitemapUrlSettings = [
+        'absolute' => TRUE,
+        'base_url' => $this->getCustomBaseUrl(),
+        'language' => $this->languageManager->getLanguage(LanguageInterface::LANGCODE_NOT_APPLICABLE),
+      ];
+    }
+
+    return $this->sitemapUrlSettings;
+  }
+
+  /**
+   * @param $delta
+   * @param $variant
+   * @return \Drupal\Core\GeneratedUrl|string
+   */
+  protected function getSitemapUrl($delta, $variant) {
+    $url = $this->isDefaultVariant()
+      ? Url::fromRoute('simple_sitemap.sitemap_default', ['page' => $delta], $this->getSitemapUrlSettings())
+      : Url::fromRoute('simple_sitemap.sitemap_variant', ['variant' => $variant, 'page' => $delta], $this->getSitemapUrlSettings());
+
+    return $url->toString();
   }
 
 }
