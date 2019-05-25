@@ -172,9 +172,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     // Add sitemap chunk locations to document.
     foreach ($chunk_info as $chunk_data) {
       $this->writer->startElement('sitemap');
-
-      // Build the URL from route to be able to show potentially aliased paths.
-      $this->writer->writeElement('loc', $this->getSitemapUrl($chunk_data->delta, $chunk_data->type));
+      $this->writer->writeElement('loc', $this->getSitemapUrl($chunk_data->delta));
       $this->writer->writeElement('lastmod', date('c', $chunk_data->sitemap_created));
       $this->writer->endElement();
     }
@@ -328,14 +326,21 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
   }
 
   /**
-   * @param $delta
-   * @param $variant
+   * @param null $delta
    * @return \Drupal\Core\GeneratedUrl|string
    */
-  protected function getSitemapUrl($delta, $variant) {
+  public function getSitemapUrl($delta = NULL) {
+    $parameters = NULL !== $delta ? ['page' => $delta] : [];
     $url = $this->isDefaultVariant()
-      ? Url::fromRoute('simple_sitemap.sitemap_default', ['page' => $delta], $this->getSitemapUrlSettings())
-      : Url::fromRoute('simple_sitemap.sitemap_variant', ['variant' => $variant, 'page' => $delta], $this->getSitemapUrlSettings());
+      ? Url::fromRoute(
+        'simple_sitemap.sitemap_default',
+        $parameters,
+        $this->getSitemapUrlSettings())
+      : Url::fromRoute(
+        'simple_sitemap.sitemap_variant',
+        $parameters + ['variant' => $this->sitemapVariant],
+        $this->getSitemapUrlSettings()
+      );
 
     return $url->toString();
   }

@@ -129,9 +129,17 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
     }
 
     $sitemap_manager = $this->generator->getSitemapManager();
+    $sitemap_settings = [
+      'base_url' => $this->generator->getSetting('base_url', ''),
+      'default_variant' => $this->generator->getSetting('default_variant', NULL),
+    ];
     $sitemap_statuses = $this->fetchSitemapInstanceStatuses();
     foreach ($sitemap_manager->getSitemapTypes() as $type_name => $type_definition) {
       if (!empty($variants = $sitemap_manager->getSitemapVariants($type_name, FALSE))) {
+        $sitemap_generator = $sitemap_manager
+          ->getSitemapGenerator($type_definition['sitemapGenerator'])
+          ->setSettings($sitemap_settings);
+
         $form['simple_sitemap_settings']['status']['types'][$type_name] = [
           '#type' => 'details',
           '#title' => '<em>' . $type_definition['label'] . '</em> ' . $this->t('sitemaps'),
@@ -150,16 +158,19 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
             $row['status'] = $this->t('pending');
           }
           else {
-            $url = $GLOBALS['base_url'] . '/' . $variant_name . '/sitemap.xml';
             switch ($sitemap_statuses[$variant_name]) {
               case 0:
                 $row['status'] = $this->t('generating');
                 break;
               case 1:
-                $row['status']['data']['#markup'] = $this->t('<a href="@url" target="_blank">published</a>', ['@url' => $url]);
+                $row['status']['data']['#markup'] = $this->t('<a href="@url" target="_blank">published</a>',
+                  ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl()]
+                );
                 break;
               case 2:
-                $row['status'] = $this->t('<a href="@url" target="_blank">published</a>, regenerating', ['@url' => $url]);
+                $row['status'] = $this->t('<a href="@url" target="_blank">published</a>, regenerating',
+                  ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl()]
+                );
                 break;
             }
           }
