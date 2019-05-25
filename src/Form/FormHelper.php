@@ -241,7 +241,8 @@ class FormHelper {
       //todo Should spit out variant => settings and not just settings; to do this, alter getEntityInstanceSettings() to include 'multiple variants' option.
       foreach ($this->settings as $variant_name => $settings) {
         if (NULL !== $instance_id = $this->getInstanceId()) {
-          $this->settings[$variant_name] = $this->generator->setVariants($variant_name)
+          $this->settings[$variant_name] = $this->generator
+            ->setVariants($variant_name)
             ->getEntityInstanceSettings($this->getEntityTypeId(), $instance_id);
         }
         $this->settings[$variant_name]['bundle_settings'] = $settings;

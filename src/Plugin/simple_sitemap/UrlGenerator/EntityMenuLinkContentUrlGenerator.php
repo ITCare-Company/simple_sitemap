@@ -146,7 +146,9 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
 
     // If menu link is of entity type menu_link_content, take under account its entity override.
     else {
-      $entity_settings = $this->generator->getEntityInstanceSettings('menu_link_content', $meta_data['entity_id']);
+      $entity_settings = $this->generator
+        ->setVariants($this->sitemapVariant)
+        ->getEntityInstanceSettings('menu_link_content', $meta_data['entity_id']);
 
       if (empty($entity_settings['index'])) {
         return FALSE;
