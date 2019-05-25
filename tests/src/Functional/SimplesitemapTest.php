@@ -307,8 +307,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('backend');
 
     $this->drupalGet($this->defaultSitemapUrl);
-    $url = Url::fromRoute('simple_sitemap.sitemap_default', ['page' => 1]);
-    $this->assertSession()->responseContains('http://base_url_test' . $url->toString());
+    $this->assertSession()->responseContains('http://base_url_test/sitemap.xml?page=1');
   }
 
   /**
