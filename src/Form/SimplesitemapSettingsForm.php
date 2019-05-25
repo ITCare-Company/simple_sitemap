@@ -387,7 +387,9 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
 
     // Regenerate sitemaps according to user setting.
     if ($form_state->getValue('simple_sitemap_regenerate_now')) {
-      $this->generator->rebuildQueue()->generateSitemap();
+      $this->generator->setVariants(TRUE)
+        ->rebuildQueue()
+        ->generateSitemap();
     }
   }
 
