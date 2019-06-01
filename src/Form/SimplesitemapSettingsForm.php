@@ -70,7 +70,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $form['simple_sitemap_settings']['#prefix'] = $this->getDonationText();
+    $form['simple_sitemap_settings']['#prefix'] = FormHelper::getDonationText();
     $form['simple_sitemap_settings']['#attached']['library'][] = 'simple_sitemap/sitemapSettings';
     $queue_worker = $this->generator->getQueueWorker();
 
@@ -222,24 +222,9 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       '#title' => $this->t('Sitemap generation interval'),
       '#description' => $this->t('The sitemap will be generated according to this interval.'),
       '#default_value' => $this->generator->getSetting('cron_generate_interval', 0),
-      '#options' => [
-        0 => $this->t('On every cron run'),
-        1 => $this->t('Once an hour'),
-        3 => $this->t('Once every @hours hours', ['@hours' => 3]),
-        6 => $this->t('Once every @hours hours', ['@hours' => 6]),
-        12 => $this->t('Once every @hours hours', ['@hours' => 12]),
-        24 => $this->t('Once a day'),
-        48 => $this->t('Once every @days days', ['@days' => 48/24]),
-        72 => $this->t('Once every @days days', ['@days' => 72/24]),
-        96 => $this->t('Once every @days days', ['@days' => 96/24]),
-        120 => $this->t('Once every @days days', ['@days' => 120/24]),
-        144 => $this->t('Once every @days days', ['@days' => 144/24]),
-        168 => $this->t('Once a week'),
-      ],
+      '#options' => FormHelper::getCronIntervalOptions(),
       '#states' => [
-        'visible' => [
-          ':input[name="cron_generate"]' => ['checked' => TRUE],
-        ],
+        'visible' => [':input[name="cron_generate"]' => ['checked' => TRUE]],
       ],
     ];
 
