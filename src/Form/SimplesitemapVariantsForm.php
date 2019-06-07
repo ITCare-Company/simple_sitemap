@@ -67,7 +67,7 @@ class SimplesitemapVariantsForm extends SimplesitemapFormBase {
         $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant name cannot be empty.", $placeholders));
       }
 
-      if (!preg_match('/^[\w-_]+$/', $variant_name)) {
+      if (!preg_match('/^[\w\-_]+$/', $variant_name)) {
         $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant name <em>@name</em> can only include alphanumeric characters, dashes and underscores.", $placeholders));
       }
 
