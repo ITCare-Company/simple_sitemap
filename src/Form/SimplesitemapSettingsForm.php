@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Form;
 
+use Drupal\Core\Datetime\DateFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -26,17 +27,24 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
   protected $db;
 
   /**
+   * @var \Drupal\Core\Datetime\DateFormatter
+   */
+  protected $dateFormatter;
+
+  /**
    * SimplesitemapSettingsForm constructor.
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    * @param \Drupal\Core\Language\LanguageManager $language_manager
    * @param \Drupal\Core\Database\Connection $database
+   * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
    */
   public function __construct(
     Simplesitemap $generator,
     FormHelper $form_helper,
     LanguageManager $language_manager,
-    Connection $database
+    Connection $database,
+    DateFormatter $date_formatter
   ) {
     parent::__construct(
       $generator,
@@ -44,6 +52,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
     );
     $this->languageManager = $language_manager;
     $this->db = $database;
+    $this->dateFormatter = $date_formatter;
   }
 
   /**
@@ -54,7 +63,8 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.form_helper'),
       $container->get('language_manager'),
-      $container->get('database')
+      $container->get('database'),
+      $container->get('date.formatter')
     );
   }
 
@@ -134,6 +144,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       'default_variant' => $this->generator->getSetting('default_variant', NULL),
     ];
     $sitemap_statuses = $this->fetchSitemapInstanceStatuses();
+    $published_timestamps = $this->fetchSitemapInstancePublishedTimestamps();
     foreach ($sitemap_manager->getSitemapTypes() as $type_name => $type_definition) {
       if (!empty($variants = $sitemap_manager->getSitemapVariants($type_name, FALSE))) {
         $sitemap_generator = $sitemap_manager
@@ -148,7 +159,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
         ];
         $form['simple_sitemap_settings']['status']['types'][$type_name]['table'] = [
           '#type' => 'table',
-          '#header' => [$this->t('Variant'), $this->t('Status'), /*$this->t('Actions')*/],
+          '#header' => [$this->t('Variant'), $this->t('Status')],
           '#attributes' => ['class' => ['form-item', 'clearfix']],
         ];
         foreach ($variants as $variant_name => $variant_definition) {
@@ -163,19 +174,17 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
                 $row['status'] = $this->t('generating');
                 break;
               case 1:
-                $row['status']['data']['#markup'] = $this->t('<a href="@url" target="_blank">published</a>',
-                  ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl()]
+                $row['status']['data']['#markup'] = $this->t('<a href="@url" target="_blank">published on @time</a>',
+                  ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl(), '@time' => $this->dateFormatter->format($published_timestamps[$variant_name])]
                 );
                 break;
               case 2:
-                $row['status'] = $this->t('<a href="@url" target="_blank">published</a>, regenerating',
-                  ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl()]
+                $row['status'] = $this->t('<a href="@url" target="_blank">published on @time</a>, regenerating',
+                  ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl(), '@time' => $this->dateFormatter->format($published_timestamps[$variant_name])]
                 );
                 break;
             }
           }
-
-//          $row['actions'] = '';
           $form['simple_sitemap_settings']['status']['types'][$type_name]['table']['#rows'][$variant_name] = $row;
           unset($sitemap_statuses[$variant_name]);
         }
@@ -324,6 +333,8 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
    *  0: Instance is unpublished
    *  1: Instance is published
    *  2: Instance is published but is being regenerated
+   *
+   * @todo Move to SitemapGeneratorBase or DefaultSitemapGenerator so it can be overwritten by sitemap types with custom storages.
    */
   protected function fetchSitemapInstanceStatuses() {
     $results = $this->db
@@ -338,6 +349,17 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
     }
 
     return $instances;
+  }
+
+  /**
+   * @return array
+   *
+   * @todo Move to SitemapGeneratorBase or DefaultSitemapGenerator so it can be overwritten by sitemap types with custom storages.
+   */
+  protected function fetchSitemapInstancePublishedTimestamps() {
+    return $this->db
+      ->query('SELECT type, MAX(sitemap_created) FROM (SELECT sitemap_created, type FROM {simple_sitemap} WHERE status = :status) AS timestamps GROUP BY type', [':status' => 1])
+      ->fetchAllKeyed(0, 1);
   }
 
   /**
