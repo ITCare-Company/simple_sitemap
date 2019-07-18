@@ -227,8 +227,8 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
   protected function isHreflangSitemap() {
     if (NULL === $this->isHreflangSitemap) {
       $this->isHreflangSitemap = count(
-          array_diff_key($this->languageManager->getLanguages(),
-            $this->settings['excluded_languages'])
+        array_diff_key($this->languageManager->getLanguages(),
+          $this->settings['excluded_languages'])
         ) > 1;
     }
     return $this->isHreflangSitemap;
