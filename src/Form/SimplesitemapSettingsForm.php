@@ -300,7 +300,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
     $form['simple_sitemap_settings']['advanced']['remove_duplicates'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Exclude duplicate links'),
-      '#description' => $this->t('Prevent per-sitemap variant duplicate links.<br>Uncheck this to significantly speed up the sitemap generation process on a huge site (more than 20 000 indexed entities).'),
+      '#description' => $this->t('Prevent per-sitemap variant duplicate links.<br>Unchecking this may help avoiding PHP memory errors on huge sites.'),
       '#default_value' => $this->generator->getSetting('remove_duplicates', TRUE),
     ];
 
