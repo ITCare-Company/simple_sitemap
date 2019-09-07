@@ -408,7 +408,7 @@ class FormHelper {
         $this->setEntityTypeId($entity_type_id);
         $this->setBundleName($this->entityHelper->getEntityInstanceBundleName($form_entity));
         // New menu link's id is '' instead of NULL, hence checking for empty.
-        $this->setInstanceId(!empty($form_entity->id()) ? $form_entity->id() : NULL);
+        $this->setInstanceId(!$form_entity->isNew() && !empty($form_entity->id()) ? $form_entity->id() : NULL);
         break;
 
       default:
