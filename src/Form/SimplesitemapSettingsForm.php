@@ -250,6 +250,13 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       '#open' => FALSE,
     ];
 
+    $form['simple_sitemap_settings']['settings']['languages']['disable_language_hreflang'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Remove hreflang markup in HTML'),
+      '#description' => $this->t('Google recommends displaying hreflang definitions either in the HTML markup or in the sitemap, but not in both places.<br>If checked, hreflang definitions created by the language module will be removed from the markup reducing its size.'),
+      '#default_value' => $this->generator->getSetting('disable_language_hreflang', FALSE),
+    ];
+
     $form['simple_sitemap_settings']['settings']['languages']['skip_untranslated'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Skip non-existent translations'),
@@ -384,7 +391,8 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
                'skip_untranslated',
                'xsl',
                'base_url',
-               'default_variant'] as $setting_name) {
+               'default_variant',
+               'disable_language_hreflang'] as $setting_name) {
       $this->generator->saveSetting($setting_name, $form_state->getValue($setting_name));
     }
     $this->generator->saveSetting('excluded_languages', array_filter($form_state->getValue('excluded_languages')));
