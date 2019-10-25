@@ -183,6 +183,8 @@ class Simplesitemap {
    *  true: All existing variants will be set.
    *
    * @return $this
+   *
+   * @todo Check if variants exist and throw exception.
    */
   public function setVariants($variants = NULL) {
     if (NULL === $variants) {

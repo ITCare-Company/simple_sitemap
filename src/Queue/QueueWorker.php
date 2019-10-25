@@ -125,18 +125,20 @@ class QueueWorker {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function rebuildQueue($variants = NULL) {
-    $all_data_sets = [];
-    $sitemap_variants = $this->manager->getSitemapVariants();
-    $type_definitions = $this->manager->getSitemapTypes();
     $this->deleteQueue();
+    $type_definitions = $this->manager->getSitemapTypes();
+    $all_data_sets = [];
+
+    // Gather variant data of variants chosen for this rebuild.
+    $sitemap_variants = NULL === $variants
+      ? $this->manager->getSitemapVariants()
+      : array_filter(
+        $this->manager->getSitemapVariants(),
+        function($name) use ($variants) { return in_array($name, (array) $variants); },
+        ARRAY_FILTER_USE_KEY
+      );
 
     foreach ($sitemap_variants as $variant_name => $variant_definition) {
-
-      // Skipping unwanted sitemap variants.
-      if (NULL !== $variants && !in_array($variant_name, (array) $variants)) {
-        continue;
-      }
-
       $type = $variant_definition['type'];
 
       // Adding generate_sitemap operations for all data sets.
@@ -170,9 +172,7 @@ class QueueWorker {
     }
     $this->getQueuedElementCount(TRUE);
 
-    // todo: May not be clean to remove sitemap variants data when queuing elements.
-    // todo: Add test.
-    // Remove all sitemap variant instances where no results have been queued.
+    // Remove all sitemap instances of variants which did not yield any results.
     $this->manager->removeSitemap(array_keys(array_filter($sitemap_variants, function($e) { return empty($e['data']); })));
 
     return $this;
