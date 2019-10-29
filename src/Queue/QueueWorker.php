@@ -120,17 +120,16 @@ class QueueWorker {
   }
 
   /**
-   * @param array|null $variants
+   * @param string[]|string|null $variants
    * @return $this
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function rebuildQueue($variants = NULL) {
-    $this->deleteQueue();
+  public function queue($variants = NULL) {
     $type_definitions = $this->manager->getSitemapTypes();
     $all_data_sets = [];
 
     // Gather variant data of variants chosen for this rebuild.
-    $sitemap_variants = NULL === $variants
+    $queue_variants = NULL === $variants
       ? $this->manager->getSitemapVariants()
       : array_filter(
         $this->manager->getSitemapVariants(),
@@ -138,7 +137,7 @@ class QueueWorker {
         ARRAY_FILTER_USE_KEY
       );
 
-    foreach ($sitemap_variants as $variant_name => $variant_definition) {
+    foreach ($queue_variants as $variant_name => $variant_definition) {
       $type = $variant_definition['type'];
 
       // Adding generate_sitemap operations for all data sets.
@@ -149,7 +148,7 @@ class QueueWorker {
           ->getDataSets();
 
         if (!empty($data_sets)) {
-          $sitemap_variants[$variant_name]['data'] = TRUE;
+          $queue_variants[$variant_name]['data'] = TRUE;
           foreach ($data_sets as $data_set) {
             $all_data_sets[] = [
               'data' => $data_set,
@@ -172,8 +171,20 @@ class QueueWorker {
     }
     $this->getQueuedElementCount(TRUE);
 
-    // Remove all sitemap instances of variants which did not yield any results.
-    $this->manager->removeSitemap(array_keys(array_filter($sitemap_variants, function($e) { return empty($e['data']); })));
+    // Remove all sitemap instances of variants which did not yield any queue elements.
+    $this->manager->removeSitemap(array_keys(array_filter($queue_variants, function($e) { return empty($e['data']); })));
+
+    return $this;
+  }
+
+  /**
+   * @param string[]|string|null $variants
+   * @return $this
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   */
+  public function rebuildQueue($variants = NULL) {
+    $this->deleteQueue();
+    $this->queue($variants);
 
     return $this;
   }
