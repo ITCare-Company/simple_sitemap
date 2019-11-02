@@ -1,6 +1,6 @@
 name: 'Simple XML Sitemap'
 type: module
 description: 'Generates standard conform hreflang XML sitemaps of the site content and provides a framework for developing other sitemap types.'
-configure: simple_sitemap.settings
+configure: simple_sitemap.sitemaps
 package: SEO
 core: 8.x
