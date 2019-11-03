@@ -152,14 +152,18 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
       $engine->save();
     }
 
-    if (empty($submit)) {
+    $config = $this->config('simple_sitemap_engines.settings');
+
+    $enabled = (bool) $form_state->getValue(['settings', 'enabled']);
+    $config->set('enabled', $enabled);
+    $config->set('submission_interval', $form_state->getValue(['settings', 'submission_interval']));
+    $config->save();
+
+    if ($enabled && empty($submit)) {
       $this->messenger()->addWarning($this->t('No sitemap variants have been selected for submission.'));
     }
 
-    $config = $this->config('simple_sitemap_engines.settings');
-    $config->set('enabled', $form_state->getValue(['settings', 'enabled']));
-    $config->set('submission_interval', $form_state->getValue(['settings', 'submission_interval']));
-    $config->save();
+    parent::submitForm($form, $form_state);
   }
 
 }
