@@ -115,7 +115,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     $form['engines'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Variant specific settings'),
-      '#markup' => '<div class="description">' . $this->t('Choose which sitemap variants are to be submitted to which search search engines.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']) . '</div>',
+      '#markup' => '<div class="description">' . $this->t('Choose which sitemap variants are to be submitted to which search engines.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']) . '</div>',
     ];
 
     $engines = $this->entityTypeManager->getStorage('simple_sitemap_engine')->loadMultiple();
