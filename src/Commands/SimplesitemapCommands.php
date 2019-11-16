@@ -76,6 +76,6 @@ class SimplesitemapCommands extends DrushCommands {
 
     $this->generator->setVariants($variants)->rebuildQueue();
 
-    $this->logger()->log('status', 'The following variants have been queued for regeneration: ' . implode(', ', $variants) . '.');
+    $this->logger()->log('notice', 'The following variants have been queued for regeneration: ' . implode(', ', $variants) . '.');
   }
 }
