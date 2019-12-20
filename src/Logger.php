@@ -2,7 +2,7 @@
 
 namespace Drupal\simple_sitemap;
 
-use Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Session\AccountProxyInterface;
 use Psr\Log\LoggerInterface;
@@ -31,7 +31,7 @@ class Logger {
   protected $logger;
 
   /**
-   * @var \Drupal\Core\Messenger\Messenger
+   * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
 
@@ -53,12 +53,12 @@ class Logger {
   /**
    * Logger constructor.
    * @param \Psr\Log\LoggerInterface $logger
-   * @param \Drupal\Core\Messenger\Messenger $messenger
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    */
   public function __construct(
     LoggerInterface $logger,
-    Messenger $messenger,
+    MessengerInterface $messenger,
     AccountProxyInterface $current_user
   ) {
     $this->logger = $logger;
