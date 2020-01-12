@@ -15,7 +15,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 class FormHelper {
   use StringTranslationTrait;
 
-  const PRIORITY_DEFAULT = 0.5;
   const PRIORITY_HIGHEST = 10;
   const PRIORITY_DIVIDER = 10;
 

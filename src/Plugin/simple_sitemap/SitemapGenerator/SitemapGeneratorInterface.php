@@ -8,15 +8,15 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
  */
 interface SitemapGeneratorInterface {
 
-  function setSitemapVariant($sitemap_variant);
+  public function setSitemapVariant($sitemap_variant);
 
-  function setSettings(array $settings);
+  public function setSettings(array $settings);
 
-  function generate(array $links);
+  public function generate(array $links);
 
-  function generateIndex();
+  public function generateIndex();
 
-  function publish();
+  public function publish();
 
-  function remove();
+  public function remove();
 }

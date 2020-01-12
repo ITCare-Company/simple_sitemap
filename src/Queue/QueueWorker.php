@@ -138,7 +138,7 @@ class QueueWorker {
       ? $this->manager->getSitemapVariants()
       : array_filter(
         $this->manager->getSitemapVariants(),
-        function($name) use ($variants) { return in_array($name, (array) $variants); },
+        static function($name) use ($variants) { return in_array($name, (array) $variants); },
         ARRAY_FILTER_USE_KEY
       );
 
@@ -177,7 +177,7 @@ class QueueWorker {
     $this->getQueuedElementCount(TRUE);
 
     // Remove all sitemap instances of variants which did not yield any queue elements.
-    $this->manager->removeSitemap(array_keys(array_filter($queue_variants, function($e) { return empty($e['data']); })));
+    $this->manager->removeSitemap(array_keys(array_filter($queue_variants, static function($e) { return empty($e['data']); })));
 
     return $this;
   }

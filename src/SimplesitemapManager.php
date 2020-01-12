@@ -160,7 +160,7 @@ class SimplesitemapManager {
    * @return array
    */
   protected function attachSitemapTypeToVariants(array $variants, $type) {
-    return array_map(function($variant) use ($type) { return $variant + ['type' => $type]; }, $variants);
+    return array_map(static function($variant) use ($type) { return $variant + ['type' => $type]; }, $variants);
   }
 
   /**
@@ -198,7 +198,7 @@ class SimplesitemapManager {
     }
 
     if (isset($old_variant)) {
-      $definition = $definition + $old_variant;
+      $definition += $old_variant;
     }
 
     $variants = array_merge($this->getSitemapVariants($definition['type'], FALSE), [$name => ['label' => $definition['label'], 'weight' => $definition['weight']]]);
