@@ -51,14 +51,14 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
    * @param $plugin_definition
    * @param \Drupal\Core\Entity\EntityStorageInterface $engine_storage
    * @param \GuzzleHttp\ClientInterface $http_client
-   * @param \Drupal\simple_sitemap\Simplesitemap $sitemap_generator
+   * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Logger $logger
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityStorageInterface $engine_storage, ClientInterface $http_client, Simplesitemap $sitemap_generator, Logger $logger) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityStorageInterface $engine_storage, ClientInterface $http_client, Simplesitemap $generator, Logger $logger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->engineStorage = $engine_storage;
     $this->httpClient = $http_client;
-    $this->generator = $sitemap_generator;
+    $this->generator = $generator;
     $this->logger = $logger;
   }
 

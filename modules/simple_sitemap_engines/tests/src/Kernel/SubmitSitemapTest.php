@@ -63,7 +63,7 @@ class SubmitSitemapTest extends KernelTestBase {
   /**
    * Tests sitemap submission URLs and last submission status.
    */
-//  public function testSubmission() {
+  public function testSubmission() {
 //    // Create a mock HTTP client.
 //    $http_client = $this->prophesize(ClientInterface::class);
 //    // Make mock HTTP requests always succeed.
@@ -84,12 +84,12 @@ class SubmitSitemapTest extends KernelTestBase {
 //    // Check that exactly 1 HTTP request was sent to the correct URL.
 //    $http_client->request('GET', 'https://www.google.com/ping?sitemap=http://localhost/default/sitemap.xml')->shouldBeCalled();
 //    $http_client->request('GET', Argument::any())->shouldBeCalledTimes(1);
-//  }
+  }
 
   /**
    * Tests that sitemaps are not submitted every time cron runs.
    */
-//  public function testNoDoubleSubmission() {
+  public function testNoDoubleSubmission() {
 //    // Create a mock HTTP client.
 //    $http_client = $this->prophesize(ClientInterface::class);
 //    // Make mock HTTP requests always succeed.
@@ -117,12 +117,12 @@ class SubmitSitemapTest extends KernelTestBase {
 //    $this->assertEquals($google->last_submitted, $google_last_submitted);
 //    // Check that no duplicate request was sent.
 //    $http_client->request('GET', 'https://www.google.com/ping?sitemap=http://localhost/default/sitemap.xml')->shouldBeCalledTimes(1);
-//  }
+  }
 
   /**
    * Tests that failed sitemap submissions are handled properly.
    */
-//  public function testFailedSubmission() {
+  public function testFailedSubmission() {
 //    // Create a mock HTTP client.
 //    $http_client = $this->prophesize(ClientInterface::class);
 //    // Make mock HTTP requests always fail.
@@ -141,6 +141,6 @@ class SubmitSitemapTest extends KernelTestBase {
 //    $this->assertEmpty($google->last_submitted);
 //    // Check that the submission was removed from the queue despite failure.
 //    $this->assertEquals(0, $this->queue->numberOfItems());
-//  }
+  }
 
 }
