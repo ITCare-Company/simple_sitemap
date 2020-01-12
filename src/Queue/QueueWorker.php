@@ -16,6 +16,11 @@ class QueueWorker {
 
   const REBUILD_QUEUE_CHUNK_ITEM_SIZE = 5000;
 
+  const GENERATE_TYPE_FORM = 'form';
+  const GENERATE_TYPE_DRUSH = 'drush';
+  const GENERATE_TYPE_CRON = 'cron';
+  const GENERATE_TYPE_BACKEND = 'backend';
+
   /**
    * @var \Drupal\simple_sitemap\SimplesitemapSettings
    */
@@ -199,7 +204,7 @@ class QueueWorker {
    * @return $this
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function generateSitemap($from = 'form') {
+  public function generateSitemap($from = self::GENERATE_TYPE_FORM) {
 
     $this->generatorSettings = [
       'base_url' => $this->settings->getSetting('base_url', ''),

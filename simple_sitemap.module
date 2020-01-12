@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\system\MenuInterface;
 use Drupal\language\ConfigurableLanguageInterface;
 
@@ -159,7 +160,7 @@ function simple_sitemap_cron() {
         $state->set('simple_sitemap.last_cron_generate', $request_time);
       }
 
-      $generator->generateSitemap('cron');
+      $generator->generateSitemap(QueueWorker::GENERATE_TYPE_CRON);
     }
   }
 }

@@ -319,15 +319,15 @@ class Simplesitemap {
    *
    * @todo Implement lock functionality.
    */
-  public function generateSitemap($from = 'form') {
+  public function generateSitemap($from = QueueWorker::GENERATE_TYPE_FORM) {
     switch($from) {
-      case 'form':
-      case 'drush':
+      case QueueWorker::GENERATE_TYPE_FORM:
+      case QueueWorker::GENERATE_TYPE_DRUSH;
         $this->queueWorker->batchGenerateSitemap($from);
         break;
 
-      case 'cron':
-      case 'backend':
+      case QueueWorker::GENERATE_TYPE_CRON:
+      case QueueWorker::GENERATE_TYPE_BACKEND:
         $this->queueWorker->generateSitemap($from);
         break;
     }

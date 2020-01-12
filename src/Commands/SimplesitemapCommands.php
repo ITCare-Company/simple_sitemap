@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Commands;
 
+use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\simple_sitemap\Simplesitemap;
 use Drush\Commands\DrushCommands;
 
@@ -37,7 +38,7 @@ class SimplesitemapCommands extends DrushCommands {
    * @aliases ssg, simple-sitemap-generate
    */
   public function generate() {
-    $this->generator->generateSitemap('drush');
+    $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_DRUSH);
   }
 
   /**
