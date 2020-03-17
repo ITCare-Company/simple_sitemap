@@ -3,10 +3,6 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Extension\ModuleHandler;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Component\Datetime\Time;
 
 /**
  * Class DefaultSitemapGenerator
@@ -174,13 +170,8 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    * @return bool
    */
   protected function isHreflangSitemap() {
-    if (NULL === $this->isHreflangSitemap) {
-      $this->isHreflangSitemap = count(
-        array_diff_key($this->languageManager->getLanguages(),
-          $this->settings['excluded_languages'])
-        ) > 1;
-    }
-    return $this->isHreflangSitemap;
+    return NULL !== $this->isHreflangSitemap
+      ? $this->isHreflangSitemap
+      : self::isMultilingualSitemap();
   }
-
 }
