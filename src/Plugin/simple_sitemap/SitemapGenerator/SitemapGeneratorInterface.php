@@ -19,4 +19,6 @@ interface SitemapGeneratorInterface {
   public function publish();
 
   public function remove();
+
+  public function getSitemapUrl($delta = NULL);
 }
