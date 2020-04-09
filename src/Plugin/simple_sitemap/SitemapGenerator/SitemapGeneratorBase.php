@@ -96,8 +96,6 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $this->languageManager = $language_manager;
     $this->time = $time;
     $this->writer = $sitemap_writer;
-    $this->sitemapVariant = $this->settings['default_variant'];
-
   }
 
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -119,6 +117,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
    */
   public function setSitemapVariant($sitemap_variant) {
     $this->sitemapVariant = $sitemap_variant;
+
     return $this;
   }
 
