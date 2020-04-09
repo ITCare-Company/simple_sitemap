@@ -321,7 +321,7 @@ class QueueWorker {
           }
         }
       }
-    };
+    }
   }
 
   protected function publishCurrentVariant() {
