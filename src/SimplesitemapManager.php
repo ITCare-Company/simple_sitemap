@@ -18,7 +18,6 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager
 class SimplesitemapManager {
 
   const DEFAULT_SITEMAP_TYPE = 'default_hreflang';
-  const DEFAULT_SITEMAP_GENERATOR = 'default';
 
   /**
    * @var \Drupal\Core\Config\ConfigFactory
@@ -295,7 +294,6 @@ class SimplesitemapManager {
         $query->condition('type', (array) $variant_names, 'IN');
       }
       $query->execute();
-
 
       // Remove default variant setting.
       if (NULL === $variant_names
