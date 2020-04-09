@@ -83,6 +83,7 @@ class Logger {
    */
   public function log($logSeverityLevel = self::LOG_SEVERITY_LEVEL_DEFAULT) {
     $this->logger->$logSeverityLevel(strtr($this->message, $this->substitutions));
+
     return $this;
   }
 
@@ -95,6 +96,7 @@ class Logger {
     if (empty($permission) || $this->currentUser->hasPermission($permission)) {
       $this->messenger->addMessage($this->t($this->message, $this->substitutions), $displayMessageType);
     }
+
     return $this;
   }
 }

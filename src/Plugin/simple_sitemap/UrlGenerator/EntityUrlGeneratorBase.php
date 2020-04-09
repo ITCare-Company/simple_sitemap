@@ -152,6 +152,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
         ->setOption('language', $this->languages[$this->defaultLanguageId])->toString()
       );
     }
+
     return $alternate_urls;
   }
 
@@ -173,6 +174,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
         }
       }
     }
+
     return $alternate_urls;
   }
 
@@ -191,6 +193,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
         }
       }
     }
+
     return $alternate_urls;
   }
 
