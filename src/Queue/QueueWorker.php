@@ -120,24 +120,6 @@ class QueueWorker {
   }
 
   /**
-   * @return $this
-   */
-  public function deleteQueue() {
-    $this->queue->deleteQueue();
-    SitemapGeneratorBase::purgeSitemapVariants(NULL, 'unpublished');
-    $this->variantProcessedNow = NULL;
-    $this->generatorProcessedNow = NULL;
-    $this->results = [];
-    $this->processedPaths = [];
-    $this->state->set('simple_sitemap.queue_items_initial_amount', 0);
-    $this->state->delete('simple_sitemap.queue_stashed_results');
-    $this->elementsTotal = NULL;
-    $this->elementsRemaining = NULL;
-
-    return $this;
-  }
-
-  /**
    * @param string[]|string|null $variants
    * @return $this
    * @throws \Drupal\Component\Plugin\Exception\PluginException
@@ -356,6 +338,29 @@ class QueueWorker {
     }
   }
 
+  protected function resetWorker() {
+    $this->results = [];
+    $this->processedPaths = [];
+    $this->processedResults = [];
+    $this->variantProcessedNow = NULL;
+    $this->generatorProcessedNow = NULL;
+    $this->elementsTotal = NULL;
+    $this->elementsRemaining = NULL;
+  }
+
+  /**
+   * @return $this
+   */
+  public function deleteQueue() {
+    $this->queue->deleteQueue();
+    SitemapGeneratorBase::purgeSitemapVariants(NULL, 'unpublished');
+    $this->state->set('simple_sitemap.queue_items_initial_amount', 0);
+    $this->state->delete('simple_sitemap.queue_stashed_results');
+    $this->resetWorker();
+
+    return $this;
+  }
+
   protected function stashResults() {
     $this->state->set('simple_sitemap.queue_stashed_results', [
       'variant' => $this->variantProcessedNow,
@@ -364,11 +369,7 @@ class QueueWorker {
       'processed_results' => $this->processedResults,
       'processed_paths' => $this->processedPaths,
     ]);
-    $this->results = [];
-    $this->processedPaths = [];
-    $this->processedResults = [];
-    $this->generatorProcessedNow = NULL;
-    $this->variantProcessedNow = NULL;
+    $this->resetWorker();
   }
 
   protected function unstashResults() {
