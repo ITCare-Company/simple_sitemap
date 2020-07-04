@@ -466,8 +466,17 @@ class Simplesitemap {
       }
       $bundle_settings->save();
 
-      // Delete entity overrides which are identical to new bundle settings.
       $entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name);
+
+      // Delete all entity overrides in case bundle indexation is disabled.
+      if (empty($settings['index'])) {
+        $this->removeEntityInstanceSettings($entity_type_id, $entity_ids);
+
+        return $this;
+      }
+
+      // Delete entity overrides which are identical to new bundle settings.
+      // todo Enclose into some sensible method.
       $query = $this->db->select('simple_sitemap_entity_overrides', 'o')
         ->fields('o', ['id', 'inclusion_settings'])
         ->condition('o.entity_type', $entity_type_id)
@@ -491,6 +500,8 @@ class Simplesitemap {
         }
       }
       if (!empty($delete_instances)) {
+
+        // todo Use removeEntityInstanceSettings() instead.
         $this->db->delete('simple_sitemap_entity_overrides')
           ->condition('id', $delete_instances, 'IN')
           ->execute();

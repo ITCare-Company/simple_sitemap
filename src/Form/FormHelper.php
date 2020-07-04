@@ -469,6 +469,8 @@ class FormHelper {
    *
    * @return bool
    *   TRUE if simple_sitemap form values have been altered by the user.
+   *
+   * @todo Make it work with variants.
    */
   public function valuesChanged($form, array $values) {
 //    foreach (self::$valuesToCheck as $field_name) {
@@ -480,7 +482,6 @@ class FormHelper {
 //
 //    return FALSE;
 
-    //todo
     return TRUE;
   }
 
