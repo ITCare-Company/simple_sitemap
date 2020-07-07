@@ -409,7 +409,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
    */
   public function testNewEntityWithIdSet() {
     $new_node = Node::create([
-      'nid' => rand(5, 10),
+      'nid' => mt_rand(5, 10),
       'type' => 'page',
     ]);
     // Assert that the form does not break if an entity has an id but is not

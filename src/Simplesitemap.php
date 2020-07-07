@@ -466,7 +466,9 @@ class Simplesitemap {
       }
       $bundle_settings->save();
 
-      $entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name);
+      if (empty($entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name))) {
+        return $this;
+      }
 
       // Delete all entity overrides in case bundle indexation is disabled.
       if (empty($settings['index'])) {
@@ -605,8 +607,9 @@ class Simplesitemap {
           ->getEditable("simple_sitemap.bundle_settings.$variant.$entity_type_id.$bundle_name")->delete();
       }
 
-      $entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name);
-      $this->removeEntityInstanceSettings($entity_type_id, (empty($entity_ids) ? NULL : $entity_ids));
+      if (!empty($entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name))) {
+        $this->removeEntityInstanceSettings($entity_type_id, $entity_ids);
+      }
     }
     else {
       foreach ($variants as $variant) {
