@@ -2,7 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
-use Drupal\Core\Routing\RouteProvider;
+use Drupal\Core\Routing\RouteProviderInterface;
 
 /**
  * Class SitemapWriter
@@ -19,7 +19,7 @@ class SitemapWriter extends \XMLWriter {
    */
   protected $routeProvider;
 
-  public function __construct(RouteProvider $route_provider) {
+  public function __construct(RouteProviderInterface $route_provider) {
     $this->routeProvider = $route_provider;
   }
 
