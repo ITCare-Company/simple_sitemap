@@ -360,6 +360,10 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
    * @return bool
    */
   public static function isMultilingualSitemap() {
+    if (!\Drupal::moduleHandler()->moduleExists('language')) {
+      return FALSE;
+    }
+
     /** @var \Drupal\language\LanguageNegotiatorInterface $language_negotiator */
     $language_negotiator = \Drupal::service('language_negotiator');
 
