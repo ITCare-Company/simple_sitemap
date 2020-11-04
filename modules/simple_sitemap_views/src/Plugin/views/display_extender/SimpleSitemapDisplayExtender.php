@@ -223,19 +223,20 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    * {@inheritdoc}
    */
   public function validate() {
-    $errors = parent::validate();
+    $errors = [parent::validate()];
 
     // Validate the argument options relative to the
     // current state of the view argument handlers.
     if ($this->hasSitemapSettings()) {
       foreach (array_keys($this->variants) as $variant) {
         $settings = $this->getSitemapSettings($variant);
-        $result = $this->validateIndexedArguments($settings['arguments']);
-        $errors = array_merge($errors, $result);
+        $errors[] = $this->validateIndexedArguments($settings['arguments']);
       }
     }
-    return $errors;
+
+    return array_merge([], ...$errors);
   }
+
 
   /**
    * {@inheritdoc}
