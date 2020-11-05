@@ -237,7 +237,6 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
     return array_merge([], ...$errors);
   }
 
-
   /**
    * {@inheritdoc}
    */
