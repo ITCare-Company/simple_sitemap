@@ -367,10 +367,12 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->assertEquals(0, $this->getOverridesCount('node', $this->node->id()));
 
     // Assert that creating a new content type doesn't remove the overrides.
-    $this->drupalPostForm('node/' . $this->node->id() . '/edit', ['index_default_node_settings' => 0], 'Save');
+    $this->drupalGet('node/' . $this->node->id() . '/edit');
+    $this->submitForm(['index_default_node_settings' => 0], 'Save');
     $this->assertEquals(1, $this->getOverridesCount('node', $this->node->id()));
     // Create a new content type.
-    $this->drupalPostForm('admin/structure/types/add', [
+    $this->drupalGet('admin/structure/types/add');
+    $this->submitForm([
       'name' => 'simple_sitemap_type',
       'type' => 'simple_sitemap_type',
       'index_default_node_settings' => 0,
@@ -379,7 +381,8 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->assertEquals(1, $this->getOverridesCount('node', $this->node->id()));
 
     // Assert that removing the other content type doesn't remove the overrides.
-    $this->drupalPostForm('admin/structure/types/manage/simple_sitemap_type/delete', [], 'Delete');
+    $this->drupalGet('admin/structure/types/manage/simple_sitemap_type/delete');
+    $this->submitForm([], 'Delete');
     $this->assertEquals(1, $this->getOverridesCount('node', $this->node->id()));
   }
 
