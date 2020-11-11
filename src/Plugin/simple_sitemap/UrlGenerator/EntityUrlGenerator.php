@@ -183,4 +183,24 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       ]
     ];
   }
+
+  /**
+   * @inheritdoc
+   *
+   * Make sure to clear entity cache so it does not build up resulting in a
+   * constant increase of memory.
+   *
+   * See https://www.drupal.org/project/simple_sitemap/issues/3170261.
+   */
+  public function generate($data_set) {
+    $result = parent::generate($data_set);
+
+    $storage = $this->entityTypeManager->getStorage($data_set['entity_type']);
+    if (method_exists($storage, 'resetCache')) {
+      $storage->resetCache([$data_set['id']]);
+    }
+
+    return $result;
+  }
+
 }
