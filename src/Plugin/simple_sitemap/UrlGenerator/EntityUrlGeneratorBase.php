@@ -149,7 +149,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     $alternate_urls = [];
     if ($url_object->access($this->anonUser)) {
       $alternate_urls[$this->defaultLanguageId] = $this->replaceBaseUrlWithCustom($url_object
-        ->setOption('language', $this->languages[$this->defaultLanguageId])->toString()
+        ->setAbsolute()->setOption('language', $this->languages[$this->defaultLanguageId])->toString()
       );
     }
 
@@ -169,7 +169,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       if (!isset($this->settings['excluded_languages'][$language->getId()]) || $language->isDefault()) {
         if ($entity->getTranslation($language->getId())->access('view', $this->anonUser)) {
           $alternate_urls[$language->getId()] = $this->replaceBaseUrlWithCustom($url_object
-            ->setOption('language', $language)->toString()
+            ->setAbsolute()->setOption('language', $language)->toString()
           );
         }
       }
@@ -188,7 +188,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       foreach ($this->languages as $language) {
         if (!isset($this->settings['excluded_languages'][$language->getId()]) || $language->isDefault()) {
           $alternate_urls[$language->getId()] = $this->replaceBaseUrlWithCustom($url_object
-            ->setOption('language', $language)->toString()
+            ->setAbsolute()->setOption('language', $language)->toString()
           );
         }
       }

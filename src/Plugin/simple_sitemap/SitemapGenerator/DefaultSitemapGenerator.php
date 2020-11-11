@@ -2,8 +2,6 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 /**
  * Class DefaultSitemapGenerator
  * @package Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator

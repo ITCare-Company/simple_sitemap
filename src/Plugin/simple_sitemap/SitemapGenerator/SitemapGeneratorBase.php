@@ -3,7 +3,6 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 use Drupal\Core\Url;
-use Drupal\language\Plugin\LanguageNegotiation\LanguageNegotiationUrl;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Database\Connection;
