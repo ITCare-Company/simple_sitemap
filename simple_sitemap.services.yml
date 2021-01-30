@@ -48,6 +48,7 @@ services:
     arguments:
     - 'simple_sitemap_elements'
     - '@database'
+    - '@datetime.time'
 
   simple_sitemap.sitemap_writer:
     class: Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter

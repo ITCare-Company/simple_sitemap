@@ -11,6 +11,7 @@ use Drupal\Core\State\StateInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Component\Datetime\TimeInterface;
 
 /**
  * Process a queue of search engines to submit sitemaps.
@@ -61,6 +62,13 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
   protected $state;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * SitemapSubmitter constructor.
    *
    * @param array $configuration
@@ -79,6 +87,8 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
    *   Standard logger.
    * @param \Drupal\Core\State\StateInterface $state
    *   Drupal state service for last submitted.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
   public function __construct(array $configuration,
                               $plugin_id,
@@ -87,13 +97,15 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
                               ClientInterface $http_client,
                               Simplesitemap $generator,
                               Logger $logger,
-                              StateInterface $state) {
+                              StateInterface $state,
+                              TimeInterface $time) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->engineStorage = $engine_storage;
     $this->httpClient = $http_client;
     $this->generator = $generator;
     $this->logger = $logger;
     $this->state = $state;
+    $this->time = $time;
   }
 
   /**
@@ -108,7 +120,8 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
       $container->get('http_client'),
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
-      $container->get('state')
+      $container->get('state'),
+      $container->get('datetime.time')
     );
   }
 
@@ -144,7 +157,7 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
           // Record last submission time. This is purely informational; the
           // variable that determines when the next submission should be run is
           // stored in the global state.
-          $this->state->set("simple_sitemap_engines.simple_sitemap_engine.{$engine_id}.last_submitted", time());
+          $this->state->set("simple_sitemap_engines.simple_sitemap_engine.{$engine_id}.last_submitted", $this->time->getRequestTime());
         }
         catch (RequestException $e) {
           // Catch and log exceptions so this submission gets removed from the
