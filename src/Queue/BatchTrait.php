@@ -66,7 +66,7 @@ trait BatchTrait {
     $processed_element_count = $queue_worker->getProcessedElementCount();
     $original_element_count = $queue_worker->getInitialElementCount();
 
-    $context['message'] = t('@indexed out of @total total items have been processed.', [
+    $context['message'] = t('@indexed out of @total total queue items have been processed.', [
       '@indexed' => $processed_element_count, '@total' => $original_element_count]);
     $context['finished'] = $original_element_count > 0 ? ($processed_element_count / $original_element_count) : 1;
   }

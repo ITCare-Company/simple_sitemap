@@ -119,7 +119,7 @@ class SimplesitemapSitemapsForm extends SimplesitemapFormBase {
       $index_progress = [
         '#theme' => 'progress_bar',
         '#percent' => $percent,
-        '#message' => $this->t('@indexed out of @total items have been processed.<br>Each sitemap variant is published after all of its items have been processed.', ['@indexed' => $indexed_count, '@total' => $total_count]),
+        '#message' => $this->t('@indexed out of @total queue items have been processed.<br>Each sitemap variant is published after all of its items have been processed.', ['@indexed' => $indexed_count, '@total' => $total_count]),
       ];
       $form['simple_sitemap_settings']['status']['progress']['bar']['#markup'] = render($index_progress);
     }

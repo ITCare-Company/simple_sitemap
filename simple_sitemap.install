@@ -783,3 +783,14 @@ function simple_sitemap_update_8303() {
   ];
   $schema->addIndex('simple_sitemap_entity_overrides', 'entity_key', ['type', 'entity_type', 'entity_id'], $spec);
 }
+
+/**
+ * Add 'entities_per_queue_item' to configuration.
+ */
+function simple_sitemap_update_8304() {
+  \Drupal::service('config.factory')
+    ->getEditable('simple_sitemap.settings')
+    ->set('entities_per_queue_item', 50)
+    ->save();
+  return t("The new 'Entities per queue item' setting has been set to 50 to improve generation performance. This changes the memory footprint during generation, so please make sure to test and adjust performance settings to your needs on the module's settings page.");
+}

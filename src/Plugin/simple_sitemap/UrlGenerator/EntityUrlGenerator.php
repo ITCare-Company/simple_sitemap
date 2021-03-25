@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\Core\Url;
 use Drupal\simple_sitemap\EntityHelper;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -25,6 +26,11 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager
    */
   protected $urlGeneratorManager;
+
+  /**
+   * @var integer
+   */
+  protected $entitiesPerDataset;
 
   /**
    * EntityUrlGenerator constructor.
@@ -60,6 +66,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       $entityHelper
     );
     $this->urlGeneratorManager = $url_generator_manager;
+    $this->entitiesPerDataset = $this->generator->getSetting('entities_per_queue_item', 50);
   }
 
   public static function create(
@@ -120,11 +127,20 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
             // See https://www.drupal.org/project/simple_sitemap/issues/3102450.
             $query->accessCheck(FALSE);
 
+            $data_set = [
+              'entity_type' => $entity_type_name,
+              'id' => [],
+            ];
             foreach ($query->execute() as $entity_id) {
-              $data_sets[] = [
-                'entity_type' => $entity_type_name,
-                'id' => $entity_id,
-              ];
+              $data_set['id'][] = $entity_id;
+              if (count($data_set['id']) >= $this->entitiesPerDataset) {
+                $data_sets[] = $data_set;
+                $data_set['id'] = [];
+              }
+            }
+            // Add the last data set if there are some IDs gathered.
+            if (!empty($data_set['id'])) {
+              $data_sets[] = $data_set;
             }
           }
         }
@@ -138,64 +154,75 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    * @inheritdoc
    */
   protected function processDataSet($data_set) {
-    if (empty($entity = $this->entityTypeManager->getStorage($data_set['entity_type'])->load($data_set['id']))) {
+    $entities = $this->entityTypeManager->getStorage($data_set['entity_type'])->loadMultiple((array) $data_set['id']);
+    if (empty($entities)) {
       return FALSE;
     }
 
-    $entity_settings = $this->generator
-      ->setVariants($this->sitemapVariant)
-      ->getEntityInstanceSettings($entity->getEntityTypeId(), $entity->id());
+    $paths = [];
+    foreach ($entities as $entity) {
+      $entity_settings = $this->generator
+        ->setVariants($this->sitemapVariant)
+        ->getEntityInstanceSettings($entity->getEntityTypeId(), $entity->id());
 
-    if (empty($entity_settings['index'])) {
-      return FALSE;
+      if (empty($entity_settings['index'])) {
+        continue;
+      }
+
+      $url_object = $entity->toUrl()->setAbsolute();
+
+      // Do not include external paths.
+      if (!$url_object->isRouted()) {
+        continue;
+      }
+
+      $paths[] = [
+        'url' => $url_object,
+        'lastmod' => method_exists($entity, 'getChangedTime')
+          ? date('c', $entity->getChangedTime())
+          : NULL,
+        'priority' => isset($entity_settings['priority']) ? $entity_settings['priority'] : NULL,
+        'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
+        'images' => !empty($entity_settings['include_images'])
+          ? $this->getEntityImageData($entity)
+          : [],
+
+        // Additional info useful in hooks.
+        'meta' => [
+          'path' => $url_object->getInternalPath(),
+          'entity_info' => [
+            'entity_type' => $entity->getEntityTypeId(),
+            'id' => $entity->id(),
+          ],
+        ]
+      ];
     }
-
-    $url_object = $entity->toUrl()->setAbsolute();
-
-    // Do not include external paths.
-    if (!$url_object->isRouted()) {
-      return FALSE;
-    }
-
-    return [
-      'url' => $url_object,
-      'lastmod' => method_exists($entity, 'getChangedTime')
-        ? date('c', $entity->getChangedTime())
-        : NULL,
-      'priority' => isset($entity_settings['priority']) ? $entity_settings['priority'] : NULL,
-      'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
-      'images' => !empty($entity_settings['include_images'])
-        ? $this->getEntityImageData($entity)
-        : [],
-
-      // Additional info useful in hooks.
-      'meta' => [
-        'path' => $url_object->getInternalPath(),
-        'entity_info' => [
-          'entity_type' => $entity->getEntityTypeId(),
-          'id' => $entity->id(),
-        ],
-      ]
-    ];
+    return $paths;
   }
 
   /**
    * @inheritdoc
-   *
-   * Make sure to clear entity cache so it does not build up resulting in a
-   * constant increase of memory.
-   *
-   * See https://www.drupal.org/project/simple_sitemap/issues/3170261.
    */
   public function generate($data_set) {
-    $result = parent::generate($data_set);
-
-    $storage = $this->entityTypeManager->getStorage($data_set['entity_type']);
-    if (method_exists($storage, 'resetCache')) {
-      $storage->resetCache([$data_set['id']]);
+    $path_data_sets = $this->processDataSet($data_set);
+    $url_variant_sets = [];
+    foreach ($path_data_sets as $key => $path_data) {
+      if (isset($path_data['url']) && $path_data['url'] instanceof Url) {
+        $url_object = $path_data['url'];
+        unset($path_data['url']);
+        $url_variant_sets[] = $this->getUrlVariants($path_data, $url_object);
+      }
     }
 
-    return $result;
+    // Make sure to clear entity cache so it does not build up resulting in a
+    // constant increase of memory.
+    // See https://www.drupal.org/project/simple_sitemap/issues/3170261.
+    $storage = $this->entityTypeManager->getStorage($data_set['entity_type']);
+    if (method_exists($storage, 'resetCache')) {
+      $storage->resetCache((array) $data_set['id']);
+    }
+
+    return array_merge([], ...$url_variant_sets);
   }
 
 }
