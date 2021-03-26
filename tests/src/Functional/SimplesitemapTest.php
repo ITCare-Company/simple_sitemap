@@ -84,6 +84,28 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   }
 
   /**
+   * Tests locks
+   */
+  public function testLocking() {
+    $this->generator->removeCustomLinks()
+      ->addCustomLink('/node/' . $this->node->id())
+      ->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
+    $this->drupalLogin($this->createUser(['administer sitemap settings']));
+
+    $this->drupalGet('/admin/config/search/simplesitemap/settings');
+    $this->submitForm(['simple_sitemap_regenerate_now' => TRUE], 'Save configuration');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('The configuration options have been saved.');
+    $this->assertSession()->pageTextNotContains('Unable to acquire a lock for sitemap generation.');
+
+    \Drupal::lock()->acquire(QueueWorker::LOCK_ID);
+    $this->submitForm(['simple_sitemap_regenerate_now' => TRUE], 'Save configuration');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('The configuration options have been saved.');
+    $this->assertSession()->pageTextContainsOnce('Unable to acquire a lock for sitemap generation.');
+  }
+
+  /**
    * Test removing custom paths from the sitemap settings.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
