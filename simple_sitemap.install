@@ -131,6 +131,13 @@ function simple_sitemap_schema() {
         'unsigned' => TRUE,
         'default' => 0,
       ],
+      'link_count' => [
+        'description' => 'The number of links in the sitemap.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ],
     ],
     'primary key' => ['id'],
     'indexes' => [
@@ -793,4 +800,20 @@ function simple_sitemap_update_8304() {
     ->set('entities_per_queue_item', 50)
     ->save();
   return t("The new 'Entities per queue item' setting has been set to 50 to improve generation performance. This changes the memory footprint during generation, so please make sure to test and adjust performance settings to your needs on the module's settings page.");
+}
+
+/**
+ * Add the link_count field to simple_sitemap table.
+ */
+function simple_sitemap_update_8305() {
+  \Drupal::database()->schema()->addField(
+    'simple_sitemap',
+    'link_count', [
+      'description' => 'The number of links in the sitemap.',
+      'type' => 'int',
+      'not null' => TRUE,
+      'unsigned' => TRUE,
+      'default' => 0,
+    ]
+  );
 }
