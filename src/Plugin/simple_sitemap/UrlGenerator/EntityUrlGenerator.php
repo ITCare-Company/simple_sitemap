@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\Core\Url;
+use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\simple_sitemap\EntityHelper;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -33,6 +34,11 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
   protected $entitiesPerDataset;
 
   /**
+   * @var \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface
+   */
+  protected $entityMemoryCache;
+
+  /**
    * EntityUrlGenerator constructor.
    * @param array $configuration
    * @param $plugin_id
@@ -43,6 +49,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
    * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager $url_generator_manager
+   * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $memory_cache
    */
   public function __construct(
     array $configuration,
@@ -53,7 +60,8 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper,
-    UrlGeneratorManager $url_generator_manager
+    UrlGeneratorManager $url_generator_manager,
+    MemoryCacheInterface $memory_cache
   ) {
     parent::__construct(
       $configuration,
@@ -66,6 +74,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       $entityHelper
     );
     $this->urlGeneratorManager = $url_generator_manager;
+    $this->entityMemoryCache = $memory_cache;
     $this->entitiesPerDataset = $this->generator->getSetting('entities_per_queue_item', 50);
   }
 
@@ -83,7 +92,8 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       $container->get('language_manager'),
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
-      $container->get('plugin.manager.simple_sitemap.url_generator')
+      $container->get('plugin.manager.simple_sitemap.url_generator'),
+      $container->get('entity.memory_cache')
     );
   }
 
@@ -214,12 +224,12 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       }
     }
 
-    // Make sure to clear entity cache so it does not build up resulting in a
-    // constant increase of memory.
-    // See https://www.drupal.org/project/simple_sitemap/issues/3170261.
-    $storage = $this->entityTypeManager->getStorage($data_set['entity_type']);
-    if (method_exists($storage, 'resetCache')) {
-      $storage->resetCache((array) $data_set['id']);
+    // Make sure to clear entity memory cache so it does not build up resulting
+    // in a constant increase of memory.
+    // See https://www.drupal.org/project/simple_sitemap/issues/3170261 and
+    // https://www.drupal.org/project/simple_sitemap/issues/3202233
+    if ($this->entityTypeManager->getDefinition($data_set['entity_type'])->isStaticallyCacheable()) {
+      $this->entityMemoryCache->deleteAll();
     }
 
     return array_merge([], ...$url_variant_sets);
