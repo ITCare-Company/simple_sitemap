@@ -13,7 +13,7 @@ trait BatchTrait {
    */
   protected $batch;
 
-  protected static $batchErrorMessage = 'The generation failed to finish. It can be continued manually on the module\'s setting page, or via drush.';
+  protected static $batchErrorMessage = 'The generation failed to finish. It can be continued manually on the module\'s settings page, or via drush.';
 
   /**
    * @param string $from
@@ -25,7 +25,7 @@ trait BatchTrait {
       'title' => $this->t('Generating XML sitemaps'),
       'init_message' => $this->t('Initializing...'),
       'error_message' => $this->t(self::$batchErrorMessage),
-      'progress_message' => $this->t('Processing items from the queue.<br>Each sitemap variant is published after all of its items have been processed.'),
+      'progress_message' => $this->t('Processing items from the queue.<br>Each sitemap variant gets published after all of its items have been processed.'),
       'operations' => [[ __CLASS__ . '::' . 'doBatchGenerateSitemap', []]],
       'finished' => [__CLASS__, 'finishGeneration'],
     ];

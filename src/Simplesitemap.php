@@ -461,8 +461,8 @@ class Simplesitemap {
   /**
    * Sets settings for bundle or non-bundle entity types. This is done for the
    * currently set variant.
-   * Please note, this method takes only the first set
-   * variant into account. See todo.
+   *
+   * Note that this method takes only the first set variant into account. See todo.
    *
    * @param $entity_type_id
    * @param null $bundle_name
