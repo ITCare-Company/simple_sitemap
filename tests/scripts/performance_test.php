@@ -75,8 +75,6 @@ class Tester {
     \Drupal::service('simple_sitemap.generator')
       ->setBundleSettings('node', 'simple_sitemap_performance_test', [
         'index' => TRUE,
-        'priority' => 0.5,
-        'changefreq' => 'hourly',
       ]);
   }
 

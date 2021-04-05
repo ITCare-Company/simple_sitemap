@@ -112,6 +112,7 @@ class QueueWorker {
    * @param \Drupal\simple_sitemap\Queue\SimplesitemapQueue $element_queue
    * @param \Drupal\simple_sitemap\Logger $logger
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock
    */
   public function __construct(SimplesitemapSettings $settings,
                               SimplesitemapManager $manager,
