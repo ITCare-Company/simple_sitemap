@@ -3,7 +3,7 @@
 namespace Drupal\simple_sitemap_views;
 
 use Drupal\simple_sitemap_views\Plugin\views\display_extender\SimpleSitemapDisplayExtender;
-use Drupal\simple_sitemap\SimplesitemapManager;
+use Drupal\simple_sitemap\SimpleSitemapManager;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -32,7 +32,7 @@ class SimpleSitemapViews {
   /**
    * Simple XML Sitemap manager.
    *
-   * @var \Drupal\simple_sitemap\SimplesitemapManager
+   * @var \Drupal\simple_sitemap\SimpleSitemapManager
    */
   protected $sitemapManager;
 
@@ -67,7 +67,7 @@ class SimpleSitemapViews {
   /**
    * SimpleSitemapViews constructor.
    *
-   * @param \Drupal\simple_sitemap\SimplesitemapManager $sitemap_manager
+   * @param \Drupal\simple_sitemap\SimpleSitemapManager $sitemap_manager
    *   Simple XML Sitemap manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
@@ -79,7 +79,7 @@ class SimpleSitemapViews {
    *   The current active database's master connection.
    */
   public function __construct(
-    SimplesitemapManager $sitemap_manager,
+    SimpleSitemapManager $sitemap_manager,
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory,
     QueueFactory $queue_factory,

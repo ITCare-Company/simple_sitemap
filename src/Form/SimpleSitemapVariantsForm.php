@@ -3,12 +3,12 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\simple_sitemap\SimplesitemapManager;
+use Drupal\simple_sitemap\Entity\SimpleSitemapType;
 
 /**
- * Class SimplesitemapVariantsForm
+ * Class SimpleSitemapVariantsForm
  */
-class SimplesitemapVariantsForm extends SimplesitemapFormBase {
+class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
 
   /**
    * {@inheritdoc}
@@ -33,12 +33,19 @@ class SimplesitemapVariantsForm extends SimplesitemapFormBase {
       '#type' => 'textarea',
       '#title' => $this->t('Variants'),
       '#default_value' => $this->variantsToString($this->generator->getSitemapManager()->getSitemapVariants()),
-      '#description' => $this->t("Please specify sitemap variants, one per line. <strong>Caution: </strong>Removing variants here will delete their bundle settings, custom links and corresponding sitemap instances.<br><br>A variant definition consists of the variant name (used as the variant's path), the sitemap type it belongs to (optional) and the variant label (optional). These three values have to be separated by the | pipe | symbol.<br><br><strong>Examples:</strong><br><em>default | default_hreflang | Default</em> -> variant of the <em>default_hreflang</em> sitemap type and <em>Default</em> as label; accessible under <em>/default/sitemap.xml</em><br><em>test</em> -> variant of the <em>@default_sitemap_type</em> sitemap type and <em>test</em> as label; accessible under <em>/test/sitemap.xml</em><br><br><strong>Available sitemap types:</strong>", ['@default_sitemap_type' => SimplesitemapManager::DEFAULT_SITEMAP_TYPE]),
+      '#description' => $this->t("Please specify sitemap variants, one per line. <strong>Caution: </strong>Removing variants here will delete their bundle settings, custom links and corresponding sitemap instances.<br><br>A variant definition consists of the variant name (used as the variant's path), the sitemap type it belongs to (optional) and the variant label (optional). These three values have to be separated by the | pipe | symbol.<br><br><strong>Examples:</strong><br><em>default | default_hreflang | Default</em> -> variant of the <em>default_hreflang</em> sitemap type and <em>Default</em> as label; accessible under <em>/default/sitemap.xml</em><br><em>test</em> -> variant of the <em>@default_sitemap_type</em> sitemap type and <em>test</em> as label; accessible under <em>/test/sitemap.xml</em><br><br><strong>Available sitemap types:</strong>", ['@default_sitemap_type' => SimpleSitemapType::DEFAULT_SITEMAP_TYPE]),
     ];
 
-    foreach ($this->generator->getSitemapManager()->getSitemapTypes() as $sitemap_type) {
-      $form['simple_sitemap_variants']['variants']['#description'] .= '<br>' . '<em>' . $sitemap_type->id() . '</em>' . (!empty($sitemap_type->getDescription()) ? (': ' . $sitemap_type->getDescription()) : '');
+    $types = $this->generator->getSitemapManager()->getSitemapTypes();
+    if ($types) {
+      foreach ($this->generator->getSitemapManager()->getSitemapTypes() as $sitemap_type) {
+        $form['simple_sitemap_variants']['variants']['#description'] .= '<br>' . '<em>' . $sitemap_type->id() . '</em>' . (!empty($sitemap_type->getDescription()) ? (': ' . $sitemap_type->getDescription()) : '');
+      }
     }
+    else {
+      $form['simple_sitemap_variants']['variants']['#description'] .= " ({$this->t('none')})";
+    }
+
 
     $this->formHelper->displayRegenerateNow($form['simple_sitemap_variants']);
 
@@ -137,7 +144,7 @@ class SimplesitemapVariantsForm extends SimplesitemapFormBase {
     foreach ($variants_string_lines as $i => &$line) {
       $variant_settings = explode('|', $line);
       $name = strtolower(trim($variant_settings[0]));
-      $variants[$name]['type'] = !empty($variant_settings[1]) ? trim($variant_settings[1]) : SimplesitemapManager::DEFAULT_SITEMAP_TYPE;
+      $variants[$name]['type'] = !empty($variant_settings[1]) ? trim($variant_settings[1]) : SimpleSitemapType::DEFAULT_SITEMAP_TYPE;
       $variants[$name]['label'] = !empty($variant_settings[2]) ? trim($variant_settings[2]) : $name;
     }
 

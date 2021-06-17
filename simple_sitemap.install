@@ -196,7 +196,7 @@ function _simple_sitemap_update_8216_get_default_variant() {
       ->save();
   }
 
-  /** @var \Drupal\simple_sitemap\SimplesitemapManager $manager */
+  /** @var \Drupal\simple_sitemap\SimpleSitemapManager $manager */
   $manager = \Drupal::service('simple_sitemap.manager');
   $variants = $manager->getSitemapVariants();
   if (!isset($variants[$default_variant])) {

@@ -11,6 +11,9 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGenerato
  * @ConfigEntityType(
  *   id = "simple_sitemap_type",
  *   label = @Translation("Simple XML sitemap type"),
+ *   handlers = {
+ *     "storage" = "Drupal\simple_sitemap\SimpleSitemapTypeStorage",
+ *   },
  *   config_prefix = "type",
  *   admin_permission = "administer sitemap settings",
  *   entity_keys = {
@@ -28,8 +31,11 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGenerato
  * )
  *
  * @todo Implement dependency injection after https://www.drupal.org/project/drupal/issues/2142515 is fixed.
+ * @todo Now all sitemap types can be deleted. Deal with it.
  */
 class SimpleSitemapType extends ConfigEntityBase implements SimpleSitemapTypeInterface {
+
+  public const DEFAULT_SITEMAP_TYPE = 'default_hreflang';
 
   /**
    * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorInterface[]

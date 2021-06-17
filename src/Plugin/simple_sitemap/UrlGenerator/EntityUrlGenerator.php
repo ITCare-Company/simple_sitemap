@@ -10,7 +10,7 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Simplesitemap;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\simple_sitemap\SimplesitemapSettings;
+use Drupal\simple_sitemap\SimpleSitemapSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,7 +47,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    * @param $plugin_definition
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
+   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
@@ -60,7 +60,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     $plugin_definition,
     Simplesitemap $generator,
     Logger $logger,
-    SimplesitemapSettings $settings,
+    SimpleSitemapSettings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper,

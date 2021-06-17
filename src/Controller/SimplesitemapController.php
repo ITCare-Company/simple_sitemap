@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\simple_sitemap\Simplesitemap;
 use Symfony\Component\HttpFoundation\Request;
-use Drupal\simple_sitemap\SimplesitemapManager;
+use Drupal\simple_sitemap\SimpleSitemapManager;
 
 /**
  * Class SimplesitemapController

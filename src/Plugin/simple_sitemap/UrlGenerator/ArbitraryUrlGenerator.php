@@ -6,7 +6,7 @@ use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Simplesitemap;
 use Drupal\Core\Extension\ModuleHandler;
-use Drupal\simple_sitemap\SimplesitemapSettings;
+use Drupal\simple_sitemap\SimpleSitemapSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,7 +30,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
    * @param $plugin_definition
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
+   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    */
   public function __construct(
@@ -39,7 +39,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     $plugin_definition,
     Simplesitemap $generator,
     Logger $logger,
-    SimplesitemapSettings $settings,
+    SimpleSitemapSettings $settings,
     ModuleHandler $module_handler
   ) {
     parent::__construct(

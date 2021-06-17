@@ -11,9 +11,9 @@ use Drupal\simple_sitemap\Simplesitemap as SimplesitemapOld;
 use Drupal\Core\Database\Connection;
 
 /**
- * Class SimplesitemapSitemapsForm
+ * Class SimpleSitemapSitemapsForm
  */
-class SimplesitemapSitemapsForm extends SimplesitemapFormBase {
+class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
 
   /**
    * @var \Drupal\Core\Database\Connection
@@ -26,7 +26,7 @@ class SimplesitemapSitemapsForm extends SimplesitemapFormBase {
   protected $dateFormatter;
 
   /**
-   * SimplesitemapSitemapsForm constructor.
+   * SimpleSitemapSitemapsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param SimplesitemapOld $generator

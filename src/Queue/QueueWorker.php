@@ -7,8 +7,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
-use Drupal\simple_sitemap\SimplesitemapSettings;
-use Drupal\simple_sitemap\SimplesitemapManager;
+use Drupal\simple_sitemap\SimpleSitemapSettings;
+use Drupal\simple_sitemap\SimpleSitemapManager;
 use Drupal\Core\State\StateInterface;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\SimpleSitemapStorage;
@@ -27,12 +27,12 @@ class QueueWorker {
   public const GENERATE_TYPE_BACKEND = 'backend';
 
   /**
-   * @var \Drupal\simple_sitemap\SimplesitemapSettings
+   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
    */
   protected $settings;
 
   /**
-   * @var \Drupal\simple_sitemap\SimplesitemapManager
+   * @var \Drupal\simple_sitemap\SimpleSitemapManager
    */
   protected $manager;
 
@@ -42,7 +42,7 @@ class QueueWorker {
   protected $state;
 
   /**
-   * @var \Drupal\simple_sitemap\Queue\SimplesitemapQueue
+   * @var \Drupal\simple_sitemap\Queue\SimpleSitemapQueue
    */
   protected $queue;
 
@@ -109,19 +109,19 @@ class QueueWorker {
   /**
    * QueueWorker constructor.
    *
-   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
-   * @param \Drupal\simple_sitemap\SimplesitemapManager $manager
+   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\SimpleSitemapManager $manager
    * @param \Drupal\Core\State\StateInterface $state
-   * @param \Drupal\simple_sitemap\Queue\SimplesitemapQueue $element_queue
+   * @param \Drupal\simple_sitemap\Queue\SimpleSitemapQueue $element_queue
    * @param \Drupal\simple_sitemap\Logger $logger
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
    */
-  public function __construct(SimplesitemapSettings $settings,
-                              SimplesitemapManager $manager,
+  public function __construct(SimpleSitemapSettings $settings,
+                              SimpleSitemapManager $manager,
                               StateInterface $state,
-                              SimplesitemapQueue $element_queue,
+                              SimpleSitemapQueue $element_queue,
                               Logger $logger,
                               ModuleHandlerInterface $module_handler,
                               EntityTypeManagerInterface $entity_type_manager,

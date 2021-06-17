@@ -9,6 +9,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
@@ -28,10 +29,13 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
 
   protected $time;
 
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, Connection $database, TimeInterface $time) {
+  protected $entityTypeManager;
+
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, Connection $database, TimeInterface $time, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
     $this->database = $database;
     $this->time = $time;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -44,7 +48,8 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
       $container->get('uuid'),
       $container->get('language_manager'),
       $container->get('database'),
-      $container->get('datetime.time')
+      $container->get('datetime.time'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -77,6 +82,9 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
    * @todo
    */
   protected function doSave($id, EntityInterface $entity) {
+    if ($this->entityTypeManager->getStorage('simple_sitemap_type')->load($entity->get('type')) === NULL) {
+      throw new \InvalidArgumentException("Sitemap type {$entity->get('type')} does not exist.");
+    }
     return parent::doSave($id, $entity) ? SAVED_NEW : SAVED_UPDATED;
   }
 

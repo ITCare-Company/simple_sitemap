@@ -7,9 +7,9 @@ use Drupal\Core\Queue\DatabaseQueue;
 use Drupal\Component\Datetime\Time;
 
 /**
- * Class SimplesitemapQueue
+ * Class SimpleSitemapQueue
  */
-class SimplesitemapQueue extends DatabaseQueue {
+class SimpleSitemapQueue extends DatabaseQueue {
 
   /**
    * @var \Drupal\Component\Datetime\Time
@@ -17,7 +17,7 @@ class SimplesitemapQueue extends DatabaseQueue {
   protected $time;
 
   /**
-   * SimplesitemapQueue constructor.
+   * SimpleSitemapQueue constructor.
    * @param $name
    * @param \Drupal\Core\Database\Connection $connection
    * @param \Drupal\Component\Datetime\Time $time

@@ -9,7 +9,7 @@ use Drupal\simple_sitemap\Simplesitemap;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
-use Drupal\simple_sitemap\SimplesitemapSettings;
+use Drupal\simple_sitemap\SimpleSitemapSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuLinkBase;
@@ -43,7 +43,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
    * @param $plugin_definition
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
+   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
@@ -55,7 +55,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     $plugin_definition,
     Simplesitemap $generator,
     Logger $logger,
-    SimplesitemapSettings $settings,
+    SimpleSitemapSettings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper,

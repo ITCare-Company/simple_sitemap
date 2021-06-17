@@ -4,7 +4,7 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
-use Drupal\simple_sitemap\SimplesitemapSettings;
+use Drupal\simple_sitemap\SimpleSitemapSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ModuleHandler;
 
@@ -21,7 +21,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
   protected $moduleHandler;
 
   /**
-   * @var \Drupal\simple_sitemap\SimplesitemapSettings
+   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
    */
   protected $settings;
 
@@ -50,7 +50,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
    * @param $plugin_definition
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter $sitemap_writer
-   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
+   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
    */
   public function __construct(
     array $configuration,
@@ -58,7 +58,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $plugin_definition,
     ModuleHandler $module_handler,
     SitemapWriter $sitemap_writer,
-    SimplesitemapSettings $settings
+    SimpleSitemapSettings $settings
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;

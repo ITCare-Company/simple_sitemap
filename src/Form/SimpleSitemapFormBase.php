@@ -8,9 +8,9 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\simple_sitemap\Simplesitemap;
 
 /**
- * Class SimplesitemapFormBase
+ * Class SimpleSitemapFormBase
  */
-abstract class SimplesitemapFormBase extends ConfigFormBase {
+abstract class SimpleSitemapFormBase extends ConfigFormBase {
 
   /**
    * @var \Drupal\simple_sitemap\Simplesitemap
@@ -23,7 +23,7 @@ abstract class SimplesitemapFormBase extends ConfigFormBase {
   protected $formHelper;
 
   /**
-   * SimplesitemapFormBase constructor.
+   * SimpleSitemapFormBase constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\simple_sitemap\Simplesitemap $generator

@@ -7,9 +7,9 @@ use Drupal\simple_sitemap\Simplesitemap;
 use Drush\Commands\DrushCommands;
 
 /**
- * Class SimplesitemapCommands
+ * Class SimpleSitemapCommands
  */
-class SimplesitemapCommands extends DrushCommands {
+class SimpleSitemapCommands extends DrushCommands {
 
   /**
    * @var \Drupal\simple_sitemap\Simplesitemap

@@ -22,12 +22,12 @@ class Simplesitemap {
   protected $entityHelper;
 
   /**
-   * @var \Drupal\simple_sitemap\SimplesitemapSettings
+   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
    */
   protected $settings;
 
   /**
-   * @var \Drupal\simple_sitemap\SimplesitemapManager
+   * @var \Drupal\simple_sitemap\SimpleSitemapManager
    */
   protected $manager;
 
@@ -101,9 +101,10 @@ class Simplesitemap {
 
   /**
    * Simplesitemap constructor.
+   *
    * @param \Drupal\simple_sitemap\EntityHelper $entity_helper
-   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
-   * @param \Drupal\simple_sitemap\SimplesitemapManager $manager
+   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\SimpleSitemapManager $manager
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    * @param \Drupal\Core\Database\Connection $database
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -116,8 +117,8 @@ class Simplesitemap {
    */
   public function __construct(
     EntityHelper $entity_helper,
-    SimplesitemapSettings $settings,
-    SimplesitemapManager $manager,
+    SimpleSitemapSettings $settings,
+    SimpleSitemapManager $manager,
     ConfigFactory $config_factory,
     Connection $database,
     EntityTypeManagerInterface $entity_type_manager,
@@ -192,7 +193,7 @@ class Simplesitemap {
   }
 
   /**
-   * @return \Drupal\simple_sitemap\SimplesitemapManager
+   * @return \Drupal\simple_sitemap\SimpleSitemapManager
    */
   public function getSitemapManager() {
     return $this->manager;

@@ -4,7 +4,7 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
-use Drupal\simple_sitemap\SimplesitemapSettings;
+use Drupal\simple_sitemap\SimpleSitemapSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -25,7 +25,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
   protected $logger;
 
   /**
-   * @var \Drupal\simple_sitemap\SimplesitemapSettings
+   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
    */
   protected $settings;
 
@@ -42,7 +42,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    * @param $plugin_definition
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
+   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
    */
   public function __construct(
     array $configuration,
@@ -50,7 +50,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
     $plugin_definition,
     Simplesitemap $generator,
     Logger $logger,
-    SimplesitemapSettings $settings
+    SimpleSitemapSettings $settings
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->generator = $generator;

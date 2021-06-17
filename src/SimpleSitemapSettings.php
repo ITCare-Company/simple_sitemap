@@ -5,9 +5,9 @@ namespace Drupal\simple_sitemap;
 use Drupal\Core\Config\ConfigFactory;
 
 /**
- * Class SimplesitemapSettings
+ * Class SimpleSitemapSettings
  */
-class SimplesitemapSettings {
+class SimpleSitemapSettings {
 
   /**
    * @var \Drupal\Core\Config\ConfigFactory
@@ -16,7 +16,7 @@ class SimplesitemapSettings {
 
 
   /**
-   * SimplesitemapSettings constructor.
+   * SimpleSitemapSettings constructor.
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    */
   public function __construct(ConfigFactory $config_factory) {
@@ -59,7 +59,7 @@ class SimplesitemapSettings {
    *
    * @return $this
    */
-  public function saveSetting(string $name, $setting): SimplesitemapSettings {
+  public function saveSetting(string $name, $setting): SimpleSitemapSettings {
     $this->configFactory->getEditable('simple_sitemap.settings')
       ->set($name, $setting)->save();
 

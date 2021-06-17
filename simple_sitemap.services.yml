@@ -17,7 +17,7 @@ services:
       - '@simple_sitemap.logger'
 
   simple_sitemap.manager:
-    class: Drupal\simple_sitemap\SimplesitemapManager
+    class: Drupal\simple_sitemap\SimpleSitemapManager
     public: true
     arguments:
     - '@config.factory'
@@ -27,7 +27,7 @@ services:
     - '@simple_sitemap.settings'
 
   simple_sitemap.settings:
-    class: Drupal\simple_sitemap\SimplesitemapSettings
+    class: Drupal\simple_sitemap\SimpleSitemapSettings
     public: true
     arguments:
     - '@config.factory'
@@ -46,7 +46,7 @@ services:
     - '@lock'
 
   simple_sitemap.queue:
-    class: Drupal\simple_sitemap\Queue\SimplesitemapQueue
+    class: Drupal\simple_sitemap\Queue\SimpleSitemapQueue
     public: false
     arguments:
     - 'simple_sitemap_elements'

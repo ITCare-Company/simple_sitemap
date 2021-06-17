@@ -6,7 +6,7 @@ use Drupal\views\Plugin\views\display_extender\DisplayExtenderPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\views\Plugin\views\display\DisplayRouterInterface;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
-use Drupal\simple_sitemap\SimplesitemapManager;
+use Drupal\simple_sitemap\SimpleSitemapManager;
 use Drupal\simple_sitemap\Form\FormHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ViewExecutable;
@@ -35,7 +35,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
   /**
    * Simple XML Sitemap manager.
    *
-   * @var \Drupal\simple_sitemap\SimplesitemapManager
+   * @var \Drupal\simple_sitemap\SimpleSitemapManager
    */
   protected $sitemapManager;
 
@@ -57,10 +57,10 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    *   The plugin implementation definition.
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    *   Simple XML Sitemap form helper.
-   * @param \Drupal\simple_sitemap\SimplesitemapManager $sitemap_manager
+   * @param \Drupal\simple_sitemap\SimpleSitemapManager $sitemap_manager
    *   Simple XML Sitemap manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, FormHelper $form_helper, SimplesitemapManager $sitemap_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, FormHelper $form_helper, SimpleSitemapManager $sitemap_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->formHelper = $form_helper;
     $this->sitemapManager = $sitemap_manager;

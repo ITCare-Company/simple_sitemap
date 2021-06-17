@@ -9,9 +9,9 @@ use Drupal\simple_sitemap\Simplesitemap;
 use Drupal\simple_sitemap\EntityHelper;
 
 /**
- * Class SimplesitemapEntitiesForm
+ * Class SimpleSitemapEntitiesForm
  */
-class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
+class SimpleSitemapEntitiesForm extends SimpleSitemapFormBase {
 
   /**
    * @var \Drupal\simple_sitemap\EntityHelper
@@ -19,7 +19,7 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
   protected $entityHelper;
 
   /**
-   * SimplesitemapEntitiesForm constructor.
+   * SimpleSitemapEntitiesForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\simple_sitemap\Simplesitemap $generator

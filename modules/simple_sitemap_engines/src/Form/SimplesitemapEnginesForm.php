@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\simple_sitemap\Form\FormHelper;
-use Drupal\simple_sitemap\SimplesitemapManager;
+use Drupal\simple_sitemap\SimpleSitemapManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -33,7 +33,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
   /**
    * The sitemap manager service.
    *
-   * @var \Drupal\simple_sitemap\SimplesitemapManager
+   * @var \Drupal\simple_sitemap\SimpleSitemapManager
    */
   protected $sitemapManager;
 
@@ -46,10 +46,10 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
    *   The entity type manager service.
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
    *   The date formatter service.
-   * @param \Drupal\simple_sitemap\SimplesitemapManager $sitemap_manager
+   * @param \Drupal\simple_sitemap\SimpleSitemapManager $sitemap_manager
    *   The sitemap manager service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, DateFormatter $date_formatter, SimplesitemapManager $sitemap_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, DateFormatter $date_formatter, SimpleSitemapManager $sitemap_manager) {
     parent::__construct($config_factory);
     $this->entityTypeManager = $entity_type_manager;
     $this->dateFormatter = $date_formatter;

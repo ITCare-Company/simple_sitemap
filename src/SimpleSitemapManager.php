@@ -4,20 +4,18 @@ namespace Drupal\simple_sitemap;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Database\Connection;
+use Drupal\simple_sitemap\Entity\SimpleSitemapType;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorBase;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorManager;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorBase;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager;
 
 /**
- * Class SimplesitemapManager
+ * Class SimpleSitemapManager
  *
- * @todo Necessary for 4.x?
- * @todo Style.
+ * @todo Merge into Simplesitemap and rename Simplesitemap to SimpleSitemapManager
  */
-class SimplesitemapManager {
-
-  const DEFAULT_SITEMAP_TYPE = 'default_hreflang';
+class SimpleSitemapManager {
 
   /**
    * @var \Drupal\Core\Config\ConfigFactory
@@ -40,7 +38,7 @@ class SimplesitemapManager {
   protected $sitemapGeneratorManager;
 
   /**
-   * @var \Drupal\simple_sitemap\SimplesitemapSettings
+   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
    */
   protected $settings;
 
@@ -60,19 +58,20 @@ class SimplesitemapManager {
   protected $sitemapGenerators = [];
 
   /**
-   * SimplesitemapManager constructor.
+   * SimpleSitemapManager constructor.
+   *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    * @param \Drupal\Core\Database\Connection $database
    * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager $url_generator_manager
    * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorManager $sitemap_generator_manager
-   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
+   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
    */
   public function __construct(
     ConfigFactory $config_factory,
     Connection $database,
     UrlGeneratorManager $url_generator_manager,
     SitemapGeneratorManager $sitemap_generator_manager,
-    SimplesitemapSettings $settings
+    SimpleSitemapSettings $settings
   ) {
     $this->configFactory = $config_factory;
     $this->db = $database;
@@ -81,99 +80,62 @@ class SimplesitemapManager {
     $this->settings = $settings;
   }
 
-//  /**
-//   * @param string $sitemap_generator_id
-//   * @return \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorBase
-//   * @throws \Drupal\Component\Plugin\Exception\PluginException
-//   */
-//  public function getSitemapGenerator($sitemap_generator_id) {
-//    if (!isset($this->sitemapGenerators[$sitemap_generator_id])) {
-//      $this->sitemapGenerators[$sitemap_generator_id]
-//        = $this->sitemapGeneratorManager->createInstance($sitemap_generator_id);
-//    }
-//
-//    return $this->sitemapGenerators[$sitemap_generator_id];
-//  }
-
   /**
-   * @param string $url_generator_id
-   * @return \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorBase
-   * @throws \Drupal\Component\Plugin\Exception\PluginException
-   */
-  public function getUrlGenerator($url_generator_id) {
-    if (!isset($this->urlGenerators[$url_generator_id])) {
-      $this->urlGenerators[$url_generator_id]
-        = $this->urlGeneratorManager->createInstance($url_generator_id);
-    }
-
-    return $this->urlGenerators[$url_generator_id];
-  }
-
-  /**
-   * @return \Drupal\Core\Entity\EntityInterface[]
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @todo Change for 4.x.
    */
   public function getSitemapTypes() {
     return \Drupal::entityTypeManager()->getStorage('simple_sitemap_type')->loadMultiple();
   }
 
   /**
-   * @param string|null $sitemap_type
-   * @param bool $attach_type_info
-   * @return array
-   *
    * @todo Change for 4.x.
    */
   public function getSitemapVariants() {
    return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->loadMultiple();
   }
 
-//  /**
-//   * @param string $name
-//   * @param array $definition
-//   * @return $this
-//   * @throws \Drupal\Component\Plugin\Exception\PluginException
-//   */
-//  public function addSitemapVariant($name, $definition = []) {
-//    $all_variants = $this->getSitemapVariants();
-//    if (isset($all_variants[$name])) {
-//      $old_variant = $all_variants[$name];
-//      if (!empty($definition['type']) && $old_variant['type'] !== $definition['type']) {
-//        $this->removeSitemapVariants($name);
-//        unset($old_variant);
-//      }
-//      else {
-//        unset($old_variant['type']);
-//      }
-//    }
-//
-//    if (!isset($old_variant) && empty($definition['label'])) {
-//      $definition['label'] = (string) $name;
-//    }
-//
-//    if (!isset($old_variant) && empty($definition['type'])) {
-//      $definition['type'] = self::DEFAULT_SITEMAP_TYPE;
-//    }
-//
-//    if (isset($definition['weight'])) {
-//      $definition['weight'] = (int) $definition['weight'];
-//    }
-//    elseif (!isset($old_variant)) {
-//      $definition['weight'] = 0;
-//    }
-//
-//    if (isset($old_variant)) {
-//      $definition += $old_variant;
-//    }
-//
-//    $variants = array_merge($this->getSitemapVariants($definition['type'], FALSE), [$name => ['label' => $definition['label'], 'weight' => $definition['weight']]]);
-//    $this->configFactory->getEditable('simple_sitemap.variants.' . $definition['type'])
-//      ->set('variants', $variants)
-//      ->save();
-//
-//    return $this;
-//  }
+  /**
+   * @todo Change for 4.x.
+   */
+  public function addSitemapVariant($name, $definition = []) {
+    $all_variants = $this->getSitemapVariants();
+    if (isset($all_variants[$name])) {
+      $old_variant = $all_variants[$name];
+      if (!empty($definition['type']) && $old_variant['type'] !== $definition['type']) {
+        $this->removeSitemapVariants($name);
+        unset($old_variant);
+      }
+      else {
+        unset($old_variant['type']);
+      }
+    }
+
+    if (!isset($old_variant) && empty($definition['label'])) {
+      $definition['label'] = (string) $name;
+    }
+
+    if (!isset($old_variant) && empty($definition['type'])) {
+      $definition['type'] = SimpleSitemapType::DEFAULT_SITEMAP_TYPE;
+    }
+
+    if (isset($definition['weight'])) {
+      $definition['weight'] = (int) $definition['weight'];
+    }
+    elseif (!isset($old_variant)) {
+      $definition['weight'] = 0;
+    }
+
+    if (isset($old_variant)) {
+      $definition += $old_variant;
+    }
+
+    $variants = array_merge($this->getSitemapVariants($definition['type'], FALSE), [$name => ['label' => $definition['label'], 'weight' => $definition['weight']]]);
+    $this->configFactory->getEditable('simple_sitemap.variants.' . $definition['type'])
+      ->set('variants', $variants)
+      ->save();
+
+    return $this;
+  }
 
 //  /**
 //   * @param null|array|string $variant_names
