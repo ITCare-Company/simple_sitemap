@@ -3,13 +3,14 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Logger;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Simplesitemap;
 use Drupal\Core\Extension\ModuleHandler;
+use Drupal\simple_sitemap\SimplesitemapSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class ArbitraryUrlGenerator
- * @package Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator
  *
  * @UrlGenerator(
  *   id = "arbitrary",
@@ -23,11 +24,13 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
 
   /**
    * ArbitraryUrlGenerator constructor.
+   *
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Logger $logger
+   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    */
   public function __construct(
@@ -36,6 +39,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     $plugin_definition,
     Simplesitemap $generator,
     Logger $logger,
+    SimplesitemapSettings $settings,
     ModuleHandler $module_handler
   ) {
     parent::__construct(
@@ -43,7 +47,8 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
       $plugin_id,
       $plugin_definition,
       $generator,
-      $logger
+      $logger,
+      $settings,
     );
     $this->moduleHandler = $module_handler;
   }
@@ -52,7 +57,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition) {
+    $plugin_definition): SimplesitemapPluginBase {
 
     return new static(
       $configuration,
@@ -60,6 +65,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
       $plugin_definition,
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
+      $container->get('simple_sitemap.settings'),
       $container->get('module_handler')
     );
   }
@@ -67,9 +73,9 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
   /**
    * @inheritdoc
    */
-  public function getDataSets() {
+  public function getDataSets(): array {
     $arbitrary_links = [];
-    $sitemap_variant = $this->sitemapVariant;
+    $sitemap_variant = $this->sitemapVariant->id();
     $this->moduleHandler->alter('simple_sitemap_arbitrary_links', $arbitrary_links, $sitemap_variant);
 
     return array_values($arbitrary_links);
@@ -78,7 +84,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
   /**
    * @inheritdoc
    */
-  protected function processDataSet($data_set) {
+  protected function processDataSet($data_set): array {
     return $data_set;
   }
 }

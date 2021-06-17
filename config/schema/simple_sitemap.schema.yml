@@ -85,19 +85,41 @@ simple_sitemap.custom_links.*:
             label: 'Change frequency'
             type: string
 
-simple_sitemap.variants.*:
-  label: 'Sitemap variants'
+simple_sitemap.sitemap.*:
+  label: 'Sitemaps'
   type: config_object
   mapping:
-    variants:
-      label: 'Sitemap variants'
+    id:
+      label: 'ID'
+      type: string
+    label:
+      label: 'Label'
+      type: string
+    type:
+      label: 'Type'
+      type: string
+    weight:
+      label: 'Weight'
+      type: integer
+
+simple_sitemap.type.*:
+  label: 'Sitemap types'
+  type: config_object
+  mapping:
+    id:
+      label: 'ID'
+      type: string
+    label:
+      label: 'Label'
+      type: string
+    description:
+      label: 'Description'
+      type: string
+    sitemap_generator:
+      label: 'Sitemap generator'
+      type: string
+    url_generators:
+      label: 'URL generators'
       type: sequence
       sequence:
-        type: mapping
-        mapping:
-          label:
-            label: 'Variant label'
-            type: string
-          weight:
-            label: 'Weight'
-            type: integer
+        type: string

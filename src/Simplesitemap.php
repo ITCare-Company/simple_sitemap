@@ -10,11 +10,9 @@ use Drupal\Core\Path\PathValidator;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Component\Datetime\Time;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorBase;
 
 /**
  * Class Simplesitemap
- * @package Drupal\simple_sitemap
  */
 class Simplesitemap {
 
@@ -219,7 +217,7 @@ class Simplesitemap {
     }
     elseif ($variants === TRUE) {
       $this->variants = array_keys(
-        $this->manager->getSitemapVariants(NULL, FALSE));
+        $this->manager->getSitemapVariants());
     }
     else {
       $this->variants = (array) $variants;
@@ -257,64 +255,12 @@ class Simplesitemap {
    *  If a chunk delta is provided, the relevant chunk is returned.
    *  Returns false if the sitemap variant is not retrievable from the database.
    */
-  public function getSitemap($delta = NULL) {
-    $chunk_info = $this->fetchSitemapVariantInfo();
+  public function getSitemap(int $delta = NULL) {
+    /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap */
+    $variants = $this->getVariants();
+    $sitemap = $this->entityTypeManager->getStorage('simple_sitemap')->load(reset($variants)); //todo: reset?
 
-    if (empty($delta) || !isset($chunk_info[$delta])) {
-
-      if (isset($chunk_info[SitemapGeneratorBase::INDEX_DELTA])) {
-        // Return sitemap index if one exists.
-        return $this->fetchSitemapChunk($chunk_info[SitemapGeneratorBase::INDEX_DELTA]->id)
-          ->sitemap_string;
-      }
-
-      // Return sitemap chunk if there is only one chunk.
-      return isset($chunk_info[SitemapGeneratorBase::FIRST_CHUNK_DELTA])
-        ? $this->fetchSitemapChunk($chunk_info[SitemapGeneratorBase::FIRST_CHUNK_DELTA]->id)
-          ->sitemap_string
-        : FALSE;
-    }
-
-    // Return specific sitemap chunk.
-    return $this->fetchSitemapChunk($chunk_info[$delta]->id)->sitemap_string;
-  }
-
-  /**
-   * Fetches info about all published sitemap variants and their chunks.
-   *
-   * @return array
-   *  An array containing all published sitemap chunk IDs, deltas and creation
-   *  timestamps keyed by the currently set variants, or in case of only one
-   *  variant set the above keyed by sitemap delta.
-   */
-  protected function fetchSitemapVariantInfo() {
-    if (!empty($this->getVariants())) {
-      $result = $this->db->select('simple_sitemap', 's')
-        ->fields('s', ['id', 'delta', 'sitemap_created', 'type'])
-        ->condition('s.status', 1)
-        ->condition('s.type', $this->getVariants(), 'IN')
-        ->execute();
-
-      return count($this->getVariants()) > 1
-        ? $result->fetchAllAssoc('type')
-        : $result->fetchAllAssoc('delta');
-    }
-
-    return [];
-  }
-
-  /**
-   * Fetches a single sitemap chunk by ID.
-   *
-   * @param int $id
-   *   The chunk ID.
-   *
-   * @return object
-   *   A sitemap chunk object.
-   */
-  protected function fetchSitemapChunk($id) {
-    return $this->db->query('SELECT * FROM {simple_sitemap} WHERE id = :id',
-      [':id' => $id])->fetchObject();
+    return $sitemap->toString($delta);
   }
 
   /**
@@ -765,7 +711,7 @@ class Simplesitemap {
 
     $results = $this->db->select('simple_sitemap_entity_overrides', 'o')
       ->fields('o', ['inclusion_settings'])
-      ->condition('o.type', $variants[0])
+      ->condition('o.type', reset($variants))
       ->condition('o.entity_type', $entity_type_id)
       ->condition('o.entity_id', $id)
       ->execute()

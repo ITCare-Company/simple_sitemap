@@ -6,14 +6,15 @@ use Drupal\Core\Url;
 use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\simple_sitemap\EntityHelper;
 use Drupal\simple_sitemap\Logger;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Simplesitemap;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\simple_sitemap\SimplesitemapSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class EntityUrlGenerator
- * @package Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator
  *
  * @UrlGenerator(
  *   id = "entity",
@@ -40,11 +41,13 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
 
   /**
    * EntityUrlGenerator constructor.
+   *
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Logger $logger
+   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
@@ -57,6 +60,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     $plugin_definition,
     Simplesitemap $generator,
     Logger $logger,
+    SimplesitemapSettings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper,
@@ -69,26 +73,28 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       $plugin_definition,
       $generator,
       $logger,
+      $settings,
       $language_manager,
       $entity_type_manager,
       $entityHelper
     );
     $this->urlGeneratorManager = $url_generator_manager;
     $this->entityMemoryCache = $memory_cache;
-    $this->entitiesPerDataset = $this->generator->getSetting('entities_per_queue_item', 50);
+    $this->entitiesPerDataset = $this->settings->getSetting('entities_per_queue_item', 50);
   }
 
   public static function create(
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition) {
+    $plugin_definition): SimplesitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
+      $container->get('simple_sitemap.settings'),
       $container->get('language_manager'),
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
@@ -100,11 +106,11 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
   /**
    * @inheritdoc
    */
-  public function getDataSets() {
+  public function getDataSets(): array {
     $data_sets = [];
     $sitemap_entity_types = $this->entityHelper->getSupportedEntityTypes();
 
-    foreach ($this->generator->setVariants($this->sitemapVariant)->getBundleSettings() as $entity_type_name => $bundles) {
+    foreach ($this->generator->setVariants($this->sitemapVariant->id())->getBundleSettings() as $entity_type_name => $bundles) {
       if (isset($sitemap_entity_types[$entity_type_name])) {
 
         // Skip this entity type if another plugin is written to override its generation.
@@ -163,7 +169,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
   /**
    * @inheritdoc
    */
-  protected function processDataSet($data_set) {
+  protected function processDataSet($data_set): array {
     $entities = $this->entityTypeManager->getStorage($data_set['entity_type'])->loadMultiple((array) $data_set['id']);
     if (empty($entities)) {
       return FALSE;
@@ -172,7 +178,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     $paths = [];
     foreach ($entities as $entity) {
       $entity_settings = $this->generator
-        ->setVariants($this->sitemapVariant)
+        ->setVariants($this->sitemapVariant->id())
         ->getEntityInstanceSettings($entity->getEntityTypeId(), $entity->id());
 
       if (empty($entity_settings['index'])) {
@@ -191,7 +197,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
         'lastmod' => method_exists($entity, 'getChangedTime')
           ? date('c', $entity->getChangedTime())
           : NULL,
-        'priority' => isset($entity_settings['priority']) ? $entity_settings['priority'] : NULL,
+        'priority' => $entity_settings['priority'] ?? NULL,
         'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
         'images' => !empty($entity_settings['include_images'])
           ? $this->getEntityImageData($entity)
@@ -213,10 +219,10 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
   /**
    * @inheritdoc
    */
-  public function generate($data_set) {
+  public function generate($data_set): array {
     $path_data_sets = $this->processDataSet($data_set);
     $url_variant_sets = [];
-    foreach ($path_data_sets as $key => $path_data) {
+    foreach ($path_data_sets as $path_data) {
       if (isset($path_data['url']) && $path_data['url'] instanceof Url) {
         $url_object = $path_data['url'];
         unset($path_data['url']);

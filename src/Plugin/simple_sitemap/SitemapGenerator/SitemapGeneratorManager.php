@@ -5,10 +5,10 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\simple_sitemap\Annotation\SitemapGenerator;
 
 /**
  * Class SitemapGeneratorManager
- * @package Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator
  */
 class SitemapGeneratorManager extends DefaultPluginManager {
 
@@ -27,8 +27,8 @@ class SitemapGeneratorManager extends DefaultPluginManager {
       'Plugin/simple_sitemap/SitemapGenerator',
       $namespaces,
       $module_handler,
-      'Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorInterface',
-      'Drupal\simple_sitemap\Annotation\SitemapGenerator'
+      SitemapGeneratorInterface::class,
+      SitemapGenerator::class
     );
 
     $this->alterInfo('simple_sitemap_sitemap_generators');

@@ -6,15 +6,16 @@ use Drupal\Core\Url;
 use Drupal\simple_sitemap\Annotation\UrlGenerator;
 use Drupal\simple_sitemap\EntityHelper;
 use Drupal\simple_sitemap\Logger;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Simplesitemap;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Path\PathValidator;
+use Drupal\simple_sitemap\SimplesitemapSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class CustomUrlGenerator
- * @package Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator
  *
  * @UrlGenerator(
  *   id = "custom",
@@ -40,11 +41,13 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
 
   /**
    * CustomUrlGenerator constructor.
+   *
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Logger $logger
+   * @param \Drupal\simple_sitemap\SimplesitemapSettings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
@@ -56,6 +59,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     $plugin_definition,
     Simplesitemap $generator,
     Logger $logger,
+    SimplesitemapSettings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper,
@@ -66,6 +70,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
       $plugin_definition,
       $generator,
       $logger,
+      $settings,
       $language_manager,
       $entity_type_manager,
       $entityHelper
@@ -77,13 +82,14 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition) {
+    $plugin_definition): SimplesitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
+      $container->get('simple_sitemap.settings'),
       $container->get('language_manager'),
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
@@ -94,16 +100,16 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
   /**
    * @inheritdoc
    */
-  public function getDataSets() {
+  public function getDataSets(): array {
     $this->includeImages = $this->generator->getSetting('custom_links_include_images', FALSE);
 
-    return array_values($this->generator->setVariants($this->sitemapVariant)->getCustomLinks());
+    return array_values($this->generator->setVariants($this->sitemapVariant->id())->getCustomLinks());
   }
 
   /**
    * @inheritdoc
    */
-  protected function processDataSet($data_set) {
+  protected function processDataSet($data_set): array {
     if (!(bool) $this->pathValidator->getUrlIfValidWithoutAccessCheck($data_set['path'])) {
       $this->logger->m(self::PATH_DOES_NOT_EXIST_MESSAGE,
         ['@path' => $data_set['path'], '@custom_paths_url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/custom'])
@@ -123,7 +129,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
       'lastmod' => !empty($entity) && method_exists($entity, 'getChangedTime')
         ? date('c', $entity->getChangedTime())
         : NULL,
-      'priority' => isset($data_set['priority']) ? $data_set['priority'] : NULL,
+      'priority' => $data_set['priority'] ?? NULL,
       'changefreq' => !empty($data_set['changefreq']) ? $data_set['changefreq'] : NULL,
       'images' => $this->includeImages && !empty($entity)
         ? $this->getEntityImageData($entity)

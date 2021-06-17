@@ -8,7 +8,6 @@ use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Class PathProcessorSitemapVariantOut
- * @package Drupal\simple_sitemap\PathProcessor
  */
 class PathProcessorSitemapVariantOut implements OutboundPathProcessorInterface {
 

@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -10,7 +11,6 @@ use Drupal\Core\Language\LanguageManagerInterface;
 
 /**
  * Class SimplesitemapSettingsForm
- * @package Drupal\simple_sitemap\Form
  */
 class SimplesitemapSettingsForm extends SimplesitemapFormBase {
 
@@ -21,16 +21,20 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
 
   /**
    * SimplesitemapSettingsForm constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    */
   public function __construct(
+    ConfigFactoryInterface $config_factory,
     Simplesitemap $generator,
     FormHelper $form_helper,
     LanguageManagerInterface $language_manager
   ) {
     parent::__construct(
+      $config_factory,
       $generator,
       $form_helper
     );
@@ -42,6 +46,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('config.factory'),
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.form_helper'),
       $container->get('language_manager')
@@ -51,14 +56,14 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'simple_sitemap_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form['simple_sitemap_settings']['#prefix'] = FormHelper::getDonationText();
 
@@ -134,14 +139,14 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       '#open' => TRUE,
     ];
 
-    $variants = $this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE);
+    $variants = $this->generator->getSitemapManager()->getSitemapVariants();
     $default_variant = $this->generator->getSetting('default_variant');
     $form['simple_sitemap_settings']['advanced']['default_variant'] = [
       '#type' => 'select',
       '#title' => $this->t('Default sitemap variant'),
       '#description' => $this->t('This sitemap variant will be available under <em>/sitemap.xml</em> in addition to its default path <em>/variant-name/sitemap.xml</em>.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
       '#default_value' => isset($variants[$default_variant]) ? $default_variant : '',
-      '#options' => ['' => $this->t('- None -')] + array_map(function($variant) { return $this->t($variant['label']); }, $variants),
+      '#options' => ['' => $this->t('- None -')] + array_map(function($variant) { return $this->t($variant->label()); }, $variants),
       ];
 
     $form['simple_sitemap_settings']['advanced']['base_url'] = [

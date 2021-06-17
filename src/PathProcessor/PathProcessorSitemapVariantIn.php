@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class PathProcessorSitemapVariantIn
- * @package Drupal\simple_sitemap\PathProcessor
  */
 class PathProcessorSitemapVariantIn implements InboundPathProcessorInterface {
 

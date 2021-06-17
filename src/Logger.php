@@ -9,7 +9,6 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Class Logger
- * @package Drupal\simple_sitemap
  */
 class Logger {
 
@@ -18,12 +17,12 @@ class Logger {
   /*
    * Can be debug/info/notice/warning/error.
    */
-  const LOG_SEVERITY_LEVEL_DEFAULT = 'notice';
+  protected const LOG_SEVERITY_LEVEL_DEFAULT = 'notice';
 
   /*
    * Can be status/warning/error.
    */
-  const DISPLAY_MESSAGE_TYPE_DEFAULT = 'status';
+  protected const DISPLAY_MESSAGE_TYPE_DEFAULT = 'status';
 
   /**
    * @var \Psr\Log\LoggerInterface
@@ -69,9 +68,10 @@ class Logger {
   /**
    * @param $message
    * @param array $substitutions
+   *
    * @return $this
    */
-  public function m($message, $substitutions = []) {
+  public function m($message, array $substitutions = []): Logger {
     $this->message = $message;
     $this->substitutions = $substitutions;
     return $this;
@@ -79,9 +79,10 @@ class Logger {
 
   /**
    * @param string $logSeverityLevel
+   *
    * @return $this
    */
-  public function log($logSeverityLevel = self::LOG_SEVERITY_LEVEL_DEFAULT) {
+  public function log(string $logSeverityLevel = self::LOG_SEVERITY_LEVEL_DEFAULT): Logger {
     $this->logger->$logSeverityLevel(strtr($this->message, $this->substitutions));
 
     return $this;
@@ -90,9 +91,10 @@ class Logger {
   /**
    * @param string $displayMessageType
    * @param string $permission
+   *
    * @return $this
    */
-  public function display($displayMessageType = self::DISPLAY_MESSAGE_TYPE_DEFAULT, $permission = '') {
+  public function display(string $displayMessageType = self::DISPLAY_MESSAGE_TYPE_DEFAULT, string $permission = ''): Logger {
     if (empty($permission) || $this->currentUser->hasPermission($permission)) {
       $this->messenger->addMessage($this->t($this->message, $this->substitutions), $displayMessageType);
     }

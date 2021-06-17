@@ -93,7 +93,7 @@ function simple_sitemap_schema() {
     'fields' => [
       'id' => [
         'description' => 'Sitemap chunk unique identifier.',
-        'type' => 'int',
+        'type' => 'serial', // todo: Update hook?
         'not null' => TRUE,
         'unsigned' => TRUE,
       ],

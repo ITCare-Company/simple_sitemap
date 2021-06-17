@@ -8,7 +8,6 @@ use Drush\Commands\DrushCommands;
 
 /**
  * Class SimplesitemapCommands
- * @package Drupal\simple_sitemap\Commands
  */
 class SimplesitemapCommands extends DrushCommands {
 
@@ -23,6 +22,8 @@ class SimplesitemapCommands extends DrushCommands {
    */
   public function __construct(Simplesitemap $generator) {
     $this->generator = $generator;
+
+    parent::__construct();
   }
 
   /**
@@ -37,7 +38,7 @@ class SimplesitemapCommands extends DrushCommands {
    *
    * @aliases ssg, simple-sitemap-generate
    */
-  public function generate() {
+  public function generate(): void {
     $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_DRUSH);
   }
 
@@ -62,8 +63,8 @@ class SimplesitemapCommands extends DrushCommands {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function rebuildQueue(array $options = ['variants' => '']) {
-    $variants = array_keys($this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE));
+  public function rebuildQueue(array $options = ['variants' => '']): void {
+    $variants = array_keys($this->generator->getSitemapManager()->getSitemapVariants());
     if (strlen($options['variants']) > 0) {
       $chosen_variants = array_map('trim', array_filter(explode(',', $options['variants'])));
       if (!empty($erroneous_variants = array_diff($chosen_variants, $variants))) {

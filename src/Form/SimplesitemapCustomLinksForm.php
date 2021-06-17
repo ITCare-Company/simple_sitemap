@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -9,7 +10,6 @@ use Drupal\Core\Path\PathValidator;
 
 /**
  * Class SimplesitemapCustomLinksForm
- * @package Drupal\simple_sitemap\Form
  */
 class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
 
@@ -20,16 +20,20 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
 
   /**
    * SimplesitemapCustomLinksForm constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    * @param \Drupal\Core\Path\PathValidator $path_validator
    */
   public function __construct(
+    ConfigFactoryInterface $config_factory,
     Simplesitemap $generator,
     FormHelper $form_helper,
     PathValidator $path_validator
   ) {
     parent::__construct(
+      $config_factory,
       $generator,
       $form_helper
     );
@@ -41,6 +45,7 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('config.factory'),
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.form_helper'),
       $container->get('path.validator')
@@ -50,7 +55,7 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'simple_sitemap_custom_links_form';
   }
 
@@ -79,8 +84,8 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
       '#title' => $this->t('Sitemap variants'),
       '#description' => $this->t('The sitemap variants to include the above links in.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
       '#options' => array_map(
-        function($variant) { return $this->t($variant['label']); },
-        $this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE)
+        function($variant) { return $this->t($variant->label()); },
+        $this->generator->getSitemapManager()->getSitemapVariants()
       ),
       '#default_value' => array_keys(array_filter(
           $this->generator->setVariants(TRUE)->getCustomLinks(NULL, FALSE, TRUE),
@@ -99,10 +104,6 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
     $this->formHelper->displayRegenerateNow($form['simple_sitemap_custom']);
 
     return parent::buildForm($form, $form_state);
-  }
-
-  protected function negotiateVariant() {
-
   }
 
   /**
@@ -170,10 +171,11 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
   }
 
   /**
-   * @param $custom_links_string
+   * @param string $custom_links_string
+   *
    * @return array
    */
-  protected function stringToCustomLinks($custom_links_string) {
+  protected function stringToCustomLinks(string $custom_links_string): array {
 
     // Unify newline characters and explode into array.
     $custom_links_string_lines = explode("\n", str_replace("\r\n", "\n", $custom_links_string));
@@ -205,6 +207,7 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
         }
       }
     }
+
     return $custom_links;
   }
 
@@ -212,7 +215,7 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
    * @param array $links
    * @return string
    */
-  protected function customLinksToString(array $links) {
+  protected function customLinksToString(array $links): string {
     $setting_string = '';
     foreach ($links as $custom_link) {
       $setting_string .= $custom_link['path'];
@@ -224,6 +227,7 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
         : '';
       $setting_string .= "\r\n";
     }
+
     return $setting_string;
   }
 }

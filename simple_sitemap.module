@@ -104,17 +104,17 @@ function simple_sitemap_entity_form_submit($form, FormStateInterface &$form_stat
     /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
     $generator = \Drupal::service('simple_sitemap.generator');
 
-    foreach ($generator->getSitemapManager()->getSitemapVariants(NULL, FALSE) as $variant => $definition) {
+    foreach ($generator->getSitemapManager()->getSitemapVariants() as $variant_id => $variant) {
 
-      if (isset($values['index_' . $variant . '_' . $f->getEntityTypeId() . '_settings'])) { // Variants may have changed since form load.
+      if (isset($values['index_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'])) { // Variants may have changed since form load.
         $settings = [
-          'index' => (bool) $values['index_' . $variant . '_' . $f->getEntityTypeId() . '_settings'],
-          'priority' => $values['priority_' . $variant . '_' . $f->getEntityTypeId() . '_settings'],
-          'changefreq' => $values['changefreq_' . $variant . '_' . $f->getEntityTypeId() . '_settings'],
-          'include_images' => (bool) $values['include_images_' . $variant . '_' . $f->getEntityTypeId() . '_settings'],
+          'index' => (bool) $values['index_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'],
+          'priority' => $values['priority_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'],
+          'changefreq' => $values['changefreq_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'],
+          'include_images' => (bool) $values['include_images_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'],
         ];
 
-        $generator->setVariants($variant);
+        $generator->setVariants($variant_id);
 
         switch ($f->getEntityCategory()) {
           case 'bundle':

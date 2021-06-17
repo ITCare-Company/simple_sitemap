@@ -5,10 +5,10 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\simple_sitemap\Annotation\UrlGenerator;
 
 /**
  * Class UrlGeneratorManager
- * @package Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator
  */
 class UrlGeneratorManager extends DefaultPluginManager {
 
@@ -27,8 +27,8 @@ class UrlGeneratorManager extends DefaultPluginManager {
       'Plugin/simple_sitemap/UrlGenerator',
       $namespaces,
       $module_handler,
-      'Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorInterface',
-      'Drupal\simple_sitemap\Annotation\UrlGenerator'
+      UrlGeneratorInterface::class,
+      UrlGenerator::class
     );
 
     $this->alterInfo('simple_sitemap_url_generators');

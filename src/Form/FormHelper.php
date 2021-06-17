@@ -10,13 +10,12 @@ use Drupal\Core\Session\AccountProxyInterface;
 
 /**
  * Class FormHelper
- * @package Drupal\simple_sitemap\Form
  */
 class FormHelper {
   use StringTranslationTrait;
 
-  const PRIORITY_HIGHEST = 10;
-  const PRIORITY_DIVIDER = 10;
+  protected const PRIORITY_HIGHEST = 10;
+  protected const PRIORITY_DIVIDER = 10;
 
   /**
    * @var \Drupal\simple_sitemap\Simplesitemap
@@ -123,7 +122,7 @@ class FormHelper {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
    */
-  public function processForm(FormStateInterface $form_state) {
+  public function processForm(FormStateInterface $form_state): bool {
     $this->formState = $form_state;
     $this->cleanUpFormInfo();
 
@@ -135,10 +134,11 @@ class FormHelper {
   }
 
   /**
-   * @param string $entity_category
+   * @param string|null $entity_category
+   *
    * @return $this
    */
-  public function setEntityCategory($entity_category) {
+  public function setEntityCategory(?string $entity_category): FormHelper {
     $this->entityCategory = $entity_category;
     return $this;
   }
@@ -146,15 +146,16 @@ class FormHelper {
   /**
    * @return null|string
    */
-  public function getEntityCategory() {
+  public function getEntityCategory(): ?string {
     return $this->entityCategory;
   }
 
   /**
- * @param string $entity_type_id
- * @return $this
- */
-  public function setEntityTypeId($entity_type_id) {
+   * @param string|null $entity_type_id
+   *
+   * @return $this
+   */
+  public function setEntityTypeId(?string $entity_type_id): FormHelper {
     $this->entityTypeId = $entity_type_id;
 
     return $this;
@@ -163,15 +164,16 @@ class FormHelper {
   /**
    * @return string
    */
-  public function getEntityTypeId() {
+  public function getEntityTypeId(): string {
     return $this->entityTypeId;
   }
 
   /**
-   * @param string $bundle_name
+   * @param string|null $bundle_name
+   *
    * @return $this
    */
-  public function setBundleName($bundle_name) {
+  public function setBundleName(?string $bundle_name): FormHelper {
     $this->bundleName = $bundle_name;
 
     return $this;
@@ -180,15 +182,16 @@ class FormHelper {
   /**
    * @return string
    */
-  public function getBundleName() {
+  public function getBundleName(): string {
     return $this->bundleName;
   }
 
   /**
-   * @param string $instance_id
+   * @param string|null $instance_id
+   *
    * @return $this
    */
-  public function setInstanceId($instance_id) {
+  public function setInstanceId(?string $instance_id): FormHelper {
     $this->instanceId = $instance_id;
 
     return $this;
@@ -197,14 +200,14 @@ class FormHelper {
   /**
    * @return string
    */
-  public function getInstanceId() {
+  public function getInstanceId(): string {
     return $this->instanceId;
   }
 
   /**
    * @return bool
    */
-  protected function supports() {
+  protected function supports(): bool {
 
     // Do not alter the form if it is irrelevant to sitemap generation.
     if (empty($this->getEntityCategory())) {
@@ -227,15 +230,16 @@ class FormHelper {
   /**
    * @return bool
    */
-  public function entityIsNew() {
-    return !empty($entity = $this->getFormEntity()) ? $entity->isNew() : TRUE;
+  public function entityIsNew(): bool {
+    return empty($entity = $this->getFormEntity()) || $entity->isNew();
   }
 
   /**
    * @param array $form_fragment
+   *
    * @return $this
    */
-  public function displayRegenerateNow(&$form_fragment) {
+  public function displayRegenerateNow(array &$form_fragment): FormHelper {
     $form_fragment['simple_sitemap_regenerate_now'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Regenerate all sitemaps after hitting <em>Save</em>'),
@@ -254,20 +258,20 @@ class FormHelper {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function negotiateSettings() {
+  public function negotiateSettings(): FormHelper {
 
     $this->settings = $this->generator->setVariants(TRUE)
       ->getBundleSettings($this->getEntityTypeId(), $this->getBundleName(), TRUE, TRUE);
     if ($this->getEntityCategory() === 'instance') {
 
       //todo Should spit out variant => settings and not just settings; to do this, alter getEntityInstanceSettings() to include 'multiple variants' option.
-      foreach ($this->settings as $variant_name => $settings) {
+      foreach ($this->settings as $variant_id => $settings) {
         if (NULL !== $instance_id = $this->getInstanceId()) {
-          $this->settings[$variant_name] = $this->generator
-            ->setVariants($variant_name)
+          $this->settings[$variant_id] = $this->generator
+            ->setVariants($variant_id)
             ->getEntityInstanceSettings($this->getEntityTypeId(), $instance_id);
         }
-        $this->settings[$variant_name]['bundle_settings'] = $settings;
+        $this->settings[$variant_id]['bundle_settings'] = $settings;
       }
     }
 
@@ -277,98 +281,100 @@ class FormHelper {
   /**
    * @param $form_fragment
    * @return $this
+   *
+   * @todo Refactor.
    */
-  public function displayEntitySettings(&$form_fragment) {
+  public function displayEntitySettings(&$form_fragment): FormHelper {
     $bundle_name = !empty($this->getBundleName())
       ? $this->entityHelper->getBundleLabel($this->getEntityTypeId(), $this->getBundleName())
       : $this->t('undefined');
 
-    $variants = $this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE);
+    $variants = $this->generator->getSitemapManager()->getSitemapVariants();
     $form_fragment['settings']['#markup'] = empty($variants)
       ? $this->t('At least one sitemap variants needs to be defined for a bundle to be indexable.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants'])
       : '<strong>' . $this->t('Sitemap variants') . '</strong>';
 
-    foreach ($variants as $variant => $definition) {
-      $form_fragment['settings'][$variant] = [
+    foreach ($variants as $variant_id => $variant) {
+      $form_fragment['settings'][$variant_id] = [
         '#type' => 'details',
-        '#title' => '<em>' . $this->t($definition['label']) . '</em>',
-        '#open' => !empty($this->settings[$variant]['index']),
+        '#title' => '<em>' . $this->t($variant->label()) . '</em>',
+        '#open' => !empty($this->settings[$variant_id]['index']),
       ];
 
       // Disable fields of entity instance whose bundle is not indexed.
-      $form_fragment['settings'][$variant]['#disabled'] = $this->getEntityCategory() === 'instance' && empty($this->settings[$variant]['bundle_settings']['index']);
+      $form_fragment['settings'][$variant_id]['#disabled'] = $this->getEntityCategory() === 'instance' && empty($this->settings[$variant_id]['bundle_settings']['index']);
 
       // Index
-      $form_fragment['settings'][$variant]['index_' . $variant . '_' . $this->getEntityTypeId() . '_settings'] = [
+      $form_fragment['settings'][$variant_id]['index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings'] = [
         '#type' => 'radios',
-        '#default_value' => (int) $this->settings[$variant]['index'],
+        '#default_value' => (int) $this->settings[$variant_id]['index'],
         '#options' => [
           $this->getEntityCategory() === 'instance'
-            ? $this->t('Do not index this <em>@bundle</em> entity in variant <em>@variant_label</em>', ['@bundle' => $bundle_name, '@variant_label' => $this->t($variants[$variant]['label'])])
-            : $this->t('Do not index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', ['@bundle' => $bundle_name, '@variant_label' => $this->t($variants[$variant]['label'])]),
+            ? $this->t('Do not index this <em>@bundle</em> entity in variant <em>@variant_label</em>', ['@bundle' => $bundle_name, '@variant_label' => $this->t($variant->label())])
+            : $this->t('Do not index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', ['@bundle' => $bundle_name, '@variant_label' => $this->t($variant->label())]),
           $this->getEntityCategory() === 'instance'
-            ? $this->t('Index this <em>@bundle entity</em> in variant <em>@variant_label</em>', ['@bundle' => $bundle_name, '@variant_label' => $this->t($variants[$variant]['label'])])
-            : $this->t('Index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', ['@bundle' => $bundle_name, '@variant_label' => $this->t($variants[$variant]['label'])]),
+            ? $this->t('Index this <em>@bundle entity</em> in variant <em>@variant_label</em>', ['@bundle' => $bundle_name, '@variant_label' => $this->t($variant->label())])
+            : $this->t('Index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', ['@bundle' => $bundle_name, '@variant_label' => $this->t($variant->label())]),
         ],
-        '#attributes' => ['class' => ['enabled-for-variant', $variant]],
+        '#attributes' => ['class' => ['enabled-for-variant', $variant_id]],
       ];
 
-      if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant]['bundle_settings']['index'])) {
-        $form_fragment['settings'][$variant]['index_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][(int) $this->settings[$variant]['bundle_settings']['index']] .= ' <em>(' . $this->t('default') . ')</em>';
+      if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant_id]['bundle_settings']['index'])) {
+        $form_fragment['settings'][$variant_id]['index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings']['#options'][(int) $this->settings[$variant_id]['bundle_settings']['index']] .= ' <em>(' . $this->t('default') . ')</em>';
       }
 
       // Priority
-      $form_fragment['settings'][$variant]['priority_' . $variant . '_' . $this->getEntityTypeId() . '_settings'] = [
+      $form_fragment['settings'][$variant_id]['priority_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings'] = [
         '#type' => 'select',
         '#title' => $this->t('Priority'),
         '#description' => $this->getEntityCategory() === 'instance'
           ? $this->t('The priority this <em>@bundle</em> entity will have in the eyes of search engine bots.', ['@bundle' => $bundle_name])
           : $this->t('The priority entities of this type will have in the eyes of search engine bots.'),
-        '#default_value' => $this->settings[$variant]['priority'],
+        '#default_value' => $this->settings[$variant_id]['priority'],
         '#options' => $this->getPrioritySelectValues(),
         '#states' => [
-          'visible' => [':input[name="index_' . $variant . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
+          'visible' => [':input[name="index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
         ],
       ];
 
-      if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant]['bundle_settings']['priority'])) {
-        $form_fragment['settings'][$variant]['priority_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->formatPriority($this->settings[$variant]['bundle_settings']['priority'])] .= ' (' . $this->t('default') . ')';
+      if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant_id]['bundle_settings']['priority'])) {
+        $form_fragment['settings'][$variant_id]['priority_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->formatPriority($this->settings[$variant_id]['bundle_settings']['priority'])] .= ' (' . $this->t('default') . ')';
       }
 
       // Changefreq
-      $form_fragment['settings'][$variant]['changefreq_' . $variant . '_' . $this->getEntityTypeId() . '_settings'] = [
+      $form_fragment['settings'][$variant_id]['changefreq_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings'] = [
         '#type' => 'select',
         '#title' => $this->t('Change frequency'),
         '#description' => $this->getEntityCategory() === 'instance'
           ? $this->t('The frequency with which this <em>@bundle</em> entity changes. Search engine bots may take this as an indication of how often to index it.', ['@bundle' => $bundle_name])
           : $this->t('The frequency with which entities of this type change. Search engine bots may take this as an indication of how often to index them.'),
-        '#default_value' => isset($this->settings[$variant]['changefreq']) ? $this->settings[$variant]['changefreq'] : NULL,
+        '#default_value' => isset($this->settings[$variant_id]['changefreq']) ? $this->settings[$variant_id]['changefreq'] : NULL,
         '#options' => $this->getChangefreqSelectValues(),
         '#states' => [
-          'visible' => [':input[name="index_' . $variant . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
+          'visible' => [':input[name="index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
         ],
       ];
 
-      if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant]['bundle_settings']['changefreq'])) {
-        $form_fragment['settings'][$variant]['changefreq_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->settings[$variant]['bundle_settings']['changefreq']] .= ' (' . $this->t('default') . ')';
+      if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant_id]['bundle_settings']['changefreq'])) {
+        $form_fragment['settings'][$variant_id]['changefreq_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->settings[$variant_id]['bundle_settings']['changefreq']] .= ' (' . $this->t('default') . ')';
       }
 
       // Images
-      $form_fragment['settings'][$variant]['include_images_' . $variant . '_' . $this->getEntityTypeId() . '_settings'] = [
+      $form_fragment['settings'][$variant_id]['include_images_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings'] = [
         '#type' => 'select',
         '#title' => $this->t('Include images'),
         '#description' => $this->getEntityCategory() === 'instance'
           ? $this->t('Determines if images referenced by this <em>@bundle</em> entity should be included in the sitemap.', ['@bundle' => $bundle_name])
           : $this->t('Determines if images referenced by entities of this type should be included in the sitemap.'),
-        '#default_value' => isset($this->settings[$variant]['include_images']) ? (int) $this->settings[$variant]['include_images'] : 0,
+        '#default_value' => isset($this->settings[$variant_id]['include_images']) ? (int) $this->settings[$variant_id]['include_images'] : 0,
         '#options' => [$this->t('No'), $this->t('Yes')],
         '#states' => [
-          'visible' => [':input[name="index_' . $variant . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
+          'visible' => [':input[name="index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
         ],
       ];
 
-      if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant]['bundle_settings']['include_images'])) {
-        $form_fragment['settings'][$variant]['include_images_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][(int) $this->settings[$variant]['bundle_settings']['include_images']] .= ' (' . $this->t('default') . ')';
+      if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant_id]['bundle_settings']['include_images'])) {
+        $form_fragment['settings'][$variant_id]['include_images_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings']['#options'][(int) $this->settings[$variant_id]['bundle_settings']['include_images']] .= ' (' . $this->t('default') . ')';
       }
     }
 
@@ -382,7 +388,7 @@ class FormHelper {
    * @return bool
    *   TRUE if this is a bundle or bundle instance form, FALSE otherwise.
    */
-  protected function getEntityDataFromFormEntity() {
+  protected function getEntityDataFromFormEntity(): bool {
     if (!$form_entity = $this->getFormEntity()) {
       return FALSE;
     }
@@ -441,7 +447,7 @@ class FormHelper {
     if (NULL !== $form_object
       && method_exists($form_object, 'getOperation')
       && method_exists($form_object, 'getEntity')
-      && in_array($form_object->getOperation(), self::$allowedFormOperations)) {
+      && in_array($form_object->getOperation(), self::$allowedFormOperations, TRUE)) {
       return $form_object->getEntity();
     }
 
@@ -456,7 +462,7 @@ class FormHelper {
    *
    * @return $this
    */
-  public function cleanUpFormInfo() {
+  public function cleanUpFormInfo(): FormHelper {
     $this->entityCategory = NULL;
     $this->entityTypeId = NULL;
     $this->bundleName = NULL;
@@ -478,7 +484,7 @@ class FormHelper {
    *
    * @todo Make it work with variants.
    */
-  public function valuesChanged($form, array $values) {
+  public function valuesChanged($form, array $values): bool {
 //    foreach (self::$valuesToCheck as $field_name) {
 //      if (!isset($form['simple_sitemap'][$field_name]['#default_value'])
 //        || (isset($values[$field_name]) && $values[$field_name] != $form['simple_sitemap'][$field_name]['#default_value'])) {
@@ -496,36 +502,11 @@ class FormHelper {
    *
    * @return array
    */
-  public function getVariantSelectValues() {
+  public function getVariantSelectValues(): array {
     return array_map(
-      function($variant) { return $this->t($variant['label']); },
-      $this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE)
+      function($variant) { return $this->t($variant->label()); },
+      $this->generator->getSitemapManager()->getSitemapVariants()
     );
-  }
-
-  /**
-   * Returns correct default value for variant select list.
-   *
-   * If only one variant is available, return it, otherwise check if a default
-   * variant is provided and return it.
-   *
-   * @param string|null $default_value
-   *  Actual default value from the database.
-   *
-   * @return string|null
-   *  Value to be set on form.
-   */
-  public function getVariantSelectValuesDefault($default_value) {
-    $options = $this->getVariantSelectValues();
-    return NULL === $default_value
-      ? (1 === count($options)
-        ? array_keys($options)[0]
-        : (!empty($default = $this->generator->getSetting('default_variant'))
-          ? $default
-          : $default_value
-        )
-      )
-      : $default_value;
   }
 
   /**
@@ -533,7 +514,7 @@ class FormHelper {
    *
    * @return array
    */
-  public function getPrioritySelectValues() {
+  public function getPrioritySelectValues(): array {
     $options = [];
     foreach (range(0, self::PRIORITY_HIGHEST) as $value) {
       $value = $this->formatPriority($value / self::PRIORITY_DIVIDER);
@@ -548,7 +529,7 @@ class FormHelper {
    *
    * @return array
    */
-  public function getChangefreqSelectValues() {
+  public function getChangefreqSelectValues(): array {
     $options = ['' => $this->t('- Not specified -')];
     foreach (self::getChangefreqOptions() as $setting) {
       $options[$setting] = $this->t($setting);
@@ -560,15 +541,16 @@ class FormHelper {
   /**
    * @return array
    */
-  public static function getChangefreqOptions() {
+  public static function getChangefreqOptions(): array {
     return self::$changefreqValues;
   }
 
   /**
    * @param string $priority
+   *
    * @return string
    */
-  public function formatPriority($priority) {
+  public function formatPriority(string $priority): string {
     return number_format((float) $priority, 1, '.', '');
   }
 
@@ -576,22 +558,23 @@ class FormHelper {
    * @param string|int $priority
    * @return bool
    */
-  public static function isValidPriority($priority) {
+  public static function isValidPriority(string $priority): bool {
     return is_numeric($priority) && $priority >= 0 && $priority <= 1;
   }
 
   /**
    * @param string $changefreq
+   *
    * @return bool
    */
-  public static function isValidChangefreq($changefreq) {
-    return in_array($changefreq, self::$changefreqValues);
+  public static function isValidChangefreq(string $changefreq): bool {
+    return in_array($changefreq, self::$changefreqValues, TRUE);
   }
 
   /**
    * @return array
    */
-  public static function getCronIntervalOptions() {
+  public static function getCronIntervalOptions(): array {
     /** @var \Drupal\Core\Datetime\DateFormatter $formatter */
     $formatter = \Drupal::service('date.formatter');
     $intervals = array_flip(self::$cronIntervals);
@@ -605,7 +588,7 @@ class FormHelper {
   /**
    * @return string
    */
-  public static function getDonationText() {
+  public static function getDonationText(): string {
     return '<div class="description">' . t('If you would like to say thanks and support the development of this module, a <a target="_blank" href="@url">donation</a> will be much appreciated.', ['@url' => 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5AFYRSBLGSC3W']) . '</div>';
   }
 }

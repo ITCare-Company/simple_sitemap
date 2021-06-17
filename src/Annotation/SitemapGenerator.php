@@ -7,8 +7,6 @@ use Drupal\Component\Annotation\Plugin;
 /**
  * Defines a SitemapGenerator item annotation object.
  *
- * @package Drupal\simple_sitemap\Annotation
- *
  * @see \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorManager
  * @see plugin_api
  *

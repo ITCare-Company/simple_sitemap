@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -9,7 +10,6 @@ use Drupal\simple_sitemap\EntityHelper;
 
 /**
  * Class SimplesitemapEntitiesForm
- * @package Drupal\simple_sitemap\Form
  */
 class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
 
@@ -20,16 +20,20 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
 
   /**
    * SimplesitemapEntitiesForm constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\simple_sitemap\Simplesitemap $generator
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    * @param \Drupal\simple_sitemap\EntityHelper $entity_helper
    */
   public function __construct(
+    ConfigFactoryInterface $config_factory,
     Simplesitemap $generator,
     FormHelper $form_helper,
     EntityHelper $entity_helper
   ) {
     parent::__construct(
+      $config_factory,
       $generator,
       $form_helper
     );
@@ -41,6 +45,7 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('config.factory'),
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.form_helper'),
       $container->get('simple_sitemap.entity_helper')
@@ -50,14 +55,14 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'simple_sitemap_entities_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form['simple_sitemap_entities']['#prefix'] = FormHelper::getDonationText();
 
@@ -70,14 +75,14 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
     $form['#attached']['library'][] = 'simple_sitemap/sitemapEntities';
     $form['#attached']['drupalSettings']['simple_sitemap'] = ['all_entities' => [], 'atomic_entities' => []];
 
-    $variants = $this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE);
+    $variants = $this->generator->getSitemapManager()->getSitemapVariants();
     $all_bundle_settings = $this->generator->setVariants(TRUE)->getBundleSettings(NULL, NULL, TRUE, TRUE);
     $indexed_bundles = [];
     foreach ($all_bundle_settings as $variant => $entity_types) {
       foreach ($entity_types as $entity_type_name => $bundles) {
         foreach ($bundles as $bundle_name => $bundle_settings) {
           if (!empty($bundle_settings['index'])) {
-            $indexed_bundles[$entity_type_name][$bundle_name]['variants'][] = $this->t($variants[$variant]['label']);
+            $indexed_bundles[$entity_type_name][$bundle_name]['variants'][] = $this->t($variants[$variant]->label());
             $indexed_bundles[$entity_type_name][$bundle_name]['bundle_label'] = $this->entityHelper->getBundleLabel($entity_type_name, $bundle_name);
           }
         }
@@ -114,7 +119,7 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
 
         $indexed_bundles_string = '';
         if (isset($indexed_bundles[$entity_type_id])) {
-          foreach ($indexed_bundles[$entity_type_id] as $bundle => $bundle_data) {
+          foreach ($indexed_bundles[$entity_type_id] as $bundle_data) {
             $indexed_bundles_string .= '<br><em>' . $bundle_data['bundle_label'] . '</em> <span class="description">(' . $this->t('sitemap variants') . ': <em>' . implode(', ', $bundle_data['variants']) . '</em>)</span>';
           }
         }
@@ -173,15 +178,15 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
         if ($value) {
           $this->generator->enableEntityType($entity_type_id);
           if ($this->entityHelper->entityTypeIsAtomic($entity_type_id)) {
-            foreach ($this->generator->getSitemapManager()->getSitemapVariants(NULL, FALSE) as $variant => $definition) {
-              if (isset($values['index_' . $variant . '_' . $entity_type_id . '_settings'])) {
+            foreach ($this->generator->getSitemapManager()->getSitemapVariants() as $variant_id => $variant) {
+              if (isset($values['index_' . $variant_id . '_' . $entity_type_id . '_settings'])) {
                 $this->generator
-                  ->setVariants($variant)
+                  ->setVariants($variant_id)
                   ->setBundleSettings($entity_type_id, $entity_type_id, [
-                    'index' => (bool) $values['index_' . $variant . '_' . $entity_type_id . '_settings'],
-                    'priority' => $values['priority_' . $variant . '_' . $entity_type_id . '_settings'],
-                    'changefreq' => $values['changefreq_' . $variant . '_' . $entity_type_id . '_settings'],
-                    'include_images' => (bool) $values['include_images_' . $variant . '_' . $entity_type_id . '_settings'],
+                    'index' => (bool) $values['index_' . $variant_id . '_' . $entity_type_id . '_settings'],
+                    'priority' => $values['priority_' . $variant_id . '_' . $entity_type_id . '_settings'],
+                    'changefreq' => $values['changefreq_' . $variant_id . '_' . $entity_type_id . '_settings'],
+                    'include_images' => (bool) $values['include_images_' . $variant_id . '_' . $entity_type_id . '_settings'],
                     ]);
               }
             }
