@@ -164,7 +164,7 @@ class FormHelper {
   /**
    * @return string
    */
-  public function getEntityTypeId(): string {
+  public function getEntityTypeId(): ?string {
     return $this->entityTypeId;
   }
 
@@ -182,7 +182,7 @@ class FormHelper {
   /**
    * @return string
    */
-  public function getBundleName(): string {
+  public function getBundleName(): ?string {
     return $this->bundleName;
   }
 
@@ -200,7 +200,7 @@ class FormHelper {
   /**
    * @return string
    */
-  public function getInstanceId(): string {
+  public function getInstanceId(): ?string {
     return $this->instanceId;
   }
 
@@ -338,7 +338,7 @@ class FormHelper {
       ];
 
       if ($this->getEntityCategory() === 'instance' && isset($this->settings[$variant_id]['bundle_settings']['priority'])) {
-        $form_fragment['settings'][$variant_id]['priority_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->formatPriority($this->settings[$variant_id]['bundle_settings']['priority'])] .= ' (' . $this->t('default') . ')';
+        $form_fragment['settings'][$variant_id]['priority_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->formatPriority($this->settings[$variant_id]['bundle_settings']['priority'])] .= ' (' . $this->t('default') . ')';
       }
 
       // Changefreq

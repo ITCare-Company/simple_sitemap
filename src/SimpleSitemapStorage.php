@@ -31,11 +31,14 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
 
   protected $entityTypeManager;
 
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, Connection $database, TimeInterface $time, EntityTypeManagerInterface $entity_type_manager) {
+  protected $settings;
+
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, Connection $database, TimeInterface $time, EntityTypeManagerInterface $entity_type_manager, SimpleSitemapSettings $settings) {
     parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
     $this->database = $database;
     $this->time = $time;
     $this->entityTypeManager = $entity_type_manager;
+    $this->settings = $settings;
   }
 
   /**
@@ -49,19 +52,42 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
       $container->get('language_manager'),
       $container->get('database'),
       $container->get('datetime.time'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('simple_sitemap.settings')
     );
   }
 
   /**
    * {@inheritdoc}
    *
-   * @todo Remove other bits.
+   * @todo Improve performance of his method.
    */
   protected function doDelete($entities) {
+    $default_variant = $this->settings->getSetting('default_variant');
+
     /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[] $entities */
     foreach ($entities as $entity) {
+
+      // Remove sitemap instance.
       $this->deleteContent($entity);
+
+      // Unset default variant setting if necessary.
+      if ($default_variant === $entity->id()) {
+        $this->settings->saveSetting('default_variant', NULL);
+      }
+
+      // Remove bundle settings.
+      foreach ($this->configFactory->listAll("simple_sitemap.bundle_settings.{$entity->id()}.") as $config_name) {
+        $this->configFactory->getEditable($config_name)->delete();
+      }
+
+      // Remove custom links.
+      foreach ($this->configFactory->listAll("simple_sitemap.custom_links.{$entity->id()}") as $config_name) {
+        $this->configFactory->getEditable($config_name)->delete();
+      }
+
+      // Remove bundle settings entity overrides.
+      $this->database->delete('simple_sitemap_entity_overrides')->condition('type', $entity->id())->execute();
     }
 
     parent::doDelete($entities);

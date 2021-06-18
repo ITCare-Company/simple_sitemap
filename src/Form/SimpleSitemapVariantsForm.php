@@ -101,19 +101,8 @@ class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
     $storage->delete($storage->loadMultiple($remove_variants));
 
     $weight = 0;
-
-    foreach ($new_variants as $variant_name => $variant_definition) {
-      if ($old_variant = $storage->load($variant_name)) {
-        foreach ($variant_definition as $field => $value) {
-          $old_variant->set($field, $value);
-        }
-        $old_variant->set('weight', $weight);
-        $old_variant->save();
-      }
-      else {
-        $storage->create(['id' => $variant_name, 'weight' => $weight] + $variant_definition)->save();
-      }
-
+    foreach ($new_variants as $id => $variant_definition) {
+      $manager->addSitemapVariant($id, $variant_definition + ['weight' => $weight]);
       $weight++;
     }
 

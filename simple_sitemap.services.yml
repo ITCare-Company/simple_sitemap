@@ -20,11 +20,7 @@ services:
     class: Drupal\simple_sitemap\SimpleSitemapManager
     public: true
     arguments:
-    - '@config.factory'
-    - '@database'
-    - '@plugin.manager.simple_sitemap.url_generator'
-    - '@plugin.manager.simple_sitemap.sitemap_generator'
-    - '@simple_sitemap.settings'
+      - '@entity_type.manager'
 
   simple_sitemap.settings:
     class: Drupal\simple_sitemap\SimpleSitemapSettings
@@ -47,7 +43,7 @@ services:
 
   simple_sitemap.queue:
     class: Drupal\simple_sitemap\Queue\SimpleSitemapQueue
-    public: false
+    public: true
     arguments:
     - 'simple_sitemap_elements'
     - '@database'
@@ -95,7 +91,7 @@ services:
 
   logger.channel.simple_sitemap:
     parent: logger.channel_base
-    public: false
+    public: true
     arguments:
       - simple_sitemap
 

@@ -2,13 +2,8 @@
 
 namespace Drupal\simple_sitemap;
 
-use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\Database\Connection;
-use Drupal\simple_sitemap\Entity\SimpleSitemapType;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorBase;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorManager;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorBase;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 
 /**
  * Class SimpleSitemapManager
@@ -18,219 +13,59 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager
 class SimpleSitemapManager {
 
   /**
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $configFactory;
-
-  /**
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected $db;
-
-  /**
-   * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager
-   */
-  protected $urlGeneratorManager;
-
-  /**
-   * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorManager
-   */
-  protected $sitemapGeneratorManager;
-
-  /**
-   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
-   */
-  protected $settings;
-
-  /**
-   * @var SitemapTypeBase[] $sitemapTypes
-   */
-  protected $sitemapTypes = [];
-
-  /**
-   * @var UrlGeneratorBase[] $urlGenerators
-   */
-  protected $urlGenerators = [];
-
-  /**
-   * @var SitemapGeneratorBase[] $sitemapGenerators
-   */
-  protected $sitemapGenerators = [];
+  protected $entityTypeManager;
 
   /**
    * SimpleSitemapManager constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
-   * @param \Drupal\Core\Database\Connection $database
-   * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager $url_generator_manager
-   * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorManager $sitemap_generator_manager
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    */
-  public function __construct(
-    ConfigFactory $config_factory,
-    Connection $database,
-    UrlGeneratorManager $url_generator_manager,
-    SitemapGeneratorManager $sitemap_generator_manager,
-    SimpleSitemapSettings $settings
-  ) {
-    $this->configFactory = $config_factory;
-    $this->db = $database;
-    $this->urlGeneratorManager = $url_generator_manager;
-    $this->sitemapGeneratorManager = $sitemap_generator_manager;
-    $this->settings = $settings;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * @todo Change for 4.x.
    */
-  public function getSitemapTypes() {
-    return \Drupal::entityTypeManager()->getStorage('simple_sitemap_type')->loadMultiple();
+  public function getSitemapTypes(): array {
+    return $this->entityTypeManager->getStorage('simple_sitemap_type')
+      ->loadMultiple();
   }
 
   /**
    * @todo Change for 4.x.
    */
-  public function getSitemapVariants() {
-   return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->loadMultiple();
+  public function getSitemapVariant($id): ?SimpleSitemapInterface {
+    return $this->entityTypeManager->getStorage('simple_sitemap')->load($id);
   }
 
   /**
    * @todo Change for 4.x.
    */
-  public function addSitemapVariant($name, $definition = []) {
-    $all_variants = $this->getSitemapVariants();
-    if (isset($all_variants[$name])) {
-      $old_variant = $all_variants[$name];
-      if (!empty($definition['type']) && $old_variant['type'] !== $definition['type']) {
-        $this->removeSitemapVariants($name);
-        unset($old_variant);
+  public function getSitemapVariants(): array {
+    return $this->entityTypeManager->getStorage('simple_sitemap')
+      ->loadMultiple();
+  }
+
+  public function addSitemapVariant(string $id, array $definition = []): SimpleSitemapManager {
+    $storage = $this->entityTypeManager->getStorage('simple_sitemap');
+
+    $definition['label'] = !empty($definition['label']) ? $definition['label'] : $id;
+    $definition['weight'] = isset($definition['weight']) ? (int) $definition['weight'] : 0;
+
+    if ($old_variant = $storage->load($id)) {
+      foreach ($definition as $field => $value) {
+        $old_variant->set($field, $value);
       }
-      else {
-        unset($old_variant['type']);
-      }
+      $old_variant->save();
     }
-
-    if (!isset($old_variant) && empty($definition['label'])) {
-      $definition['label'] = (string) $name;
+    else {
+      $storage->create(['id' => $id] + $definition)->save();
     }
-
-    if (!isset($old_variant) && empty($definition['type'])) {
-      $definition['type'] = SimpleSitemapType::DEFAULT_SITEMAP_TYPE;
-    }
-
-    if (isset($definition['weight'])) {
-      $definition['weight'] = (int) $definition['weight'];
-    }
-    elseif (!isset($old_variant)) {
-      $definition['weight'] = 0;
-    }
-
-    if (isset($old_variant)) {
-      $definition += $old_variant;
-    }
-
-    $variants = array_merge($this->getSitemapVariants($definition['type'], FALSE), [$name => ['label' => $definition['label'], 'weight' => $definition['weight']]]);
-    $this->configFactory->getEditable('simple_sitemap.variants.' . $definition['type'])
-      ->set('variants', $variants)
-      ->save();
 
     return $this;
   }
 
-//  /**
-//   * @param null|array|string $variant_names
-//   *  Limit removal by specific variants.
-//   *
-//   * @return $this
-//   *
-//   * @throws \Drupal\Component\Plugin\Exception\PluginException
-//   */
-//  public function removeSitemap($variant_names = NULL) {
-//    if (NULL === $variant_names || !empty((array) $variant_names)) {
-//      $saved_variants = $this->getSitemapVariants();
-//      $remove_variants = NULL === $variant_names
-//        ? $saved_variants
-//        : array_intersect_key($saved_variants, array_flip((array) $variant_names));
-//
-//      if (!empty($remove_variants)) {
-//        $type_definitions = $this->getSitemapTypes();
-//        foreach ($remove_variants as $variant_name => $variant_definition) {
-//          $this->getSitemapGenerator($type_definitions[$variant_definition['type']]['sitemapGenerator'])
-//            ->setSitemapVariant($variant_name)
-//            ->remove();
-//        }
-//      }
-//    }
-//
-//    return $this;
-//  }
-
-  /**
-   * @param null|array|string $variant_names
-   *  Limit removal by specific variants.
-   *
-   * @return $this
-   *
-   * @todo Rewrite for 4.x.
-   */
-  public function removeSitemapVariants($variant_names = NULL) {
-    if (NULL === $variant_names || !empty((array) $variant_names)) {
-
-      // Remove sitemap instances.
-      $this->removeSitemap($variant_names);
-
-      if (NULL === $variant_names) {
-        // Remove all variants and their bundle settings.
-        foreach(['variants', 'bundle_settings', 'custom_links'] as $config_name_part) {
-          foreach ($this->configFactory->listAll("simple_sitemap.$config_name_part.") as $config_name) {
-            $this->configFactory->getEditable($config_name)->delete();
-          }
-        }
-      }
-      else {
-        // Remove bundle settings for specific variants.
-        foreach ((array) $variant_names as $variant_name) {
-          foreach ($this->configFactory->listAll("simple_sitemap.bundle_settings.$variant_name.") as $config_name) {
-            $this->configFactory->getEditable($config_name)->delete();
-          }
-        }
-
-        // Remove custom links for specific variants.
-        foreach ((array) $variant_names as $variant_name) {
-          foreach ($this->configFactory->listAll("simple_sitemap.custom_links.$variant_name") as $config_name) {
-            $this->configFactory->getEditable($config_name)->delete();
-          }
-        }
-
-        // Remove specific variants from configuration.
-        $remove_variants = [];
-        $variants = $this->getSitemapVariants();
-        foreach ((array) $variant_names as $variant_name) {
-          if (isset($variants[$variant_name])) {
-            $remove_variants[$variants[$variant_name]['type']][$variant_name] = $variant_name;
-          }
-        }
-        foreach ($remove_variants as $type => $variants_per_type) {
-          $this->configFactory->getEditable("simple_sitemap.variants.$type")
-            ->set('variants', array_diff_key($this->getSitemapVariants($type, FALSE), $variants_per_type))
-            ->save();
-        }
-      }
-
-      // Remove bundle setting overrides for entities.
-      $query = $this->db->delete('simple_sitemap_entity_overrides');
-      if (NULL !== $variant_names) {
-        $query->condition('type', (array) $variant_names, 'IN');
-      }
-      $query->execute();
-
-      // Remove default variant setting.
-      if (NULL === $variant_names
-        || in_array($this->settings->getSetting('default_variant', ''), (array) $variant_names)) {
-        $this->settings->saveSetting('default_variant', '');
-      }
-    }
-
-    return $this;
-  }
 }

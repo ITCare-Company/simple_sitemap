@@ -471,7 +471,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
    */
   public function testNewEntityWithIdSet() {
     $new_node = Node::create([
-      'nid' => mt_rand(5, 10),
+      'nid' => random_int(5, 10),
       'type' => 'page',
     ]);
     // Assert that the form does not break if an entity has an id but is not
@@ -568,7 +568,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   public function testSitemapVariants() {
 
     // Test adding a variant.
-    $this->generator->getSitemapManager()->addSitemapVariant('test');
+    $this->generator->getSitemapManager()->addSitemapVariant('test', ['type' => 'default_hreflang']);
 
     $this->generator
       ->setBundleSettings('node', 'page')
@@ -593,7 +593,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->drupalGet($this->defaultSitemapUrl);
     $this->assertSession()->responseContains('node/' . $this->node->id());
 
-    $this->generator->getSitemapManager()->removeSitemapVariants('test');
+    $this->generator->getSitemapManager()->getSitemapVariant('test')->delete();
 
     $variants = $this->generator->getSitemapManager()->getSitemapVariants();
     $this->assertArrayNotHasKey('test', $variants);
