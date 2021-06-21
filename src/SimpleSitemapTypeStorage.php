@@ -34,8 +34,6 @@ class SimpleSitemapTypeStorage extends ConfigEntityStorage {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Test.
    */
   protected function doDelete($entities) {
     /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapTypeInterface[] $entities */

@@ -81,7 +81,7 @@ class SimpleSitemapEntitiesForm extends SimpleSitemapFormBase {
     foreach ($all_bundle_settings as $variant => $entity_types) {
       foreach ($entity_types as $entity_type_name => $bundles) {
         foreach ($bundles as $bundle_name => $bundle_settings) {
-          if (!empty($bundle_settings['index'])) {
+          if ($bundle_settings['index']) {
             $indexed_bundles[$entity_type_name][$bundle_name]['variants'][] = $this->t($variants[$variant]->label());
             $indexed_bundles[$entity_type_name][$bundle_name]['bundle_label'] = $this->entityHelper->getBundleLabel($entity_type_name, $bundle_name);
           }

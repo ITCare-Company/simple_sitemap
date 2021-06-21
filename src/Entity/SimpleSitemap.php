@@ -33,6 +33,7 @@ use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
  * )
  *
  * @todo Implement dependency injection after https://www.drupal.org/project/drupal/issues/2142515 is fixed.
+ * @todo status?
  */
 class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
 

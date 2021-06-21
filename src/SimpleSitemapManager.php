@@ -49,21 +49,14 @@ class SimpleSitemapManager {
       ->loadMultiple();
   }
 
-  public function addSitemapVariant(string $id, array $definition = []): SimpleSitemapManager {
+  public function addOrUpdateSitemap(string $id, string $type, string $label = NULL, int $weight = 0): SimpleSitemapManager {
     $storage = $this->entityTypeManager->getStorage('simple_sitemap');
-
-    $definition['label'] = !empty($definition['label']) ? $definition['label'] : $id;
-    $definition['weight'] = isset($definition['weight']) ? (int) $definition['weight'] : 0;
-
-    if ($old_variant = $storage->load($id)) {
-      foreach ($definition as $field => $value) {
-        $old_variant->set($field, $value);
-      }
-      $old_variant->save();
-    }
-    else {
-      $storage->create(['id' => $id] + $definition)->save();
-    }
+    $variant = (($old_variant = $storage->load($id)) !== NULL) ? $old_variant : $storage->create(['id' => $id]);
+    $variant
+      ->set('type', $type)
+      ->set('label', $label)
+      ->set('weight', $weight)
+      ->save();
 
     return $this;
   }

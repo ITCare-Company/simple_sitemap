@@ -568,7 +568,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   public function testSitemapVariants() {
 
     // Test adding a variant.
-    $this->generator->getSitemapManager()->addSitemapVariant('test', ['type' => 'default_hreflang']);
+    $this->generator->getSitemapManager()->addOrUpdateSitemap('test', 'default_hreflang');
 
     $this->generator
       ->setBundleSettings('node', 'page')

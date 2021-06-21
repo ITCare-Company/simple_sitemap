@@ -27,7 +27,7 @@ function simple_sitemap_requirements($phase) {
 
     case 'runtime':
 
-      // todo Implement for 3.x
+      // todo Implement for 4.x
 //      /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
 //      $generator = \Drupal::service('simple_sitemap.generator');
 //      $generated_ago = $generator->getGeneratedAgo();
@@ -198,7 +198,7 @@ function _simple_sitemap_update_8216_get_default_variant() {
   $manager = \Drupal::service('simple_sitemap.manager');
   $variants = $manager->getSitemapVariants();
   if (!isset($variants[$default_variant])) {
-    $manager->addSitemapVariant($default_variant);
+    $manager->addOrUpdateSitemap($default_variant);
   }
 
   return $default_variant;

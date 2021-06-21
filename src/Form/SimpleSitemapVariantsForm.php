@@ -56,33 +56,35 @@ class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
    * {@inheritdoc}
    *
    * @todo Show multiple errors at once.
-   * @todo Allow numeric variant names, but bear in mind that they are stored as integer array keys due to how php arrays work.
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $line = 0;
     $sitemap_types = $this->generator->getSitemapManager()->getSitemapTypes();
-    foreach ($this->stringToVariants($form_state->getValue('variants')) as $variant_name => $variant_definition) {
+    foreach ($this->stringToVariants($form_state->getValue('variants')) as $id => $variant_definition) {
       $placeholders = [
         '@line' => ++$line,
-        '@name' => $variant_name,
-        '@type' => $variant_definition['type'] ?? '',
-        '@label' => $variant_definition['label'] ?? '',
+        '@id' => $id,
+        '@type' => $variant_definition['type'],
       ];
 
-      if (trim($variant_name) === '') {
-        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant name cannot be empty.", $placeholders));
+      if (trim($id) === '') {
+        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant ID cannot be empty.", $placeholders));
       }
 
-      if (!preg_match('/^[\w\-_]+$/', $variant_name)) {
-        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant name <em>@name</em> can only include alphanumeric characters, dashes and underscores.", $placeholders));
+      if (!preg_match('/^[\w\-_]+$/', $id)) {
+        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant ID <em>@id</em> can only include alphanumeric characters, dashes and underscores.", $placeholders));
       }
 
-      if (is_numeric($variant_name)) {
-        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant name cannot be numeric.", $placeholders));
+      if (is_numeric($id)) {
+        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant ID cannot be numeric.", $placeholders));
+      }
+
+      if ($variant_definition['type'] === NULL) {
+        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant type cannot be empty.", $placeholders));
       }
 
       if (!isset($sitemap_types[$variant_definition['type']])) {
-        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant <em>@name</em> is of a sitemap type <em>@type</em> that does not exist.", $placeholders));
+        $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The variant <em>@id</em> is of a sitemap type <em>@type</em> that does not exist.", $placeholders));
       }
     }
   }
@@ -101,8 +103,9 @@ class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
     $storage->delete($storage->loadMultiple($remove_variants));
 
     $weight = 0;
-    foreach ($new_variants as $id => $variant_definition) {
-      $manager->addSitemapVariant($id, $variant_definition + ['weight' => $weight]);
+    foreach ($new_variants as $variant_definition) {
+      $variant_definition['weight'] = $weight;
+      $manager->addOrUpdateSitemap(...array_values($variant_definition));
       $weight++;
     }
 
@@ -130,11 +133,12 @@ class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
     $variants_string_lines = array_filter(array_map('trim', $variants_string_lines));
 
     $variants = [];
-    foreach ($variants_string_lines as $i => &$line) {
+    foreach ($variants_string_lines as &$line) {
       $variant_settings = explode('|', $line);
-      $name = strtolower(trim($variant_settings[0]));
-      $variants[$name]['type'] = !empty($variant_settings[1]) ? trim($variant_settings[1]) : SimpleSitemapType::DEFAULT_SITEMAP_TYPE;
-      $variants[$name]['label'] = !empty($variant_settings[2]) ? trim($variant_settings[2]) : $name;
+      $id = strtolower(trim($variant_settings[0]));
+      $variants[$id]['id'] = $id;
+      $variants[$id]['type'] = isset($variant_settings[1]) ? trim($variant_settings[1]) : NULL;
+      $variants[$id]['label'] = isset($variant_settings[2]) ? trim($variant_settings[2]) : NULL;
     }
 
     return $variants;

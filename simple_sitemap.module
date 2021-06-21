@@ -253,7 +253,7 @@ function simple_sitemap_page_attachments_alter(array &$attachments) {
       // but if an entity page is configured as the front page, it attaches
       // extraneous hreflang tags using the entity URL.
       foreach ($attachments['#attached']['html_head_link'] as $key => $list) {
-        foreach ($list as $k => $element) {
+        foreach ($list as $element) {
           if (!empty($element['hreflang']) && !empty($element['rel'])) {
             unset($attachments['#attached']['html_head_link'][$key]);
           }

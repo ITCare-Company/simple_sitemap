@@ -94,24 +94,47 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   }
 
   /**
-   * {@inheritdoc}
+   * Loads all sitemaps, sorted by their weight.
    *
-   * @todo Sort by weight and other magic
+   * {@inheritdoc}
    */
   protected function doLoadMultiple(array $ids = NULL) {
-    return parent::doLoadMultiple($ids);
+    $sitemaps = parent::doLoadMultiple($ids);
+    uasort($sitemaps, function($a, $b) { return strcmp($a->getWeight(), $b->getWeight()); });
+
+    return $sitemaps;
   }
 
   /**
    * {@inheritdoc}
-   *
-   * @todo
    */
   protected function doSave($id, EntityInterface $entity) {
+    /** @var SimpleSitemapInterface $entity */
+    if (!preg_match('/^[\w\-_]+$/', $id)) {
+      throw new \InvalidArgumentException("The sitemap ID can only include alphanumeric characters, dashes and underscores.");
+    }
+
+    if (is_numeric($id)) {
+      throw new \InvalidArgumentException("The sitemap ID cannot be numeric.");
+    }
+
+    if ($entity->get('type') === NULL) {
+      throw new \InvalidArgumentException("The sitemap must define its sitemap type information.");
+    }
+
     if ($this->entityTypeManager->getStorage('simple_sitemap_type')->load($entity->get('type')) === NULL) {
       throw new \InvalidArgumentException("Sitemap type {$entity->get('type')} does not exist.");
     }
-    return parent::doSave($id, $entity) ? SAVED_NEW : SAVED_UPDATED;
+
+    if ($entity->label() === NULL) {
+      $entity->set('label', $id);
+    }
+
+    if ($entity->get('weight') === NULL) {
+      $entity->set('weight', 0);
+    }
+
+    return parent::doSave($id, $entity);
   }
 
   /*
