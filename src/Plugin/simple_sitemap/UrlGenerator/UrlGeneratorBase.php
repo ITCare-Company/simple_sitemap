@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\simple_sitemap\SimpleSitemapSettings;
@@ -106,8 +107,11 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    * @return array
    */
   public function generate($data_set): array {
-    $path_data = $this->processDataSet($data_set);
-
-    return FALSE !== $path_data ? [$path_data] : [];
+    try {
+      return [$this->processDataSet($data_set)];
+    }
+    catch (SkipElementException $e) {
+      return [];
+    }
   }
 }

@@ -5,6 +5,7 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 use Drupal\Core\Url;
 use Drupal\simple_sitemap\Annotation\UrlGenerator;
 use Drupal\simple_sitemap\EntityHelper;
+use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -116,7 +117,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
         ->display('warning', 'administer sitemap settings')
         ->log('warning');
 
-      return FALSE;
+      throw new SkipElementException();
     }
 
     $url_object = Url::fromUserInput($data_set['path'])->setAbsolute();

@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\EntityHelper;
+use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Simplesitemap;
@@ -104,7 +105,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       ->getBundleSettings();
     if (!empty($bundle_settings['menu_link_content'])) {
       foreach ($bundle_settings['menu_link_content'] as $bundle_name => $bundle_settings) {
-        if (!empty($bundle_settings['index'])) {
+        if ($bundle_settings['index']) {
 
           // Retrieve the expanded tree.
           $tree = $this->menuLinkTree->load($bundle_name, new MenuTreeParameters());
@@ -132,14 +133,14 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
 
     /** @var  MenuLinkBase $data_set */
     if (!$data_set->isEnabled()) {
-      return FALSE; // todo throw exception isntead.
+      throw new SkipElementException();
     }
 
     $url_object = $data_set->getUrlObject()->setAbsolute();
 
     // Do not include external paths.
     if ($url_object->isExternal()) {
-      return FALSE;
+      throw new SkipElementException();
     }
 
     // If not a menu_link_content link, use bundle settings.
@@ -157,7 +158,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
         ->getEntityInstanceSettings('menu_link_content', $meta_data['entity_id']);
 
       if (empty($entity_settings['index'])) {
-        return FALSE;
+        throw new SkipElementException();
       }
     }
 
@@ -165,7 +166,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
 
       // Do not include paths that have no URL.
       if (in_array($url_object->getRouteName(), ['<nolink>', '<none>'])) {
-        return FALSE;
+        throw new SkipElementException();
       }
 
       $path = $url_object->getInternalPath();
