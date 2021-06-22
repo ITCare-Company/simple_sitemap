@@ -353,7 +353,7 @@ class QueueWorker {
    */
   public function deleteQueue(): QueueWorker {
     $this->queue->deleteQueue();
-    SimpleSitemapStorage::purgeContent(NULL, SimpleSitemap::FETCH_BY_STATUS_UNPUBLISHED);
+    SimpleSitemap::purgeContent(NULL, SimpleSitemap::FETCH_BY_STATUS_UNPUBLISHED);
     $this->state->set('simple_sitemap.queue_items_initial_amount', 0);
     $this->state->delete('simple_sitemap.queue_stashed_results');
     $this->resetWorker();

@@ -67,8 +67,6 @@ class Generator {
    *
    * @return mixed
    *  The current setting from configuration or a default value.
-   *
-   * @todo Replace calls with simple_sitemap.settings and remove.
    */
   public function getSetting(string $name, $default = FALSE) {
     return $this->settings->get($name, $default);
@@ -84,8 +82,6 @@ class Generator {
    *  The setting to be saved.
    *
    * @return $this
-   *
-   * @todo Replace calls with simple_sitemap.settings and remove.
    */
   public function saveSetting(string $name, $setting): Generator {
     $this->settings->save($name, $setting);

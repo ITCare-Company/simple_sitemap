@@ -10,9 +10,9 @@ use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Path\PathValidator;
 
 /**
- * Class SimpleSitemapCustomLinksForm
+ * Class CustomLinksForm
  */
-class SimpleSitemapCustomLinksForm extends SimpleSitemapFormBase {
+class CustomLinksForm extends SimpleSitemapFormBase {
 
   /**
    * @var \Drupal\Core\Path\PathValidator
@@ -20,7 +20,7 @@ class SimpleSitemapCustomLinksForm extends SimpleSitemapFormBase {
   protected $pathValidator;
 
   /**
-   * SimpleSitemapCustomLinksForm constructor.
+   * CustomLinksForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\simple_sitemap\Manager\Generator $generator

@@ -249,4 +249,8 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return $variant;
   }
 
+  public static function purgeContent($variants = NULL, $status = self::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED) {
+    \Drupal::entityTypeManager()->getStorage('simple_sitemap')->purgeContent($variants, $status);
+  }
+
 }

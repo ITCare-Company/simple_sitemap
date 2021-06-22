@@ -1,7 +1,7 @@
 simple_sitemap.sitemap_default:
   path: '/sitemap.xml'
   defaults:
-    _controller: '\Drupal\simple_sitemap\Controller\SimplesitemapController::getSitemap'
+    _controller: '\Drupal\simple_sitemap\Controller\SimpleSitemapController::getSitemap'
     _disable_route_normalizer: 'TRUE'
   requirements:
     _access: 'TRUE'
@@ -13,7 +13,7 @@ simple_sitemap.sitemap_default:
 simple_sitemap.sitemap_variant:
   path: '/sitemaps/{variant}/sitemap.xml'
   defaults:
-    _controller: '\Drupal\simple_sitemap\Controller\SimplesitemapController::getSitemap'
+    _controller: '\Drupal\simple_sitemap\Controller\SimpleSitemapController::getSitemap'
     _disable_route_normalizer: 'TRUE'
   requirements:
     _access: 'TRUE'
@@ -21,7 +21,7 @@ simple_sitemap.sitemap_variant:
 simple_sitemap.sitemap_xsl:
   path: '/sitemap.xsl'
   defaults:
-    _controller: '\Drupal\simple_sitemap\Controller\SimplesitemapController::getSitemapXsl'
+    _controller: '\Drupal\simple_sitemap\Controller\SimpleSitemapController::getSitemapXsl'
     _title: 'Sitemap XSL'
     _disable_route_normalizer: 'TRUE'
   requirements:
@@ -30,7 +30,7 @@ simple_sitemap.sitemap_xsl:
 simple_sitemap.sitemaps:
   path: '/admin/config/search/simplesitemap'
   defaults:
-    _form: '\Drupal\simple_sitemap\Form\SimpleSitemapSitemapsForm'
+    _form: '\Drupal\simple_sitemap\Form\SitemapsForm'
     _title: 'Simple XML Sitemap'
   requirements:
     _permission: 'administer sitemap settings'
@@ -38,7 +38,7 @@ simple_sitemap.sitemaps:
 simple_sitemap.settings:
   path: '/admin/config/search/simplesitemap/settings'
   defaults:
-    _form: '\Drupal\simple_sitemap\Form\SimpleSitemapSettingsForm'
+    _form: '\Drupal\simple_sitemap\Form\SettingsForm'
     _title: 'Simple XML Sitemap'
   requirements:
     _permission: 'administer sitemap settings'
@@ -46,7 +46,7 @@ simple_sitemap.settings:
 simple_sitemap.entities:
   path: '/admin/config/search/simplesitemap/entities'
   defaults:
-    _form: '\Drupal\simple_sitemap\Form\SimpleSitemapEntitiesForm'
+    _form: '\Drupal\simple_sitemap\Form\EntitiesForm'
     _title: 'Simple XML Sitemap'
   requirements:
     _permission: 'administer sitemap settings'
@@ -54,7 +54,7 @@ simple_sitemap.entities:
 simple_sitemap.custom:
   path: '/admin/config/search/simplesitemap/custom'
   defaults:
-    _form: '\Drupal\simple_sitemap\Form\SimpleSitemapCustomLinksForm'
+    _form: '\Drupal\simple_sitemap\Form\CustomLinksForm'
     _title: 'Simple XML Sitemap'
   requirements:
     _permission: 'administer sitemap settings'
@@ -62,7 +62,7 @@ simple_sitemap.custom:
 simple_sitemap.variants:
   path: '/admin/config/search/simplesitemap/variants'
   defaults:
-    _form: '\Drupal\simple_sitemap\Form\SimpleSitemapVariantsForm'
+    _form: '\Drupal\simple_sitemap\Form\VariantsForm'
     _title: 'Simple XML Sitemap'
   requirements:
     _permission: 'administer sitemap settings'

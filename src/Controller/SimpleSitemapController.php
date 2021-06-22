@@ -10,9 +10,9 @@ use Drupal\simple_sitemap\Manager\Generator;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class SimplesitemapController
+ * Class SimpleSitemapController
  */
-class SimplesitemapController extends ControllerBase {
+class SimpleSitemapController extends ControllerBase {
 
   /**
    * @var \Drupal\simple_sitemap\Manager\Generator
@@ -20,7 +20,7 @@ class SimplesitemapController extends ControllerBase {
   protected $generator;
 
   /**
-   * SimplesitemapController constructor.
+   * SimpleSitemapController constructor.
    *
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
    */
@@ -31,7 +31,7 @@ class SimplesitemapController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container): SimplesitemapController {
+  public static function create(ContainerInterface $container): SimpleSitemapController {
     return new static(
       $container->get('simple_sitemap.generator')
     );

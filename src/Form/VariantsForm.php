@@ -7,9 +7,9 @@ use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Entity\SimpleSitemapType;
 
 /**
- * Class SimpleSitemapVariantsForm
+ * Class VariantsForm
  */
-class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
+class VariantsForm extends SimpleSitemapFormBase {
 
   /**
    * {@inheritdoc}

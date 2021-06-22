@@ -5,8 +5,6 @@
  * Module install and update procedures.
  */
 
-use Drupal\simple_sitemap\Entity\SimpleSitemap;
-
 /**
  * Implements hook_requirements().
  *
@@ -196,8 +194,8 @@ function _simple_sitemap_update_8216_get_default_variant() {
       ->save();
   }
 
-  if (SimpleSitemap::load($default_variant) === NULL) {
-    SimpleSitemap::createOrUpdate($default_variant, 'default_hreflang');
+  if (Drupal\simple_sitemap\Entity\SimpleSitemap::load($default_variant) === NULL) {
+    Drupal\simple_sitemap\Entity\SimpleSitemap::createOrUpdate($default_variant, 'default_hreflang');
   }
 
   return $default_variant;
@@ -876,12 +874,10 @@ function simple_sitemap_update_8308() {
       ])->save();
     }
   }
-  if (!empty($configs = $config_factory->listAll('simple_sitemap.variants.'))) {
-    foreach ($configs as $config) {
-      $config_factory->getEditable($config)->delete();
-    }
+  foreach ($config_factory->listAll('simple_sitemap.variants.') as $config) {
+    $config_factory->getEditable($config)->delete();
   }
-  \Drupal\simple_sitemap\Entity\SimpleSitemapStorage::purgeContent();
+  Drupal\simple_sitemap\Entity\SimpleSitemap::purgeContent();
 
   return t('All variants belonging to the built-in "Default hreflang" sitemap type have been converted to entities. Custom sitemap types added via plugins will have to be recreated manually. See simple_sitemap.type.default_hreflang.yml.');
 }

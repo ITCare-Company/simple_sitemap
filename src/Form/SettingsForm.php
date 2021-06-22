@@ -12,9 +12,9 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Language\LanguageManagerInterface;
 
 /**
- * Class SimpleSitemapSettingsForm
+ * Class SettingsForm
  */
-class SimpleSitemapSettingsForm extends SimpleSitemapFormBase {
+class SettingsForm extends SimpleSitemapFormBase {
 
   /**
    * @var \Drupal\Core\Language\LanguageManagerInterface
@@ -22,7 +22,7 @@ class SimpleSitemapSettingsForm extends SimpleSitemapFormBase {
   protected $languageManager;
 
   /**
-   * SimpleSitemapSettingsForm constructor.
+   * SettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param \Drupal\simple_sitemap\Manager\Generator $generator

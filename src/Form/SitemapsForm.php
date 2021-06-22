@@ -14,9 +14,9 @@ use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
 use Drupal\Core\Database\Connection;
 
 /**
- * Class SimpleSitemapSitemapsForm
+ * Class SitemapsForm
  */
-class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
+class SitemapsForm extends SimpleSitemapFormBase {
 
   /**
    * @var \Drupal\Core\Database\Connection
@@ -31,7 +31,7 @@ class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
   protected $queueWorker;
 
   /**
-   * SimpleSitemapSitemapsForm constructor.
+   * SitemapsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param SimplesitemapOld $generator
