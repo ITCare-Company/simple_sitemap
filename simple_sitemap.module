@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\system\MenuInterface;
 use Drupal\language\ConfigurableLanguageInterface;
@@ -101,10 +102,10 @@ function simple_sitemap_entity_form_submit($form, FormStateInterface &$form_stat
 
   if ($f->valuesChanged($form, $values)) {
 
-    /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
+    /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
     $generator = \Drupal::service('simple_sitemap.generator');
 
-    foreach ($generator->getSitemapManager()->getSitemapVariants() as $variant_id => $variant) {
+    foreach (SimpleSitemap::loadMultiple() as $variant_id => $variant) {
 
       if (isset($values['index_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'])) { // Variants may have changed since form load.
         $settings = [
@@ -118,12 +119,12 @@ function simple_sitemap_entity_form_submit($form, FormStateInterface &$form_stat
 
         switch ($f->getEntityCategory()) {
           case 'bundle':
-            $generator->setBundleSettings($f->getEntityTypeId(), $f->getBundleName(), $settings);
+            $generator->entities()->setBundleSettings($f->getEntityTypeId(), $f->getBundleName(), $settings);
             break;
 
           case 'instance':
             if (!$f->entityIsNew()) { // Make sure the entity is saved first for multi-step forms, see https://www.drupal.org/project/simple_sitemap/issues/3080510.
-              $generator->setEntityInstanceSettings($f->getEntityTypeId(), $f->getInstanceId(), $settings);
+              $generator->entities()->setEntityInstanceSettings($f->getEntityTypeId(), $f->getInstanceId(), $settings);
             }
             break;
         }
@@ -143,14 +144,14 @@ function simple_sitemap_entity_form_submit($form, FormStateInterface &$form_stat
  * Implements hook_cron().
  */
 function simple_sitemap_cron() {
+  /** @var \Drupal\simple_sitemap\Settings $settings */
+  $settings = \Drupal::service(('simple_sitemap.settings'));
 
-  /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
-  $generator = \Drupal::service('simple_sitemap.generator');
+  if ($settings->get('cron_generate')) {
 
-  if ($generator->getSetting('cron_generate')) {
-    $interval = (int) $generator->getSetting('cron_generate_interval', 0) * 60 * 60;
+    $interval = (int) $settings->get('cron_generate_interval', 0) * 60 * 60;
     $request_time = \Drupal::service('datetime.time')->getRequestTime();
-    $generation_in_progress = $generator->getQueueWorker()->generationInProgress();
+    $generation_in_progress = \Drupal::service('simple_sitemap.queue_worker')->generationInProgress();
     $state = \Drupal::state();
 
     if ($interval === 0
@@ -161,6 +162,8 @@ function simple_sitemap_cron() {
         $state->set('simple_sitemap.last_cron_generate', $request_time);
       }
 
+      /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
+      $generator = \Drupal::service('simple_sitemap.generator');
       $generator->generateSitemap(QueueWorker::GENERATE_TYPE_CRON);
     }
   }
@@ -173,13 +176,13 @@ function simple_sitemap_cron() {
  */
 function simple_sitemap_configurable_language_delete(ConfigurableLanguageInterface $language) {
 
-  /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
-  $generator = \Drupal::service('simple_sitemap.generator');
+  /** @var \Drupal\simple_sitemap\Settings $settings */
+  $settings = \Drupal::service('simple_sitemap.settings');
 
-  $excluded_languages = $generator->getSetting('excluded_languages');
+  $excluded_languages = $settings->get('excluded_languages');
   if (isset($excluded_languages[$language->id()])) {
     unset($excluded_languages[$language->id()]);
-    $generator->saveSetting('excluded_languages', $excluded_languages);
+    $settings->save('excluded_languages', $excluded_languages);
   }
 }
 
@@ -192,13 +195,13 @@ function simple_sitemap_configurable_language_delete(ConfigurableLanguageInterfa
  */
 function simple_sitemap_entity_delete(EntityInterface $entity) {
 
-  /** @var \Drupal\simple_sitemap\EntityHelper $entity_helper */
+  /** @var \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper */
   $entity_helper = \Drupal::service('simple_sitemap.entity_helper');
   if ($entity_helper->supports($entity->getEntityType())) {
 
-    /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
+    /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
     $generator = \Drupal::service('simple_sitemap.generator');
-    $generator->setVariants(TRUE)->removeEntityInstanceSettings(
+    $generator->setVariants(TRUE)->entities()->removeEntityInstanceSettings(
       $entity->getEntityTypeId(), $entity->id()
     );
   }
@@ -216,9 +219,9 @@ function simple_sitemap_entity_delete(EntityInterface $entity) {
  */
 function simple_sitemap_entity_bundle_delete($entity_type_id, $bundle) {
 
-  /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
+  /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
   $generator = \Drupal::service('simple_sitemap.generator');
-  $generator->setVariants(TRUE)->removeBundleSettings($entity_type_id, $bundle);
+  $generator->setVariants(TRUE)->entities()->removeBundleSettings($entity_type_id, $bundle);
 }
 
 /**
@@ -232,9 +235,9 @@ function simple_sitemap_entity_bundle_delete($entity_type_id, $bundle) {
  */
 function simple_sitemap_menu_delete(MenuInterface $menu) {
 
-  /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
+  /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
   $generator = \Drupal::service('simple_sitemap.generator');
-  $generator->setVariants(TRUE)->removeBundleSettings('menu_link_content', $menu->id());
+  $generator->setVariants(TRUE)->entities()->removeBundleSettings('menu_link_content', $menu->id());
 }
 
 /**
@@ -243,10 +246,10 @@ function simple_sitemap_menu_delete(MenuInterface $menu) {
 function simple_sitemap_page_attachments_alter(array &$attachments) {
   if (!empty($attachments['#attached']['html_head_link'])) {
 
-    /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
-    $generator = \Drupal::service('simple_sitemap.generator');
+    /** @var \Drupal\simple_sitemap\Settings $settings */
+    $settings = \Drupal::service('simple_sitemap.settings');
 
-    if ($generator->getSetting('disable_language_hreflang')) {
+    if ($settings->get('disable_language_hreflang')) {
       // @fixme https://www.drupal.org/project/drupal/issues/1255092
       // Content Translation module normally adds identical hreflang tags, so
       // executing its hook_page_attachments() implementation would be harmless,

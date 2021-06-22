@@ -5,9 +5,12 @@ namespace Drupal\simple_sitemap\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
+use Drupal\simple_sitemap\Entity\SimpleSitemapType;
+use Drupal\simple_sitemap\Queue\QueueWorker;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\simple_sitemap\Simplesitemap as SimplesitemapOld;
+use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
 use Drupal\Core\Database\Connection;
 
 /**
@@ -25,29 +28,37 @@ class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
    */
   protected $dateFormatter;
 
+  protected $queueWorker;
+
   /**
    * SimpleSitemapSitemapsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    * @param SimplesitemapOld $generator
+   * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    * @param \Drupal\Core\Database\Connection $database
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
+   * @param \Drupal\simple_sitemap\Queue\QueueWorker $queue_worker
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     SimplesitemapOld $generator,
+    Settings $settings,
     FormHelper $form_helper,
     Connection $database,
-    DateFormatter $date_formatter
+    DateFormatter $date_formatter,
+    QueueWorker $queue_worker
   ) {
     parent::__construct(
       $config_factory,
       $generator,
+      $settings,
       $form_helper
     );
     $this->db = $database;
     $this->dateFormatter = $date_formatter;
+    $this->queueWorker = $queue_worker;
   }
 
   /**
@@ -57,9 +68,11 @@ class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('simple_sitemap.generator'),
+      $container->get('simple_sitemap.settings'),
       $container->get('simple_sitemap.form_helper'),
       $container->get('database'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('simple_sitemap.queue_worker')
     );
   }
 
@@ -77,7 +90,6 @@ class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
 
     $form['simple_sitemap_settings']['#prefix'] = FormHelper::getDonationText();
     $form['simple_sitemap_settings']['#attached']['library'][] = 'simple_sitemap/sitemaps';
-    $queue_worker = $this->generator->getQueueWorker();
 
     $form['simple_sitemap_settings']['status'] = [
       '#type' => 'fieldset',
@@ -100,7 +112,7 @@ class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
 
     $form['simple_sitemap_settings']['status']['actions']['regenerate_submit'] = [
       '#type' => 'submit',
-      '#value' => $queue_worker->generationInProgress()
+      '#value' => $this->queueWorker->generationInProgress()
         ? $this->t('Resume generation')
         : $this->t('Rebuild queue & generate'),
       '#submit' => ['::generateSitemap'],
@@ -114,13 +126,13 @@ class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
 
     $form['simple_sitemap_settings']['status']['progress']['title']['#markup'] = $this->t('Progress of sitemap regeneration');
 
-    $total_count = $queue_worker->getInitialElementCount();
+    $total_count = $this->queueWorker->getInitialElementCount();
     if (!empty($total_count)) {
-      $indexed_count = $queue_worker->getProcessedElementCount();
+      $indexed_count = $this->queueWorker->getProcessedElementCount();
       $percent = round(100 * $indexed_count / $total_count);
 
       // With all results processed, there still may be some stashed results to be indexed.
-      $percent = $percent === 100 && $queue_worker->generationInProgress() ? 99 : $percent;
+      $percent = $percent === 100 && $this->queueWorker->generationInProgress() ? 99 : $percent;
 
       $index_progress = [
         '#theme' => 'progress_bar',
@@ -133,15 +145,13 @@ class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
       $form['simple_sitemap_settings']['status']['progress']['bar']['#markup'] = '<div class="description">' . $this->t('There are no items to be indexed.') . '</div>';
     }
 
-    $sitemap_manager = $this->generator->getSitemapManager();
-    foreach ($sitemap_manager->getSitemapTypes() as $type_id => $sitemap_type) {
-      $variants = \Drupal::entityTypeManager()->getStorage('simple_sitemap')->loadByProperties(['type' => $type_id]);
-      if (!empty($variants)) {
+    foreach (SimpleSitemapType::loadMultiple() as $type_id => $sitemap_type) {
+      if ($variants = \Drupal::entityTypeManager()->getStorage('simple_sitemap')->loadByProperties(['type' => $type_id])) {
 
         $form['simple_sitemap_settings']['status']['types'][$type_id] = [
           '#type' => 'details',
           '#title' => '<em>' . $sitemap_type->label() . '</em> ' . $this->t('sitemaps'),
-          '#open' => !empty($variants) && count($variants) <= 5,
+          '#open' => count($variants) <= 5,
           '#description' => !empty($sitemap_type->getDescription()) ? '<div class="description">' . $sitemap_type->getDescription() . '</div>' : '',
         ];
         $form['simple_sitemap_settings']['status']['types'][$type_id]['table'] = [
@@ -168,7 +178,7 @@ class SimpleSitemapSitemapsForm extends SimpleSitemapFormBase {
               case SimpleSitemap::SITEMAP_PUBLISHED:
               case SimpleSitemap::SITEMAP_PUBLISHED_GENERATING:
                 $row['name']['data']['#markup'] = $this->t('<a href="@url" target="_blank">@variant</a>',
-                  ['@url' => $variant->getUrl(), '@variant' => $this->t($variant->label())]
+                  ['@url' => $variant->toUrlString(), '@variant' => $this->t($variant->label())]
                 );
                 $row['status'] = $this->t(($variant->status() === SimpleSitemap::SITEMAP_PUBLISHED
                   ? 'published on @time'

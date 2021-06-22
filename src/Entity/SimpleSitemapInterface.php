@@ -3,7 +3,6 @@
 namespace Drupal\simple_sitemap\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\simple_sitemap\SimpleSitemapStorage;
 
 interface SimpleSitemapInterface extends ConfigEntityInterface {
 
@@ -43,7 +42,7 @@ interface SimpleSitemapInterface extends ConfigEntityInterface {
 
   public function getLinkCount(): int;
 
-  public function getUrl(): string;
+  public function toUrlString(): string;
 
   public function isDefault(): bool;
 

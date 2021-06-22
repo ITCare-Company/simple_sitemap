@@ -4,9 +4,9 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Extension\ModuleHandler;
-use Drupal\simple_sitemap\SimpleSitemapSettings;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,18 +28,18 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Simplesitemap $generator,
+    Generator $generator,
     Logger $logger,
-    SimpleSitemapSettings $settings,
+    Settings $settings,
     ModuleHandler $module_handler
   ) {
     parent::__construct(

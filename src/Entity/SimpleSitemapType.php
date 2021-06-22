@@ -12,7 +12,7 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGenerato
  *   id = "simple_sitemap_type",
  *   label = @Translation("Simple XML sitemap type"),
  *   handlers = {
- *     "storage" = "Drupal\simple_sitemap\SimpleSitemapTypeStorage",
+ *     "storage" = "Drupal\simple_sitemap\Entity\SimpleSitemapTypeStorage",
  *   },
  *   config_prefix = "type",
  *   admin_permission = "administer sitemap settings",
@@ -34,8 +34,6 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGenerato
  * @todo Now all sitemap types can be deleted. Deal with it.
  */
 class SimpleSitemapType extends ConfigEntityBase implements SimpleSitemapTypeInterface {
-
-  public const DEFAULT_SITEMAP_TYPE = 'default_hreflang';
 
   /**
    * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorInterface[]

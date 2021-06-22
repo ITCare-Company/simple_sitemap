@@ -5,14 +5,14 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
-use Drupal\simple_sitemap\EntityHelper;
+use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\simple_sitemap\SimpleSitemapSettings;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,12 +47,12 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
+   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entityHelper
    * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager $url_generator_manager
    * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $memory_cache
    */
@@ -60,9 +60,9 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Simplesitemap $generator,
+    Generator $generator,
     Logger $logger,
-    SimpleSitemapSettings $settings,
+    Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper,
@@ -82,7 +82,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     );
     $this->urlGeneratorManager = $url_generator_manager;
     $this->entityMemoryCache = $memory_cache;
-    $this->entitiesPerDataset = $this->settings->getSetting('entities_per_queue_item', 50);
+    $this->entitiesPerDataset = $this->settings->get('entities_per_queue_item', 50);
   }
 
   public static function create(
@@ -112,7 +112,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     $data_sets = [];
     $sitemap_entity_types = $this->entityHelper->getSupportedEntityTypes();
 
-    foreach ($this->generator->setVariants($this->sitemapVariant->id())->getBundleSettings() as $entity_type_name => $bundles) {
+    foreach ($this->generator->setVariants($this->sitemapVariant->id())->entities()->getBundleSettings() as $entity_type_name => $bundles) {
       if (!isset($sitemap_entity_types[$entity_type_name])) {
         continue;
       }
@@ -202,7 +202,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
   protected function processEntity(ContentEntityInterface $entity): array {
     $entity_settings = $this->generator
       ->setVariants($this->sitemapVariant->id())
-      ->getEntityInstanceSettings($entity->getEntityTypeId(), $entity->id());
+      ->entities()->getEntityInstanceSettings($entity->getEntityTypeId(), $entity->id());
 
     if (empty($entity_settings['index'])) {
       throw new SkipElementException();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\simple_sitemap;
+namespace Drupal\simple_sitemap\Entity;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
@@ -11,8 +11,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -33,7 +33,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
 
   protected $settings;
 
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, Connection $database, TimeInterface $time, EntityTypeManagerInterface $entity_type_manager, SimpleSitemapSettings $settings) {
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, Connection $database, TimeInterface $time, EntityTypeManagerInterface $entity_type_manager, Settings $settings) {
     parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
     $this->database = $database;
     $this->time = $time;
@@ -63,7 +63,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
    * @todo Improve performance of his method.
    */
   protected function doDelete($entities) {
-    $default_variant = $this->settings->getSetting('default_variant');
+    $default_variant = $this->settings->get('default_variant');
 
     /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[] $entities */
     foreach ($entities as $entity) {
@@ -73,7 +73,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
 
       // Unset default variant setting if necessary.
       if ($default_variant === $entity->id()) {
-        $this->settings->saveSetting('default_variant', NULL);
+        $this->settings->save('default_variant', NULL);
       }
 
       // Remove bundle settings.

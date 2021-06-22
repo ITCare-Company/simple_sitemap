@@ -9,8 +9,8 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Database\Database;
-use Drupal\simple_sitemap\Simplesitemap;
-use Drupal\simple_sitemap\EntityHelper;
+use Drupal\simple_sitemap\Manager\Generator;
+use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Logger;
 use Drupal\views\Views;
 use Drupal\Core\Url;
@@ -49,7 +49,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    *   The simple_sitemap.generator service.
    * @param \Drupal\simple_sitemap\Logger $logger
    *   The simple_sitemap.logger service.
@@ -57,7 +57,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
    *   The language manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\simple_sitemap\EntityHelper $entity_helper
+   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
    *   The simple_sitemap.entity_helper service.
    * @param \Drupal\simple_sitemap_views\SimpleSitemapViews $sitemap_views
    *   Views sitemap data.
@@ -68,7 +68,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Simplesitemap $generator,
+    Generator $generator,
     Logger $logger,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,

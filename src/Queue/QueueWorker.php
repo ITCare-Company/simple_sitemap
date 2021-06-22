@@ -7,11 +7,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
-use Drupal\simple_sitemap\SimpleSitemapSettings;
-use Drupal\simple_sitemap\SimpleSitemapManager;
+use Drupal\simple_sitemap\Settings;
 use Drupal\Core\State\StateInterface;
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\SimpleSitemapStorage;
+use Drupal\simple_sitemap\Entity\SimpleSitemapStorage;
 
 class QueueWorker {
 
@@ -27,14 +26,9 @@ class QueueWorker {
   public const GENERATE_TYPE_BACKEND = 'backend';
 
   /**
-   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
+   * @var \Drupal\simple_sitemap\Settings
    */
   protected $settings;
-
-  /**
-   * @var \Drupal\simple_sitemap\SimpleSitemapManager
-   */
-  protected $manager;
 
   /**
    * @var \Drupal\Core\State\StateInterface
@@ -109,8 +103,7 @@ class QueueWorker {
   /**
    * QueueWorker constructor.
    *
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
-   * @param \Drupal\simple_sitemap\SimpleSitemapManager $manager
+   * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\State\StateInterface $state
    * @param \Drupal\simple_sitemap\Queue\SimpleSitemapQueue $element_queue
    * @param \Drupal\simple_sitemap\Logger $logger
@@ -118,8 +111,7 @@ class QueueWorker {
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
    */
-  public function __construct(SimpleSitemapSettings $settings,
-                              SimpleSitemapManager $manager,
+  public function __construct(Settings $settings,
                               StateInterface $state,
                               SimpleSitemapQueue $element_queue,
                               Logger $logger,
@@ -127,7 +119,6 @@ class QueueWorker {
                               EntityTypeManagerInterface $entity_type_manager,
                               LockBackendInterface $lock) {
     $this->settings = $settings;
-    $this->manager = $manager;
     $this->state = $state;
     $this->queue = $element_queue;
     $this->logger = $logger;
@@ -215,15 +206,15 @@ class QueueWorker {
   public function generateSitemap(string $from = self::GENERATE_TYPE_FORM): QueueWorker {
 
     $this->generatorSettings = [
-      'base_url' => $this->settings->getSetting('base_url', ''),
-      'xsl' => $this->settings->getSetting('xsl', TRUE),
-      'default_variant' => $this->settings->getSetting('default_variant', NULL),
-      'skip_untranslated' => $this->settings->getSetting('skip_untranslated', FALSE),
-      'remove_duplicates' => $this->settings->getSetting('remove_duplicates', TRUE),
-      'excluded_languages' => $this->settings->getSetting('excluded_languages', []),
+      'base_url' => $this->settings->get('base_url', ''),
+      'xsl' => $this->settings->get('xsl', TRUE),
+      'default_variant' => $this->settings->get('default_variant', NULL),
+      'skip_untranslated' => $this->settings->get('skip_untranslated', FALSE),
+      'remove_duplicates' => $this->settings->get('remove_duplicates', TRUE),
+      'excluded_languages' => $this->settings->get('excluded_languages', []),
     ];
-    $this->maxLinks = $this->settings->getSetting('max_links');
-    $max_execution_time = $this->settings->getSetting('generate_duration', 10000);
+    $this->maxLinks = $this->settings->get('max_links');
+    $max_execution_time = $this->settings->get('generate_duration', 10000);
     Timer::start('simple_sitemap_generator');
 
     $this->unstashResults();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\simple_sitemap;
+namespace Drupal\simple_sitemap\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Component\Uuid\UuidInterface;

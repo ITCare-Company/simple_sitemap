@@ -3,14 +3,14 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
-use Drupal\simple_sitemap\SimpleSitemapSettings;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
-use Drupal\simple_sitemap\EntityHelper;
+use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\Language;
@@ -42,7 +42,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   protected $anonUser;
 
   /**
-   * @var \Drupal\simple_sitemap\EntityHelper
+   * @var \Drupal\simple_sitemap\Entity\EntityHelper
    */
   protected $entityHelper;
 
@@ -52,20 +52,20 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
+   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entityHelper
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Simplesitemap $generator,
+    Generator $generator,
     Logger $logger,
-    SimpleSitemapSettings $settings,
+    Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper
@@ -107,7 +107,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       // Not a routed URL or URL language negotiation disabled: Including only default variant.
       $alternate_urls = $this->getAlternateUrlsForDefaultLanguage($url_object);
     }
-    elseif ($this->settings->getSetting('skip_untranslated')
+    elseif ($this->settings->get('skip_untranslated')
       && ($entity = $this->entityHelper->getEntityFromUrlObject($url_object)) instanceof ContentEntityInterface) {
 
       /** @var ContentEntityInterface $entity */
@@ -164,7 +164,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
 
     /** @var Language $language */
     foreach ($entity->getTranslationLanguages() as $language) {
-      if (!isset($this->settings->getSetting('excluded_languages')[$language->getId()]) || $language->isDefault()) {
+      if (!isset($this->settings->get('excluded_languages')[$language->getId()]) || $language->isDefault()) {
         if ($entity->getTranslation($language->getId())->access('view', $this->anonUser)) {
           $alternate_urls[$language->getId()] = $this->replaceBaseUrlWithCustom($url_object
             ->setAbsolute()->setOption('language', $language)->toString()
@@ -184,7 +184,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     $alternate_urls = [];
     if ($url_object->access($this->anonUser)) {
       foreach ($this->languages as $language) {
-        if (!isset($this->settings->getSetting('excluded_languages')[$language->getId()]) || $language->isDefault()) {
+        if (!isset($this->settings->get('excluded_languages')[$language->getId()]) || $language->isDefault()) {
           $alternate_urls[$language->getId()] = $this->replaceBaseUrlWithCustom($url_object
             ->setAbsolute()->setOption('language', $language)->toString()
           );

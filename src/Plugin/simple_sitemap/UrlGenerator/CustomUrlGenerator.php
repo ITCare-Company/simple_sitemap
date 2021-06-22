@@ -4,15 +4,15 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\Core\Url;
 use Drupal\simple_sitemap\Annotation\UrlGenerator;
-use Drupal\simple_sitemap\EntityHelper;
+use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Path\PathValidator;
-use Drupal\simple_sitemap\SimpleSitemapSettings;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -46,21 +46,21 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
+   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entityHelper
    * @param \Drupal\Core\Path\PathValidator $path_validator
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Simplesitemap $generator,
+    Generator $generator,
     Logger $logger,
-    SimpleSitemapSettings $settings,
+    Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper,
@@ -102,9 +102,9 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    * @inheritdoc
    */
   public function getDataSets(): array {
-    $this->includeImages = $this->generator->getSetting('custom_links_include_images', FALSE);
+    $this->includeImages = $this->settings->get('custom_links_include_images', FALSE);
 
-    return array_values($this->generator->setVariants($this->sitemapVariant->id())->getCustomLinks());
+    return array_values($this->generator->setVariants($this->sitemapVariant->id())->customLinks()->get());
   }
 
   /**

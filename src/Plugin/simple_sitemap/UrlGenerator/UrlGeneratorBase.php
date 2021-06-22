@@ -5,10 +5,10 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
-use Drupal\simple_sitemap\SimpleSitemapSettings;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 
 /**
  * Class UrlGeneratorBase
@@ -16,7 +16,7 @@ use Drupal\simple_sitemap\Simplesitemap;
 abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGeneratorInterface {
 
   /**
-   * @var \Drupal\simple_sitemap\Simplesitemap
+   * @var \Drupal\simple_sitemap\Manager\Generator
    */
   protected $generator;
 
@@ -26,7 +26,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
   protected $logger;
 
   /**
-   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
+   * @var \Drupal\simple_sitemap\Settings
    */
   protected $settings;
 
@@ -41,17 +41,17 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\Settings $settings
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Simplesitemap $generator,
+    Generator $generator,
     Logger $logger,
-    SimpleSitemapSettings $settings
+    Settings $settings
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->generator = $generator;
@@ -86,7 +86,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    * @return string
    */
   protected function replaceBaseUrlWithCustom($url): string {
-    return !empty($base_url = $this->settings->getSetting('base_url'))
+    return !empty($base_url = $this->settings->get('base_url'))
       ? str_replace($GLOBALS['base_url'], $base_url, $url)
       : $url;
   }

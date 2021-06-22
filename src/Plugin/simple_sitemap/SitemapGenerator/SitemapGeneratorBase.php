@@ -4,7 +4,7 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
-use Drupal\simple_sitemap\SimpleSitemapSettings;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ModuleHandler;
 
@@ -21,7 +21,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
   protected $moduleHandler;
 
   /**
-   * @var \Drupal\simple_sitemap\SimpleSitemapSettings
+   * @var \Drupal\simple_sitemap\Settings
    */
   protected $settings;
 
@@ -50,7 +50,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
    * @param $plugin_definition
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter $sitemap_writer
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\Settings $settings
    */
   public function __construct(
     array $configuration,
@@ -58,7 +58,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $plugin_definition,
     ModuleHandler $module_handler,
     SitemapWriter $sitemap_writer,
-    SimpleSitemapSettings $settings
+    Settings $settings
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;
@@ -103,7 +103,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $this->writer->startSitemapDocument();
 
     // Add the XML stylesheet to document if enabled.
-    if ($this->settings->getSetting('xsl')) {
+    if ($this->settings->get('xsl')) {
       $this->writer->writeXsl();
     }
 
@@ -121,7 +121,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     // Add sitemap chunk locations to document.
     for ($delta = 1; $delta <= $this->sitemapVariant->unpublished()->getChunkCount(); $delta++) {
       $this->writer->startElement('sitemap');
-      $this->writer->writeElement('loc', $this->sitemapVariant->getUrl($delta));
+      $this->writer->writeElement('loc', $this->sitemapVariant->toUrlString($delta));
       $this->writer->writeElement('lastmod', date('c', $this->sitemapVariant->unpublished()->getCreated())); // todo Should this be current time instead?
       $this->writer->endElement();
     }

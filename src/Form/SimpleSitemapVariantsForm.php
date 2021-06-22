@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Entity\SimpleSitemapType;
 
 /**
@@ -32,13 +33,12 @@ class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
     $form['simple_sitemap_variants']['variants'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Variants'),
-      '#default_value' => $this->variantsToString($this->generator->getSitemapManager()->getSitemapVariants()),
-      '#description' => $this->t("Please specify sitemap variants, one per line. <strong>Caution: </strong>Removing variants here will delete their bundle settings, custom links and corresponding sitemap instances.<br><br>A variant definition consists of the variant name (used as the variant's path), the sitemap type it belongs to (optional) and the variant label (optional). These three values have to be separated by the | pipe | symbol.<br><br><strong>Examples:</strong><br><em>default | default_hreflang | Default</em> -> variant of the <em>default_hreflang</em> sitemap type and <em>Default</em> as label; accessible under <em>/default/sitemap.xml</em><br><em>test</em> -> variant of the <em>@default_sitemap_type</em> sitemap type and <em>test</em> as label; accessible under <em>/test/sitemap.xml</em><br><br><strong>Available sitemap types:</strong>", ['@default_sitemap_type' => SimpleSitemapType::DEFAULT_SITEMAP_TYPE]),
+      '#default_value' => $this->variantsToString(SimpleSitemap::loadMultiple()),
+      '#description' => $this->t("Please specify sitemap variants, one per line. <strong>Caution: </strong>Removing variants here will delete their bundle settings, custom links and corresponding sitemap instances.<br><br>A variant definition consists of the variant name (used as the variant's path), the sitemap type it belongs to (optional) and the variant label (optional). These three values have to be separated by the | pipe | symbol.<br><br><strong>Examples:</strong><br><em>default | default_hreflang | Default</em> -> variant of the <em>default_hreflang</em> sitemap type and <em>Default</em> as label; accessible under <em>/default/sitemap.xml</em><br><em>test</em> -> variant of the <em>default_hreflang</em> sitemap type and <em>test</em> as label; accessible under <em>/test/sitemap.xml</em><br><br><strong>Available sitemap types:</strong>"),
     ];
 
-    $types = $this->generator->getSitemapManager()->getSitemapTypes();
-    if ($types) {
-      foreach ($this->generator->getSitemapManager()->getSitemapTypes() as $sitemap_type) {
+    if ($types = SimpleSitemapType::loadMultiple()) {
+      foreach ($types as $sitemap_type) {
         $form['simple_sitemap_variants']['variants']['#description'] .= '<br>' . '<em>' . $sitemap_type->id() . '</em>' . (!empty($sitemap_type->getDescription()) ? (': ' . $sitemap_type->getDescription()) : '');
       }
     }
@@ -59,7 +59,7 @@ class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $line = 0;
-    $sitemap_types = $this->generator->getSitemapManager()->getSitemapTypes();
+    $sitemap_types = SimpleSitemapType::loadMultiple();
     foreach ($this->stringToVariants($form_state->getValue('variants')) as $id => $variant_definition) {
       $placeholders = [
         '@line' => ++$line,
@@ -93,10 +93,9 @@ class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $manager = $this->generator->getSitemapManager();
     $new_variants = $this->stringToVariants($form_state->getValue('variants'));
     $remove_variants = array_values(array_diff(
-      array_keys($manager->getSitemapVariants()),
+      array_keys(SimpleSitemap::loadMultiple()),
       array_keys($new_variants)
     ));
     $storage = \Drupal::entityTypeManager()->getStorage('simple_sitemap');
@@ -105,7 +104,7 @@ class SimpleSitemapVariantsForm extends SimpleSitemapFormBase {
     $weight = 0;
     foreach ($new_variants as $variant_definition) {
       $variant_definition['weight'] = $weight;
-      $manager->addOrUpdateSitemap(...array_values($variant_definition));
+      SimpleSitemap::createOrUpdate(...array_values($variant_definition));
       $weight++;
     }
 

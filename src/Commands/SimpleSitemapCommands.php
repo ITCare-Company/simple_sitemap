@@ -3,7 +3,7 @@
 namespace Drupal\simple_sitemap\Commands;
 
 use Drupal\simple_sitemap\Queue\QueueWorker;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drush\Commands\DrushCommands;
 
 /**
@@ -12,15 +12,16 @@ use Drush\Commands\DrushCommands;
 class SimpleSitemapCommands extends DrushCommands {
 
   /**
-   * @var \Drupal\simple_sitemap\Simplesitemap
+   * @var \Drupal\simple_sitemap\Manager\Generator
    */
   protected $generator;
 
   /**
    * SimplesitemapCommands constructor.
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   *
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    */
-  public function __construct(Simplesitemap $generator) {
+  public function __construct(Generator $generator) {
     $this->generator = $generator;
 
     parent::__construct();
@@ -64,7 +65,7 @@ class SimpleSitemapCommands extends DrushCommands {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function rebuildQueue(array $options = ['variants' => '']): void {
-    $variants = array_keys($this->generator->getSitemapManager()->getSitemapVariants());
+    $variants = array_keys(\Drupal\simple_sitemap\Entity\SimpleSitemap::loadMultiple());
     if (strlen($options['variants']) > 0) {
       $chosen_variants = array_map('trim', array_filter(explode(',', $options['variants'])));
       if (!empty($erroneous_variants = array_diff($chosen_variants, $variants))) {

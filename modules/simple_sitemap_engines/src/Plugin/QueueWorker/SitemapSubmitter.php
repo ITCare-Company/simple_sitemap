@@ -5,7 +5,8 @@ namespace Drupal\simple_sitemap_engines\Plugin\QueueWorker;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Entity\SimpleSitemapType;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Logger;
 use Drupal\Core\State\StateInterface;
 use GuzzleHttp\ClientInterface;
@@ -43,7 +44,7 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
   /**
    * The sitemap generator service.
    *
-   * @var \Drupal\simple_sitemap\Simplesitemap
+   * @var \Drupal\simple_sitemap\Manager\Generator
    */
   protected $generator;
 
@@ -81,7 +82,7 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
    *   The EntityStorageInterface.
    * @param \GuzzleHttp\ClientInterface $http_client
    *   The client used to submit to engines.
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    *   The generator service.
    * @param \Drupal\simple_sitemap\Logger $logger
    *   Standard logger.
@@ -95,7 +96,7 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
                               array $plugin_definition,
                               EntityStorageInterface $engine_storage,
                               ClientInterface $http_client,
-                              Simplesitemap $generator,
+                              Generator $generator,
                               Logger $logger,
                               StateInterface $state,
                               TimeInterface $time) {
@@ -135,7 +136,7 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
       $sitemap_urls = [];
       $manager = $this->generator->getSitemapManager();
 
-      foreach ($manager->getSitemapTypes() as $type_name => $type_definition) {
+      foreach (SimpleSitemapType::loadMultiple() as $type_name => $type_definition) {
         $sitemap_generator = $manager->getSitemapGenerator($type_definition['sitemapGenerator']);
 
         // Submit all variants that are enabled for this search engine.

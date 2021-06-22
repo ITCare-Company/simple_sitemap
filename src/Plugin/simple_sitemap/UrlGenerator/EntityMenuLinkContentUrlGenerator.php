@@ -2,15 +2,15 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
-use Drupal\simple_sitemap\EntityHelper;
+use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
-use Drupal\simple_sitemap\SimpleSitemapSettings;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuLinkBase;
@@ -42,21 +42,21 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
-   * @param \Drupal\simple_sitemap\SimpleSitemapSettings $settings
+   * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
+   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entityHelper
    * @param \Drupal\Core\Menu\MenuLinkTreeInterface $menu_link_tree
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Simplesitemap $generator,
+    Generator $generator,
     Logger $logger,
-    SimpleSitemapSettings $settings,
+    Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entityHelper,
@@ -102,7 +102,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     $data_sets = [];
     $bundle_settings = $this->generator
       ->setVariants($this->sitemapVariant->id())
-      ->getBundleSettings();
+      ->entities()->getBundleSettings();
     if (!empty($bundle_settings['menu_link_content'])) {
       foreach ($bundle_settings['menu_link_content'] as $bundle_name => $bundle_settings) {
         if ($bundle_settings['index']) {
@@ -148,14 +148,14 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     if (empty($meta_data['entity_id'])) {
       $entity_settings = $this->generator
         ->setVariants($this->sitemapVariant->id())
-        ->getBundleSettings('menu_link_content', $data_set->getMenuName());
+        ->entities()->getBundleSettings('menu_link_content', $data_set->getMenuName());
     }
 
     // If menu link is of entity type menu_link_content, take under account its entity override.
     else {
       $entity_settings = $this->generator
         ->setVariants($this->sitemapVariant->id())
-        ->getEntityInstanceSettings('menu_link_content', $meta_data['entity_id']);
+        ->entities()->getEntityInstanceSettings('menu_link_content', $meta_data['entity_id']);
 
       if (empty($entity_settings['index'])) {
         throw new SkipElementException();

@@ -3,9 +3,10 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Path\PathValidator;
 
 /**
@@ -22,19 +23,22 @@ class SimpleSitemapCustomLinksForm extends SimpleSitemapFormBase {
    * SimpleSitemapCustomLinksForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
+   * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    * @param \Drupal\Core\Path\PathValidator $path_validator
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    Simplesitemap $generator,
+    Generator $generator,
+    Settings $settings,
     FormHelper $form_helper,
     PathValidator $path_validator
   ) {
     parent::__construct(
       $config_factory,
       $generator,
+      $settings,
       $form_helper
     );
     $this->pathValidator = $path_validator;
@@ -47,6 +51,7 @@ class SimpleSitemapCustomLinksForm extends SimpleSitemapFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('simple_sitemap.generator'),
+      $container->get('simple_sitemap.settings'),
       $container->get('simple_sitemap.form_helper'),
       $container->get('path.validator')
     );
@@ -74,7 +79,7 @@ class SimpleSitemapCustomLinksForm extends SimpleSitemapFormBase {
     $form['simple_sitemap_custom']['custom_links'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Relative Drupal paths'),
-      '#default_value' => $this->customLinksToString($this->generator->setVariants(TRUE)->getCustomLinks(NULL, FALSE)),
+      '#default_value' => $this->customLinksToString($this->generator->setVariants(TRUE)->customLinks()->get(NULL, FALSE)),
       '#description' => $this->t("Please specify drupal internal (relative) paths, one per line. Do not forget to prepend the paths with a '/'.<br>Optionally link priority <em>(0.0 - 1.0)</em> can be added by appending it after a space.<br> Optionally link change frequency <em>(always / hourly / daily / weekly / monthly / yearly / never)</em> can be added by appending it after a space.<br/<br><strong>Examples:</strong><br><em>/ 1.0 daily</em> -> home page with the highest priority and daily change frequency<br><em>/contact</em> -> contact page with the default priority and no change frequency information"),
     ];
 
@@ -85,10 +90,10 @@ class SimpleSitemapCustomLinksForm extends SimpleSitemapFormBase {
       '#description' => $this->t('The sitemap variants to include the above links in.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
       '#options' => array_map(
         function($variant) { return $this->t($variant->label()); },
-        $this->generator->getSitemapManager()->getSitemapVariants()
+        \Drupal\simple_sitemap\Entity\SimpleSitemap::loadMultiple()
       ),
       '#default_value' => array_keys(array_filter(
-          $this->generator->setVariants(TRUE)->getCustomLinks(NULL, FALSE, TRUE),
+          $this->generator->setVariants(TRUE)->customLinks()->get(NULL, FALSE, TRUE),
           function($e) { return !empty($e);})
       ),
     ];
@@ -97,7 +102,7 @@ class SimpleSitemapCustomLinksForm extends SimpleSitemapFormBase {
       '#type' => 'select',
       '#title' => $this->t('Include images'),
       '#description' => $this->t('If a custom link points to an entity, include its referenced images in the sitemap.'),
-      '#default_value' => $this->generator->getSetting('custom_links_include_images', FALSE),
+      '#default_value' => $this->settings->get('custom_links_include_images', FALSE),
       '#options' => [0 => $this->t('No'), 1 => $this->t('Yes')],
     ];
 
@@ -151,15 +156,15 @@ class SimpleSitemapCustomLinksForm extends SimpleSitemapFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->generator->setVariants(TRUE)->removeCustomLinks();
+    $this->generator->setVariants(TRUE)->customLinks()->remove();
     if (!empty($variants = $form_state->getValue('variants')) && !empty($links = $form_state->getValue('custom_links'))) {
       $this->generator->setVariants(array_values($variants));
       foreach ($this->stringToCustomLinks($links) as $link_config) {
-        $this->generator->addCustomLink($link_config['path'], $link_config);
+        $this->generator->customLinks()->add($link_config['path'], $link_config);
       }
     }
 
-    $this->generator->saveSetting('custom_links_include_images', (bool) $form_state->getValue('include_images'));
+    $this->settings->save('custom_links_include_images', (bool) $form_state->getValue('include_images'));
     parent::submitForm($form, $form_state);
 
     // Regenerate sitemaps according to user setting.

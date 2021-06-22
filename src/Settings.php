@@ -5,9 +5,9 @@ namespace Drupal\simple_sitemap;
 use Drupal\Core\Config\ConfigFactory;
 
 /**
- * Class SimpleSitemapSettings
+ * Class Settings
  */
-class SimpleSitemapSettings {
+class Settings {
 
   /**
    * @var \Drupal\Core\Config\ConfigFactory
@@ -35,7 +35,7 @@ class SimpleSitemapSettings {
    * @return mixed
    *  The current setting from configuration or a default value.
    */
-  public function getSetting(string $name, $default = FALSE) { // todo Why not NULL?
+  public function get(string $name, $default = FALSE) { // todo Why not NULL?
     $setting = $this->configFactory
       ->get('simple_sitemap.settings')
       ->get($name);
@@ -43,7 +43,7 @@ class SimpleSitemapSettings {
     return $setting ?? $default;
   }
 
-  public function getSettings() {
+  public function getAll() {
     return $this->configFactory
       ->get('simple_sitemap.settings')
       ->get();
@@ -59,7 +59,7 @@ class SimpleSitemapSettings {
    *
    * @return $this
    */
-  public function saveSetting(string $name, $setting): SimpleSitemapSettings {
+  public function save(string $name, $setting): Settings {
     $this->configFactory->getEditable('simple_sitemap.settings')
       ->set($name, $setting)->save();
 

@@ -40,7 +40,7 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
     $this->writer->startSitemapDocument();
 
     // Add the XML stylesheet to document if enabled.
-    if ($this->settings->getSetting('xsl')) {
+    if ($this->settings->get('xsl')) {
       $this->writer->writeXsl();
     }
 

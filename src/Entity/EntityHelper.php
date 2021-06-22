@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\simple_sitemap;
+namespace Drupal\simple_sitemap\Entity;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
@@ -109,7 +109,7 @@ class EntityHelper {
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *
    * @return bool
-   *   TRUE if entity type supported by Simple Sitemap, FALSE if not.
+   *   TRUE if entity type is supported, FALSE if not.
    */
   public function supports(EntityTypeInterface $entity_type): bool {
     if (!$entity_type instanceof ContentEntityTypeInterface

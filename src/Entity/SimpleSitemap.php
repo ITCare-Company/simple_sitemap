@@ -5,7 +5,6 @@ namespace Drupal\simple_sitemap\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Url;
-use Drupal\simple_sitemap\SimpleSitemapStorage;
 use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
 
 /**
@@ -15,7 +14,7 @@ use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
  *   id = "simple_sitemap",
  *   label = @Translation("Simple XML sitemap"),
  *   handlers = {
- *     "storage" = "Drupal\simple_sitemap\SimpleSitemapStorage",
+ *     "storage" = "Drupal\simple_sitemap\Entity\SimpleSitemapStorage",
  *   },
  *   config_prefix = "sitemap",
  *   admin_permission = "administer sitemap settings",
@@ -56,12 +55,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   protected $sitemapType;
 
   public function __toString(): string {
-    try {
-      return $this->toString();
-    }
-    catch (SitemapNotExistsException $e) {
-      return '';
-    }
+    return $this->toString();
   }
 
   public function published(): SimpleSitemapInterface {
@@ -100,7 +94,12 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
         return $storage->getChunk($this, $status, $delta);
       }
       catch (SitemapNotExistsException $e) {
-        return $storage->getChunk($this, $status);
+        try {
+          return $storage->getChunk($this, $status);
+        }
+        catch (SitemapNotExistsException $e) {
+          return '';
+        }
       }
     }
 
@@ -175,32 +174,32 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getLinkCount($this, $this->fetchByStatus);
   }
 
-  /**
-   * @todo: Should this be parents ::url instead?
-   */
-  public function getUrl(int $delta = NULL): string {
-    $parameters = NULL !== $delta ? ['page' => $delta] : [];
-    $settings = [
-      'absolute' => TRUE,
-      'base_url' => \Drupal::service('simple_sitemap.settings')->getSetting('base_url') ?: $GLOBALS['base_url'],
-      'language' => \Drupal::languageManager()->getLanguage(LanguageInterface::LANGCODE_NOT_APPLICABLE),
-    ];
+  public function toUrlString(int $delta = NULL): string {
+    return $this->toUrl('canonical', $delta ? ['delta' => $delta] : [])->toString();
+  }
 
-    $url = $this->isDefault()
+  public function toUrl($rel = 'canonical', array $options = []) {
+    $parameters = isset($options['delta']) ? ['page' => $options['delta']] : [];
+    unset($options['delta']);
+
+    $options['base_url'] = $options['base_url'] ?? (\Drupal::service('simple_sitemap.settings')
+        ->get('base_url') ?: $GLOBALS['base_url']);
+
+    $options['language'] = \Drupal::languageManager()->getLanguage(LanguageInterface::LANGCODE_NOT_APPLICABLE);
+
+    return $this->isDefault()
       ? Url::fromRoute(
         'simple_sitemap.sitemap_default',
         $parameters,
-        $settings)
+        $options)
       : Url::fromRoute(
         'simple_sitemap.sitemap_variant',
         $parameters + ['variant' => $this->id()],
-        $settings);
-
-    return $url->toString();
+        $options);
   }
 
   public function isDefault(): bool {
-    return $this->id() === \Drupal::service('simple_sitemap.settings')->getSetting('default_variant');
+    return $this->id() === \Drupal::service('simple_sitemap.settings')->get('default_variant');
   }
 
   /**
@@ -233,10 +232,21 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
 
     $has_multiple_indexable_languages = count(
         array_diff_key(\Drupal::languageManager()->getLanguages(),
-          \Drupal::service('simple_sitemap.settings')->getSetting('excluded_languages', []))
+          \Drupal::service('simple_sitemap.settings')->get('excluded_languages', []))
       ) > 1;
 
     return $url_negotiation_method_enabled && $has_multiple_indexable_languages;
+  }
+
+  public static function createOrUpdate(string $id, string $type, string $label = NULL, int $weight = 0): SimpleSitemapInterface {
+    $variant = (($old_variant = self::load($id)) !== NULL) ? $old_variant : self::create(['id' => $id]);
+    $variant
+      ->set('type', $type)
+      ->set('label', $label)
+      ->set('weight', $weight)
+      ->save();
+
+    return $variant;
   }
 
 }
