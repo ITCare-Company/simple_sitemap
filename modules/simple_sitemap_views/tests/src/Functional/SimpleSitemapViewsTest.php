@@ -94,8 +94,7 @@ class SimpleSitemapViewsTest extends SimpleSitemapViewsTestBase {
    * Tests the process of generating view display URLs.
    */
   public function testViewsUrlGenerator() {
-    $sitemap_types = SimpleSitemapType::loadMultiple();
-    $this->assertContains('views', $sitemap_types['default_hreflang']['urlGenerators']);
+    $this->assertArrayHasKey('views', SimpleSitemapType::load('default_hreflang')->getUrlGenerators());
 
     $title = $this->node->getTitle();
     $this->sitemapViews->addArgumentsToIndex($this->testView, ['page']);
