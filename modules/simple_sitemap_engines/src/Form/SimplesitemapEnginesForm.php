@@ -9,7 +9,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Form\FormHelper;
-use Drupal\simple_sitemap_engines\Entity\SearchEngine;
+use Drupal\simple_sitemap_engines\Entity\SimpleSitemapEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,13 +30,6 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
    * @var \Drupal\Core\Datetime\DateFormatter
    */
   protected $dateFormatter;
-
-  /**
-   * The sitemap manager service.
-   *
-   * @var \Drupal\simple_sitemap\SimpleSitemapManager
-   */
-  protected $sitemapManager;
 
   /**
    * SimplesitemapEnginesForm constructor.
@@ -116,7 +109,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
       '#markup' => '<div class="description">' . $this->t('Choose which sitemap variants are to be submitted to which search engines.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']) . '</div>',
     ];
 
-    $engines = SearchEngine::loadMultiple();
+    $engines = SimpleSitemapEngine::loadMultiple();
     foreach ($engines as $engine_id => $engine) {
       $form['engines'][$engine_id] = [
         '#type' => 'details',
@@ -142,7 +135,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    foreach (SearchEngine::loadMultiple() as $engine_id => $engine) {
+    foreach (SimpleSitemapEngine::loadMultiple() as $engine_id => $engine) {
       if (!empty($values = $form_state->getValue(['engines', $engine_id, 'variants']))) {
         $submit = TRUE;
       }

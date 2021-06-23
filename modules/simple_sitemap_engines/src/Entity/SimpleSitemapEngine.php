@@ -29,7 +29,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   }
  * )
  */
-class SearchEngine extends ConfigEntityBase {
+class SimpleSitemapEngine extends ConfigEntityBase {
 
   /**
    * The search engine ID.
@@ -69,7 +69,7 @@ class SearchEngine extends ConfigEntityBase {
    *   The search engine label.
    */
   public function __toString() {
-    return $this->label();
+    return (string) $this->label();
   }
 
 }

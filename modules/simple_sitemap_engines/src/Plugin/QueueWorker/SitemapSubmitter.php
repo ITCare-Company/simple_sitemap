@@ -8,7 +8,7 @@ use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Logger;
 use Drupal\Core\State\StateInterface;
-use Drupal\simple_sitemap_engines\Entity\SearchEngine;
+use Drupal\simple_sitemap_engines\Entity\SimpleSitemapEngine;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -118,7 +118,7 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function processItem($engine_id) {
-    if ($engine = SearchEngine::load($engine_id)) {
+    if ($engine = SimpleSitemapEngine::load($engine_id)) {
       // Submit all variants that are enabled for this search engine.
       foreach (SimpleSitemap::loadMultiple() as $sitemap_id => $sitemap) {
         if (in_array($sitemap_id, $engine->sitemap_variants, TRUE)
