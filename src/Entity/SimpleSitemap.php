@@ -94,12 +94,6 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
         return $storage->getChunk($this, $status, $delta);
       }
       catch (SitemapNotExistsException $e) {
-        try {
-          return $storage->getChunk($this, $status);
-        }
-        catch (SitemapNotExistsException $e) {
-          return '';
-        }
       }
     }
 
@@ -107,7 +101,12 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
       return $storage->getIndex($this, $status);
     }
 
-    return $storage->getChunk($this, $status);
+    try {
+      return $storage->getChunk($this, $status);
+    }
+    catch (SitemapNotExistsException $e) {
+      return '';
+    }
   }
 
   public function publish(): SimpleSitemapInterface {

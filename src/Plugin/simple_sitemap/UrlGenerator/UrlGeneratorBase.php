@@ -93,6 +93,8 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
 
   /**
    * @return mixed
+   *
+   * @todo Throw and catch SkipElementException here and children.
    */
   abstract public function getDataSets(): array;
 
@@ -105,6 +107,8 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
   /**
    * @param $data_set
    * @return array
+   *
+   * @todo catch SkipElementException here and children.
    */
   public function generate($data_set): array {
     try {

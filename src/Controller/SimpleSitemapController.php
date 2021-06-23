@@ -52,7 +52,7 @@ class SimpleSitemapController extends ControllerBase {
    * @throws NotFoundHttpException
    */
   public function getSitemap(Request $request, string $variant = NULL): Response {
-    $output = $this->generator->setVariants($variant)->getSitemap($request->query->getInt('page'));
+    $output = $this->generator->setVariants($variant)->getSitemap($request->query->get('page'));
     if (!$output) {
       throw new NotFoundHttpException();
     }

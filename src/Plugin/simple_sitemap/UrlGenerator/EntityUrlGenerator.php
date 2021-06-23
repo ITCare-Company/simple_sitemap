@@ -52,7 +52,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entityHelper
+   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
    * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager $url_generator_manager
    * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $memory_cache
    */
@@ -65,7 +65,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
-    EntityHelper $entityHelper,
+    EntityHelper $entity_helper,
     UrlGeneratorManager $url_generator_manager,
     MemoryCacheInterface $memory_cache
   ) {
@@ -78,7 +78,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       $settings,
       $language_manager,
       $entity_type_manager,
-      $entityHelper
+      $entity_helper
     );
     $this->urlGeneratorManager = $url_generator_manager;
     $this->entityMemoryCache = $memory_cache;

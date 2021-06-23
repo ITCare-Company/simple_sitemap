@@ -57,7 +57,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
    * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entityHelper
+   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
    */
   public function __construct(
     array $configuration,
@@ -68,17 +68,17 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
-    EntityHelper $entityHelper
+    EntityHelper $entity_helper
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $generator, $logger, $settings);
     $this->languages = $language_manager->getLanguages();
     $this->defaultLanguageId = $language_manager->getDefaultLanguage()->getId();
     $this->entityTypeManager = $entity_type_manager;
     $this->anonUser = new AnonymousUserSession();
-    $this->entityHelper = $entityHelper;
+    $this->entityHelper = $entity_helper;
   }
 
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimplesitemapPluginBase{
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimplesitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,
