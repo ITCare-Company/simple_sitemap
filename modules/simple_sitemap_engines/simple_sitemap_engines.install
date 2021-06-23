@@ -5,6 +5,8 @@
  * Module install and update procedures.
  */
 
+use Drupal\simple_sitemap_engines\Entity\SearchEngine;
+
 /**
  * Implements hook_uninstall().
  */
@@ -12,10 +14,7 @@ function simple_sitemap_engines_uninstall() {
   $state = \Drupal::service('state');
   $state->delete('simple_sitemap_engines_last_submitted');
 
-  $engines = \Drupal::entityTypeManager()
-    ->getStorage('simple_sitemap_engine')
-    ->loadMultiple();
-  foreach ($engines as $engine_id => $engine) {
+  foreach (SearchEngine::loadMultiple() as $engine_id => $engine) {
     $state->delete("simple_sitemap_engines.simple_sitemap_engine.{$engine_id}.last_submitted");
   }
 }
@@ -24,10 +23,7 @@ function simple_sitemap_engines_uninstall() {
  * Moving last_submitted data from configuration to state.
  */
 function simple_sitemap_engines_update_8301() {
-  $engines = \Drupal::entityTypeManager()
-    ->getStorage('simple_sitemap_engine')
-    ->loadMultiple();
-  foreach ($engines as $engine_id => $engine) {
+  foreach (SearchEngine::loadMultiple() as $engine_id => $engine) {
     $config = \Drupal::configFactory()
       ->getEditable("simple_sitemap_engines.simple_sitemap_engine.$engine_id");
     $last_submitted = $config->get('last_submitted');
