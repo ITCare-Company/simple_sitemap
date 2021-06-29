@@ -6,17 +6,13 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 interface SimpleSitemapInterface extends ConfigEntityInterface {
 
-  public function __toString(): string;
+  public function fromPublished(): SimpleSitemapInterface;
 
-  public function published(): SimpleSitemapInterface;
+  public function fromUnpublished(): SimpleSitemapInterface;
 
-  public function unpublished(): SimpleSitemapInterface;
-
-  public function publishedAndUnpublished(): SimpleSitemapInterface;
+  public function fromPublishedAndUnpublished(): SimpleSitemapInterface;
 
   public function getType(): SimpleSitemapTypeInterface;
-
-  public function getWeight(): int;
 
   public function toString(int $delta = NULL): string;
 
@@ -36,13 +32,11 @@ interface SimpleSitemapInterface extends ConfigEntityInterface {
 
   public function getIndex(): string;
 
-  public function status(): int;
+  public function contentStatus(): ?int;
 
   public function getCreated(): ?string;
 
   public function getLinkCount(): int;
-
-  public function toUrlString(): string;
 
   public function isDefault(): bool;
 

@@ -816,7 +816,7 @@ function simple_sitemap_update_8305() {
 /**
  * Change the simple_sitemap ID column to serial.
  */
-function simple_sitemap_update_8306() {
+function simple_sitemap_update_8401() {
   \Drupal::database()->schema()->changeField(
     'simple_sitemap',
     'id',
@@ -832,7 +832,7 @@ function simple_sitemap_update_8306() {
 /**
  * Install new simple_sitemap_type and simple_sitemap configuration entities.
  */
-function simple_sitemap_update_8307() {
+function simple_sitemap_update_8402() {
   foreach (['simple_sitemap_type', 'simple_sitemap'] as $entity_type) {
     \Drupal::entityDefinitionUpdateManager()->installEntityType(\Drupal::entityTypeManager()->getDefinition($entity_type));
   }
@@ -841,7 +841,7 @@ function simple_sitemap_update_8307() {
 /**
  * Migrate the default_hreflang sitemap type and its variants to new configuration entities.
  */
-function simple_sitemap_update_8308() {
+function simple_sitemap_update_8403() {
 
   // Create default_hreflang sitemap type.
   $type_storage = \Drupal::entityTypeManager()->getStorage('simple_sitemap_type');

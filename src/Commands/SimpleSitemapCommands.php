@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Commands;
 
+use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\simple_sitemap\Manager\Generator;
 use Drush\Commands\DrushCommands;
@@ -65,7 +66,7 @@ class SimpleSitemapCommands extends DrushCommands {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function rebuildQueue(array $options = ['variants' => '']): void {
-    $variants = array_keys(\Drupal\simple_sitemap\Entity\SimpleSitemap::loadMultiple());
+    $variants = array_keys(SimpleSitemap::loadMultiple());
     if (strlen($options['variants']) > 0) {
       $chosen_variants = array_map('trim', array_filter(explode(',', $options['variants'])));
       if (!empty($erroneous_variants = array_diff($chosen_variants, $variants))) {

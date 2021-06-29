@@ -97,9 +97,16 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
    *
    * {@inheritdoc}
    */
-  protected function doLoadMultiple(array $ids = NULL) {
+  protected function doLoadMultiple(array $ids = NULL): array {
     $sitemaps = parent::doLoadMultiple($ids);
-    uasort($sitemaps, function($a, $b) { return strcmp($a->getWeight(), $b->getWeight()); });
+    uasort($sitemaps, [SimpleSitemap::class, 'sort']);
+
+    return $sitemaps;
+  }
+
+  public function loadByProperties(array $values = []): array {
+    $sitemaps = parent::loadByProperties($values);
+    uasort($sitemaps, [SimpleSitemap::class, 'sort']);
 
     return $sitemaps;
   }
@@ -164,12 +171,6 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   public function deleteContent(SimpleSitemap $entity): void {
     $this->purgeContent($entity->id());
   }
-
-//  protected function checkStatusSpecified($status): void {
-//    if ($status === self::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED) {
-//      throw new SitemapNotExistsException('Only a published or unpublished sitemap chunk can be retrieved, not both. Use SitemapContent::published or SitemapContent::unpublished before calling SitemapContent::getSitemapString.');
-//    }
-//  }
 
   public function addChunk(SimpleSitemapInterface $entity, string $xml, $link_count): void {
     $highest_delta = $this->database->query('SELECT MAX(delta) FROM {simple_sitemap} WHERE type = :type AND status = :status', [':type' => $entity->id(), ':status' => self::SITEMAP_UNPUBLISHED])
@@ -247,7 +248,6 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   }
 
   protected function getIdByDelta(SimpleSitemap $entity, int $delta, bool $status): int {
-//    $this->checkStatusSpecified();
     foreach ($this->getChunkData($entity) as $chunk) {
       if ($chunk->delta == $delta && $chunk->status == $status) {
         return $chunk->id;
@@ -262,8 +262,6 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     if (!isset($chunk_data[$id])) {
       throw new SitemapNotExistsException();
     }
-
-//    $this->checkStatusSpecified($status);
 
     if (empty($chunk_data[$id]->sitemap_string)) {
       $query = $this->database->select('simple_sitemap', 's')

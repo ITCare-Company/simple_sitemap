@@ -32,7 +32,6 @@ use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
  * )
  *
  * @todo Implement dependency injection after https://www.drupal.org/project/drupal/issues/2142515 is fixed.
- * @todo status?
  */
 class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
 
@@ -40,9 +39,9 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   public const SITEMAP_PUBLISHED = 1;
   public const SITEMAP_PUBLISHED_GENERATING = 2;
 
-  public const FETCH_BY_STATUS_PUBLISHED = 1;
-  public const FETCH_BY_STATUS_UNPUBLISHED = 0;
   public const FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED = NULL;
+  public const FETCH_BY_STATUS_UNPUBLISHED = 0;
+  public const FETCH_BY_STATUS_PUBLISHED = 1;
 
   /**
    * @var int
@@ -58,17 +57,17 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return $this->toString();
   }
 
-  public function published(): SimpleSitemapInterface {
+  public function fromPublished(): SimpleSitemapInterface {
     $this->fetchByStatus = self::FETCH_BY_STATUS_PUBLISHED;
     return $this;
   }
 
-  public function unpublished(): SimpleSitemapInterface {
+  public function fromUnpublished(): SimpleSitemapInterface {
     $this->fetchByStatus = self::FETCH_BY_STATUS_UNPUBLISHED;
     return $this;
   }
 
-  public function publishedAndUnpublished(): SimpleSitemapInterface {
+  public function fromPublishedAndUnpublished(): SimpleSitemapInterface {
     $this->fetchByStatus = self::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED;
     return $this;
   }
@@ -79,10 +78,6 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     }
 
     return $this->sitemapType;
-  }
-
-  public function getWeight(): int {
-    return (int) $this->get('weight');
   }
 
   public function toString(int $delta = NULL): string {
@@ -161,7 +156,11 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getIndex($this, $this->fetchByStatus);
   }
 
-  public function status(): int {
+  public function status(): bool {
+    return parent::status() && $this->contentStatus();
+  }
+
+  public function contentStatus(): ?int {
     return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->status($this);
   }
 
@@ -171,10 +170,6 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
 
   public function getLinkCount(): int {
     return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getLinkCount($this, $this->fetchByStatus);
-  }
-
-  public function toUrlString(int $delta = NULL): string {
-    return $this->toUrl('canonical', $delta ? ['delta' => $delta] : [])->toString();
   }
 
   public function toUrl($rel = 'canonical', array $options = []) {

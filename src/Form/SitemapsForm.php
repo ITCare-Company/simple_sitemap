@@ -161,13 +161,13 @@ class SitemapsForm extends SimpleSitemapFormBase {
         ];
         foreach ($variants as $variant) {
           /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $variant */
-          if (empty($variant->publishedAndUnpublished()->getChunkCount())) {
+          if (empty($variant->fromPublishedAndUnpublished()->getChunkCount())) {
             $row['name']['data']['#markup'] = '<span title="' . $variant->id() . '">' . $this->t($variant->label()) . '</span>';
             $row['status'] = $this->t('pending');
             $row['count'] = '';
           }
           else {
-            switch ($variant->status()) {
+            switch ($variant->contentStatus()) {
 
               case SimpleSitemap::SITEMAP_UNPUBLISHED:
                 $row['name']['data']['#markup'] = '<span title="' . $variant->id() . '">' . $this->t($variant->label()) . '</span>';
@@ -178,17 +178,17 @@ class SitemapsForm extends SimpleSitemapFormBase {
               case SimpleSitemap::SITEMAP_PUBLISHED:
               case SimpleSitemap::SITEMAP_PUBLISHED_GENERATING:
                 $row['name']['data']['#markup'] = $this->t('<a href="@url" target="_blank">@variant</a>',
-                  ['@url' => $variant->toUrlString(), '@variant' => $this->t($variant->label())]
+                  ['@url' => $variant->toUrl()->toString(), '@variant' => $this->t($variant->label())]
                 );
-                $row['status'] = $this->t(($variant->status() === SimpleSitemap::SITEMAP_PUBLISHED
+                $row['status'] = $this->t(($variant->contentStatus() === SimpleSitemap::SITEMAP_PUBLISHED
                   ? 'published on @time'
                   : 'published on @time, regenerating'
-                ), ['@time' => $this->dateFormatter->format($variant->published()->getCreated())]);
+                ), ['@time' => $this->dateFormatter->format($variant->fromPublished()->getCreated())]);
                 // Once the sitemap has been regenerated after
                 // simple_sitemap_update_8305() there will always be a link
                 // count.
-                $row['count'] = $variant->published()->getLinkCount() > 0
-                  ? $variant->published()->getLinkCount()
+                $row['count'] = $variant->fromPublished()->getLinkCount() > 0
+                  ? $variant->fromPublished()->getLinkCount()
                   : $this->t('unavailable');
                 break;
             }

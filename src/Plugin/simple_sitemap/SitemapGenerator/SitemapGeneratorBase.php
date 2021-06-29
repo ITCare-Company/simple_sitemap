@@ -119,10 +119,10 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     }
 
     // Add sitemap chunk locations to document.
-    for ($delta = 1; $delta <= $this->sitemapVariant->unpublished()->getChunkCount(); $delta++) {
+    for ($delta = 1; $delta <= $this->sitemapVariant->fromUnpublished()->getChunkCount(); $delta++) {
       $this->writer->startElement('sitemap');
-      $this->writer->writeElement('loc', $this->sitemapVariant->toUrlString($delta));
-      $this->writer->writeElement('lastmod', date('c', $this->sitemapVariant->unpublished()->getCreated())); // todo Should this be current time instead?
+      $this->writer->writeElement('loc', $this->sitemapVariant->toUrl('canonical', ['delta' => $delta])->toString());
+      $this->writer->writeElement('lastmod', date('c', $this->sitemapVariant->fromUnpublished()->getCreated())); // todo Should this be current time instead?
       $this->writer->endElement();
     }
 
