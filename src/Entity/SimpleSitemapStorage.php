@@ -207,7 +207,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
       ->execute();
   }
 
-  public function getChunkCount(SimpleSitemap $entity, bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): int {
+  public function getChunkCount(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): int {
     $query = $this->database->select('simple_sitemap', 's')
       ->condition('s.type', $entity->id())
       ->condition('s.delta', self::SITEMAP_INDEX_DELTA, '<>');
@@ -222,7 +222,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   /**
    * @todo Duplicate query.
    */
-  public function getChunk(SimpleSitemap $entity, bool $status, int $delta = SimpleSitemapStorage::SITEMAP_CHUNK_FIRST_DELTA): string {
+  public function getChunk(SimpleSitemap $entity, ?bool $status, int $delta = SimpleSitemapStorage::SITEMAP_CHUNK_FIRST_DELTA): string {
     if ($delta === self::SITEMAP_INDEX_DELTA) {
       throw new SitemapNotExistsException('The sitemap chunk delta needs to be higher than 0.');
     }
@@ -243,7 +243,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   /**
    * @todo Duplicate query.
    */
-  public function getIndex(SimpleSitemap $entity, bool $status): string {
+  public function getIndex(SimpleSitemap $entity, ?bool $status): string {
     return $this->getSitemapString($entity, $this->getIdByDelta($entity, self::SITEMAP_INDEX_DELTA, $status), $status );
   }
 
@@ -257,7 +257,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     throw new SitemapNotExistsException();
   }
 
-  protected function getSitemapString(SimpleSitemap $entity, int $id, bool $status): string {
+  protected function getSitemapString(SimpleSitemap $entity, int $id, ?bool $status): string {
     $chunk_data = $this->getChunkData($entity);
     if (!isset($chunk_data[$id])) {
       throw new SitemapNotExistsException();
@@ -293,7 +293,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     return SimpleSitemap::SITEMAP_PUBLISHED_GENERATING;
   }
 
-  public function getCreated(SimpleSitemap $entity, bool $status = NULL): ?string {
+  public function getCreated(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): ?string {
     foreach ($this->getChunkData($entity) as $chunk) {
       if ($status === SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED || $chunk->status == $status) {
         return $chunk->sitemap_created;
@@ -303,7 +303,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     return NULL;
   }
 
-  public function getLinkCount(SimpleSitemap $entity, bool $status = NULL): int {
+  public function getLinkCount(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): int {
     $count = 0;
     foreach ($this->getChunkData($entity) as $chunk) {
       if ($chunk->delta != self::SITEMAP_INDEX_DELTA
@@ -315,7 +315,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     return $count;
   }
 
-  public function purgeContent($variants = NULL, $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): void {
+  public function purgeContent($variants = NULL, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): void {
     $query = \Drupal::database()->delete('simple_sitemap');
     if ($status !== SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED) {
       $query->condition('status', $status);
