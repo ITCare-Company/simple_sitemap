@@ -848,8 +848,8 @@ function simple_sitemap_update_8403() {
   if ($type_storage->load('default_hreflang') === NULL) {
     $type_storage->create([
       'id' => 'default_hreflang',
-      'label' => 'default_hreflang',
-      'description' => 'default_hreflang',
+      'label' => 'Default hreflang',
+      'description' => 'The default hreflang sitemap type.',
       'sitemap_generator' => 'default',
       'url_generators' => [
         'custom',
@@ -877,7 +877,8 @@ function simple_sitemap_update_8403() {
   foreach ($config_factory->listAll('simple_sitemap.variants.') as $config) {
     $config_factory->getEditable($config)->delete();
   }
+  \Drupal::service('simple_sitemap.queue_worker')->deleteQueue();
   Drupal\simple_sitemap\Entity\SimpleSitemap::purgeContent();
 
-  return t('All variants belonging to the built-in "Default hreflang" sitemap type have been converted to entities. Custom sitemap types added via plugins will have to be recreated manually. See simple_sitemap.type.default_hreflang.yml.');
+  return t('All variants belonging to the built-in "Default hreflang" sitemap type have been converted to entities. Custom sitemap types added via plugins will have to be recreated manually. See simple_sitemap.type.default_hreflang.yml. The sitemaps need to be regenerated now.');
 }

@@ -10,7 +10,6 @@ use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Settings;
 use Drupal\Core\State\StateInterface;
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\Entity\SimpleSitemapStorage;
 
 class QueueWorker {
 

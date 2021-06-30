@@ -54,8 +54,6 @@ class VariantsForm extends SimpleSitemapFormBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Show multiple errors at once.
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $line = 0;

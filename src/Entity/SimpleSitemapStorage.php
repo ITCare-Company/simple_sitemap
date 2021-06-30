@@ -220,7 +220,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   }
 
   /**
-   * @todo Double query.
+   * @todo Duplicate query.
    */
   public function getChunk(SimpleSitemap $entity, bool $status, int $delta = SimpleSitemapStorage::SITEMAP_CHUNK_FIRST_DELTA): string {
     if ($delta === self::SITEMAP_INDEX_DELTA) {
@@ -241,7 +241,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   }
 
   /**
-   * @todo Double query.
+   * @todo Duplicate query.
    */
   public function getIndex(SimpleSitemap $entity, bool $status): string {
     return $this->getSitemapString($entity, $this->getIdByDelta($entity, self::SITEMAP_INDEX_DELTA, $status), $status );

@@ -50,7 +50,8 @@ class CustomLinks {
    * @param array $settings
    *  Settings that are not provided are supplemented by defaults.
    *
-   * @return \Drupal\simple_sitemap\CustomLinks
+   * @return \Drupal\simple_sitemap\Manager\CustomLinks
+   *
    * @todo Validate $settings and throw exceptions
    */
   public function add(string $path, array $settings = []): CustomLinks {
@@ -152,7 +153,7 @@ class CustomLinks {
    * @param array|string|null $paths
    *  Limits the removal to certain paths.
    *
-   * @return \Drupal\simple_sitemap\CustomLinks
+   * @return \Drupal\simple_sitemap\Manager\CustomLinks
    */
   public function remove($paths = NULL): CustomLinks {
     if (empty($variants = $this->getVariants(FALSE))) {

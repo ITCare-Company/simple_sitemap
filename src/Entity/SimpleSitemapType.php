@@ -31,7 +31,6 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGenerato
  * )
  *
  * @todo Implement dependency injection after https://www.drupal.org/project/drupal/issues/2142515 is fixed.
- * @todo Now all sitemap types can be deleted. Deal with it.
  */
 class SimpleSitemapType extends ConfigEntityBase implements SimpleSitemapTypeInterface {
 

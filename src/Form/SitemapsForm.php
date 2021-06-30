@@ -152,7 +152,7 @@ class SitemapsForm extends SimpleSitemapFormBase {
           '#type' => 'details',
           '#title' => '<em>' . $sitemap_type->label() . '</em> ' . $this->t('sitemaps'),
           '#open' => count($variants) <= 5,
-          '#description' => !empty($sitemap_type->getDescription()) ? '<div class="description">' . $sitemap_type->getDescription() . '</div>' : '',
+          '#description' => !empty($description = $sitemap_type->getDescription()) ? '<div class="description">' . $description . '</div>' : '',
         ];
         $form['simple_sitemap_settings']['status']['types'][$type_id]['table'] = [
           '#type' => 'table',

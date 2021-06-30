@@ -205,7 +205,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       return $this->getUrlVariants($path_data, $url_object);
     }
 
-    return FALSE !== $path_data ? [$path_data] : []; // todo: May want not to return array here.
+    return FALSE !== $path_data ? [$path_data] : []; // todo: May not want to return array here.
   }
 
   /**
