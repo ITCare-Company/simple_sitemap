@@ -8,17 +8,11 @@ use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\Manager\Generator;
 
 /**
  * Class UrlGeneratorBase
  */
 abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGeneratorInterface {
-
-  /**
-   * @var \Drupal\simple_sitemap\Manager\Generator
-   */
-  protected $generator;
 
   /**
    * @var \Drupal\simple_sitemap\Logger
@@ -41,7 +35,6 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
    * @param \Drupal\simple_sitemap\Settings $settings
    */
@@ -49,12 +42,10 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Generator $generator,
     Logger $logger,
     Settings $settings
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->generator = $generator;
     $this->logger = $logger;
     $this->settings = $settings;
   }
@@ -64,7 +55,6 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
       $container->get('simple_sitemap.settings')
     );
@@ -83,9 +73,10 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
 
   /**
    * @param string $url
+   *
    * @return string
    */
-  protected function replaceBaseUrlWithCustom($url): string {
+  protected function replaceBaseUrlWithCustom(string $url): string {
     return !empty($base_url = $this->settings->get('base_url'))
       ? str_replace($GLOBALS['base_url'], $base_url, $url)
       : $url;

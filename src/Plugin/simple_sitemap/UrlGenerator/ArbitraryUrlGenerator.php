@@ -4,7 +4,6 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
-use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -28,7 +27,6 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
    * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
@@ -37,7 +35,6 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Generator $generator,
     Logger $logger,
     Settings $settings,
     ModuleHandler $module_handler
@@ -46,7 +43,6 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $generator,
       $logger,
       $settings,
     );
@@ -63,7 +59,6 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
       $container->get('simple_sitemap.settings'),
       $container->get('module_handler')

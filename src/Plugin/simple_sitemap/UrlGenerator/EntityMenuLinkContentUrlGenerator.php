@@ -5,8 +5,8 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
+use Drupal\simple_sitemap\Manager\Entities;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
-use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
@@ -37,42 +37,47 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
   protected $menuLinkTree;
 
   /**
+   * @var \Drupal\simple_sitemap\Manager\Entities
+   */
+  protected $entitiesManager;
+
+  /**
    * EntityMenuLinkContentUrlGenerator constructor.
    *
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
    * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entityHelper
+   * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
+   * @param \Drupal\simple_sitemap\Manager\Entities $entities_manager
    * @param \Drupal\Core\Menu\MenuLinkTreeInterface $menu_link_tree
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Generator $generator,
     Logger $logger,
     Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
-    EntityHelper $entityHelper,
+    EntityHelper $entity_helper,
+    Entities $entities_manager,
     MenuLinkTreeInterface $menu_link_tree
   ) {
     parent::__construct(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $generator,
       $logger,
       $settings,
       $language_manager,
       $entity_type_manager,
-      $entityHelper
+      $entity_helper
     );
+    $this->entitiesManager = $entities_manager;
     $this->menuLinkTree = $menu_link_tree;
   }
 
@@ -85,12 +90,12 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
       $container->get('simple_sitemap.settings'),
       $container->get('language_manager'),
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
+      $container->get('simple_sitemap.entities'),
       $container->get('menu.link_tree')
     );
   }
@@ -100,9 +105,9 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
    */
   public function getDataSets(): array {
     $data_sets = [];
-    $bundle_settings = $this->generator
+    $bundle_settings = $this->entitiesManager
       ->setVariants($this->sitemapVariant->id())
-      ->entities()->getBundleSettings();
+      ->getBundleSettings();
     if (!empty($bundle_settings['menu_link_content'])) {
       foreach ($bundle_settings['menu_link_content'] as $bundle_name => $bundle_settings) {
         if ($bundle_settings['index']) {
@@ -146,16 +151,16 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     // If not a menu_link_content link, use bundle settings.
     $meta_data = $data_set->getMetaData();
     if (empty($meta_data['entity_id'])) {
-      $entity_settings = $this->generator
+      $entity_settings = $this->entitiesManager
         ->setVariants($this->sitemapVariant->id())
-        ->entities()->getBundleSettings('menu_link_content', $data_set->getMenuName());
+        ->getBundleSettings('menu_link_content', $data_set->getMenuName());
     }
 
     // If menu link is of entity type menu_link_content, take under account its entity override.
     else {
-      $entity_settings = $this->generator
+      $entity_settings = $this->entitiesManager
         ->setVariants($this->sitemapVariant->id())
-        ->entities()->getEntityInstanceSettings('menu_link_content', $meta_data['entity_id']);
+        ->getEntityInstanceSettings('menu_link_content', $meta_data['entity_id']);
 
       if (empty($entity_settings['index'])) {
         throw new SkipElementException();

@@ -2,15 +2,14 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
-use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\Language;
@@ -47,12 +46,11 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   protected $entityHelper;
 
   /**
-   * UrlGeneratorBase constructor.
+   * EntityUrlGeneratorBase constructor.
    *
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param \Drupal\simple_sitemap\Manager\Generator $generator
    * @param \Drupal\simple_sitemap\Logger $logger
    * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
@@ -63,14 +61,13 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Generator $generator,
     Logger $logger,
     Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entity_helper
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $generator, $logger, $settings);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $settings);
     $this->languages = $language_manager->getLanguages();
     $this->defaultLanguageId = $language_manager->getDefaultLanguage()->getId();
     $this->entityTypeManager = $entity_type_manager;
@@ -83,7 +80,6 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
       $container->get('simple_sitemap.settings'),
       $container->get('language_manager'),

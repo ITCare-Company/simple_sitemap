@@ -12,7 +12,6 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Database\Database;
-use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Logger;
 use Drupal\views\Views;
@@ -52,8 +51,6 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\simple_sitemap\Manager\Generator $generator
-   *   The simple_sitemap.generator service.
    * @param \Drupal\simple_sitemap\Logger $logger
    *   The simple_sitemap.logger service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
@@ -71,7 +68,6 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Generator $generator,
     Logger $logger,
     Settings $settings,
     LanguageManagerInterface $language_manager,
@@ -84,7 +80,6 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $generator,
       $logger,
       $settings,
       $language_manager,
@@ -103,7 +98,6 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.logger'),
       $container->get('simple_sitemap.settings'),
       $container->get('language_manager'),
