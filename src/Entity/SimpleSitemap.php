@@ -80,7 +80,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return $this->sitemapType;
   }
 
-  public function toString(int $delta = NULL): string {
+  public function toString(?int $delta = NULL): string {
     $status = $this->fetchByStatus ?? self::FETCH_BY_STATUS_PUBLISHED;
     $storage = \Drupal::entityTypeManager()->getStorage('simple_sitemap');
 
@@ -232,11 +232,11 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return $url_negotiation_method_enabled && $has_multiple_indexable_languages;
   }
 
-  public static function createOrUpdate(string $id, string $type, string $label = NULL, int $weight = 0): SimpleSitemapInterface {
+  public static function createOrUpdate(string $id, string $type, ?string $label = NULL, int $weight = 0): SimpleSitemapInterface {
     $variant = (($old_variant = self::load($id)) !== NULL) ? $old_variant : self::create(['id' => $id]);
     $variant
       ->set('type', $type)
-      ->set('label', $label)
+      ->set('label', $label ?? $id)
       ->set('weight', $weight)
       ->save();
 

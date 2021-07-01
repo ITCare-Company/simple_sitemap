@@ -105,7 +105,7 @@ class CustomLinks {
    * @return array|mixed|null
    *
    */
-  public function get(string $path = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE): array {
+  public function get(?string $path = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE): array {
     $all_custom_links = [];
     foreach ($this->getVariants(FALSE) as $variant) {
       $custom_links = $this->configFactory

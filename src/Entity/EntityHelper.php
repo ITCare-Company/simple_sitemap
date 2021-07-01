@@ -191,7 +191,7 @@ class EntityHelper {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getEntityInstanceIds(string $entity_type_id, string $bundle_name = NULL): array {
+  public function getEntityInstanceIds(string $entity_type_id, ?string $bundle_name = NULL): array {
     $sitemap_entity_types = $this->getSupportedEntityTypes();
     if (!isset($sitemap_entity_types[$entity_type_id])) {
       return [];

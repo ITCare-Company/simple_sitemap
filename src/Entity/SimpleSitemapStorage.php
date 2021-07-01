@@ -97,7 +97,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
    *
    * {@inheritdoc}
    */
-  protected function doLoadMultiple(array $ids = NULL): array {
+  protected function doLoadMultiple(?array $ids = NULL): array {
     $sitemaps = parent::doLoadMultiple($ids);
     uasort($sitemaps, [SimpleSitemap::class, 'sort']);
 

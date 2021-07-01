@@ -151,7 +151,7 @@ class Entities {
    * @todo multiple variants
    * @todo Pass entity object instead of id and bundle.
    */
-  public function setBundleSettings(string $entity_type_id, string $bundle_name = NULL, array $settings = ['index' => TRUE]): Entities {
+  public function setBundleSettings(string $entity_type_id, ?string $bundle_name = NULL, array $settings = ['index' => TRUE]): Entities {
     if (empty($variants = $this->getVariants(FALSE))) {
       return $this;
     }
@@ -240,7 +240,7 @@ class Entities {
    *
    * @todo Pass entity object instead of id and bundle.
    */
-  public function getBundleSettings(string $entity_type_id = NULL, string $bundle_name = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE) {
+  public function getBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE) {
     $bundle_name = $bundle_name ?? $entity_type_id;
     $all_bundle_settings = [];
 
@@ -301,7 +301,7 @@ class Entities {
    *
    * @todo Pass entity object instead of id and bundle.
    */
-  public function removeBundleSettings(string $entity_type_id = NULL, string $bundle_name = NULL): Entities {
+  public function removeBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL): Entities {
     if (empty($variants = $this->getVariants(FALSE))) {
       return $this;
     }
@@ -458,7 +458,7 @@ class Entities {
    *
    * @todo Pass entity object instead of id and bundle.
    */
-  public function removeEntityInstanceSettings(string $entity_type_id = NULL, $entity_ids = NULL): Entities {
+  public function removeEntityInstanceSettings(?string $entity_type_id = NULL, $entity_ids = NULL): Entities {
     if (empty($variants = $this->getVariants(FALSE))) {
       return $this;
     }
@@ -489,7 +489,7 @@ class Entities {
    * @return bool
    *
    */
-  public function bundleIsIndexed(string $entity_type_id, string $bundle_name = NULL): bool {
+  public function bundleIsIndexed(string $entity_type_id, ?string $bundle_name = NULL): bool {
     foreach ($this->getBundleSettings($entity_type_id, $bundle_name, FALSE, TRUE) as $settings) {
       if (!empty($settings['index'])) {
         return TRUE;

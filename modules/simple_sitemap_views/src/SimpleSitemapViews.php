@@ -139,7 +139,7 @@ class SimpleSitemapViews {
    * @return \Drupal\simple_sitemap_views\Plugin\views\display_extender\SimpleSitemapDisplayExtender|null
    *   The display extender.
    */
-  public function getDisplayExtender(ViewExecutable $view, string $display_id = NULL): ?SimpleSitemapDisplayExtender {
+  public function getDisplayExtender(ViewExecutable $view, ?string $display_id = NULL): ?SimpleSitemapDisplayExtender {
     // Ensure the display was correctly set.
     if (!$view->setDisplay($display_id)) {
       return NULL;
@@ -168,7 +168,7 @@ class SimpleSitemapViews {
    * @return array|null
    *   The sitemap settings if the display is indexed, NULL otherwise.
    */
-  public function getSitemapSettings(ViewExecutable $view, string $variant, string $display_id = NULL): ?array {
+  public function getSitemapSettings(ViewExecutable $view, string $variant, ?string $display_id = NULL): ?array {
     $extender = $this->getDisplayExtender($view, $display_id);
 
     // Retrieve the sitemap settings from the extender.
@@ -196,7 +196,7 @@ class SimpleSitemapViews {
    * @return array
    *   Indexable arguments identifiers.
    */
-  public function getIndexableArguments(ViewExecutable $view, string $variant, string $display_id = NULL): array {
+  public function getIndexableArguments(ViewExecutable $view, string $variant, ?string $display_id = NULL): array {
     $settings = $this->getSitemapSettings($view, $variant, $display_id);
     $indexable_arguments = [];
 
@@ -247,7 +247,7 @@ class SimpleSitemapViews {
    *
    * @throws \Exception
    */
-  public function addArgumentsToIndex(ViewExecutable $view, array $args, string $display_id = NULL): bool {
+  public function addArgumentsToIndex(ViewExecutable $view, array $args, ?string $display_id = NULL): bool {
     foreach (SimpleSitemap::loadMultiple() as $variant) {
       if ($this->addArgumentsToIndexByVariant($view, $variant->id(), $args, $display_id)) {
         return TRUE;
@@ -274,7 +274,7 @@ class SimpleSitemapViews {
    *
    * @throws \Exception
    */
-  public function addArgumentsToIndexByVariant(ViewExecutable $view, string $variant, array $args, string $display_id = NULL): bool {
+  public function addArgumentsToIndexByVariant(ViewExecutable $view, string $variant, array $args, ?string $display_id = NULL): bool {
     // An array of arguments to be added to the index can not be empty.
     // Also ensure the display was correctly set.
     if (empty($args) || !$view->setDisplay($display_id)) {
@@ -349,7 +349,7 @@ class SimpleSitemapViews {
    * @return array
    *   An array with information about the indexed arguments.
    */
-  public function getArgumentsFromIndex(ConditionInterface $condition = NULL, int $limit = NULL, bool $convert = FALSE): array {
+  public function getArgumentsFromIndex(?ConditionInterface $condition = NULL, ?int $limit = NULL, bool $convert = FALSE): array {
     $query = $this->database->select('simple_sitemap_views', 'ssv');
     $query->addField('ssv', 'id');
     $query->addField('ssv', 'view_id');
@@ -386,7 +386,7 @@ class SimpleSitemapViews {
    * @return int
    *   The number of rows.
    */
-  public function getArgumentsFromIndexCount(ConditionInterface $condition = NULL): int {
+  public function getArgumentsFromIndexCount(?ConditionInterface $condition = NULL): int {
     $query = $this->database->select('simple_sitemap_views', 'ssv');
 
     if ($condition !== NULL) {
@@ -407,7 +407,7 @@ class SimpleSitemapViews {
    * @return int|bool
    *   The ID of the record, or FALSE if there is no specified position.
    */
-  public function getIndexIdByPosition(int $position, ConditionInterface $condition = NULL) {
+  public function getIndexIdByPosition(int $position, ?ConditionInterface $condition = NULL) {
     $query = $this->database->select('simple_sitemap_views', 'ssv');
     $query->addField('ssv', 'id');
 
@@ -427,7 +427,7 @@ class SimpleSitemapViews {
    * @param \Drupal\Core\Database\Query\ConditionInterface|null $condition
    *   The query conditions.
    */
-  public function removeArgumentsFromIndex(ConditionInterface $condition = NULL): void {
+  public function removeArgumentsFromIndex(?ConditionInterface $condition = NULL): void {
     if ($condition === NULL) {
       // If there are no conditions, use the TRUNCATE query.
       $query = $this->database->truncate('simple_sitemap_views');
@@ -515,7 +515,7 @@ class SimpleSitemapViews {
    * @return array
    *   An array of sitemap variants.
    */
-  public function getIndexableVariants(ViewExecutable $view, string $display_id = NULL): array {
+  public function getIndexableVariants(ViewExecutable $view, ?string $display_id = NULL): array {
     // Ensure the display was correctly set.
     if (!$view->setDisplay($display_id)) {
       return [];

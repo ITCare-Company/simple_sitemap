@@ -134,8 +134,8 @@ class VariantsForm extends SimpleSitemapFormBase {
       $variant_settings = explode('|', $line);
       $id = strtolower(trim($variant_settings[0]));
       $variants[$id]['id'] = $id;
-      $variants[$id]['type'] = isset($variant_settings[1]) ? trim($variant_settings[1]) : NULL;
-      $variants[$id]['label'] = isset($variant_settings[2]) ? trim($variant_settings[2]) : NULL;
+      $variants[$id]['type'] = !empty($variant_settings[1]) ? trim($variant_settings[1]) : NULL;
+      $variants[$id]['label'] = !empty($variant_settings[2]) ? trim($variant_settings[2]) : NULL;
     }
 
     return $variants;

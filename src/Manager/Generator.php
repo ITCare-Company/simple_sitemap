@@ -9,7 +9,11 @@ use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\simple_sitemap\Settings;
 
 /**
- * Class Generator
+ * Main managing service.
+ *
+ * Capable of setting/loading module settings, queuing elements and generating the
+ * sitemap. Services for custom link and entity link generation can be fetched from this
+ * service as well.
  */
 class Generator {
 
@@ -95,22 +99,20 @@ class Generator {
    * @param int|null $delta
    *  Optional delta of the chunk.
    *
-   * @return string|false
+   * @return string|null
    *  If no chunk delta is provided, either the sitemap variant is returned,
    *  or its index in case of a chunked sitemap.
    *  If a chunk delta is provided, the relevant chunk is returned.
-   *  Returns false if the sitemap variant is not retrievable from the database.
-   *
-   * @todo Return NULL, not FALSE on failure?
+   *  Returns null if the sitemap variant is not retrievable from the database.
    */
-  public function getSitemap(int $delta = NULL) {
+  public function getSitemap(?int $delta = NULL): ?string {
     /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap */
     if (empty($variants = $this->getVariants())) {
-      return FALSE;
+      return NULL;
     }
     $sitemap = SimpleSitemap::load(reset($variants));
 
-    return $sitemap ? $sitemap->toString($delta) : FALSE;
+    return $sitemap ? $sitemap->fromPublished()->toString($delta) : NULL;
   }
 
   /**

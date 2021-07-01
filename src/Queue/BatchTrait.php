@@ -21,7 +21,7 @@ trait BatchTrait {
    *
    * @return bool
    */
-  public function batchGenerateSitemap(string $from = self::GENERATE_TYPE_FORM, array $variants = NULL): bool {
+  public function batchGenerateSitemap(string $from = self::GENERATE_TYPE_FORM, ?array $variants = NULL): bool {
     $this->batch = [
       'title' => $this->t('Generating XML sitemaps'),
       'init_message' => $this->t('Initializing...'),
