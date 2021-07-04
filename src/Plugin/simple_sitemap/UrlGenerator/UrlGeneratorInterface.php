@@ -3,11 +3,12 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginInterface;
 
 /**
  * Interface UrlGeneratorInterface
  */
-interface UrlGeneratorInterface {
+interface UrlGeneratorInterface extends SimpleSitemapPluginInterface {
 
   public function setSitemapVariant(SimpleSitemapInterface $sitemap_variant): UrlGeneratorInterface;
 

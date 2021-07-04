@@ -27,14 +27,6 @@ simple_sitemap.sitemap_xsl:
   requirements:
     _access: 'TRUE'
 
-simple_sitemap.sitemaps:
-  path: '/admin/config/search/simplesitemap'
-  defaults:
-    _form: '\Drupal\simple_sitemap\Form\SitemapsForm'
-    _title: 'Simple XML Sitemap'
-  requirements:
-    _permission: 'administer sitemap settings'
-
 simple_sitemap.settings:
   path: '/admin/config/search/simplesitemap/settings'
   defaults:
@@ -59,10 +51,74 @@ simple_sitemap.custom:
   requirements:
     _permission: 'administer sitemap settings'
 
-simple_sitemap.variants:
-  path: '/admin/config/search/simplesitemap/variants'
+#simple_sitemap.variants:
+#  path: '/admin/config/search/simplesitemap/variants'
+#  defaults:
+#    _form: '\Drupal\simple_sitemap\Form\VariantsForm'
+#    _title: 'Simple XML Sitemap'
+#  requirements:
+#    _permission: 'administer sitemap settings'
+
+entity.simple_sitemap.collection:
+  path: '/admin/config/search/simplesitemap'
   defaults:
-    _form: '\Drupal\simple_sitemap\Form\VariantsForm'
+    _entity_list: 'simple_sitemap'
+    _title: 'Simple XML Sitemap'
+  requirements:
+    _permission: 'administer sitemap settings'
+
+simple_sitemap.add:
+  path: '/admin/config/search/simplesitemap/variants/add'
+  defaults:
+    _entity_form: 'simple_sitemap.add'
+    _title: 'Simple XML Sitemap'
+  requirements:
+    _permission: 'administer sitemap settings'
+
+entity.simple_sitemap.edit_form:
+  path: '/admin/config/search/simplesitemap/variants/{simple_sitemap}'
+  defaults:
+    _entity_form: 'simple_sitemap.edit'
+    _title: 'Simple XML Sitemap'
+  requirements:
+    _permission: 'administer sitemap settings'
+
+entity.simple_sitemap.delete_form:
+  path: '/admin/config/search/simplesitemap/variants/{simple_sitemap}/delete'
+  defaults:
+    _entity_form: 'simple_sitemap.delete'
+    _title: 'Simple XML Sitemap'
+  requirements:
+    _permission: 'administer sitemap settings'
+
+entity.simple_sitemap_type.collection:
+  path: '/admin/config/search/simplesitemap/types'
+  defaults:
+    _entity_list: 'simple_sitemap_type'
+    _title: 'Simple XML Sitemap'
+  requirements:
+    _permission: 'administer sitemap settings'
+
+simple_sitemap_type.add:
+  path: '/admin/config/search/simplesitemap/types/add'
+  defaults:
+    _entity_form: 'simple_sitemap_type.add'
+    _title: 'Simple XML Sitemap'
+  requirements:
+    _permission: 'administer sitemap settings'
+
+entity.simple_sitemap_type.edit_form:
+  path: '/admin/config/search/simplesitemap/types/{simple_sitemap_type}'
+  defaults:
+    _entity_form: 'simple_sitemap_type.edit'
+    _title: 'Simple XML Sitemap'
+  requirements:
+    _permission: 'administer sitemap settings'
+
+entity.simple_sitemap_type.delete_form:
+  path: '/admin/config/search/simplesitemap/types/{simple_sitemap_type}/delete'
+  defaults:
+    _entity_form: 'simple_sitemap_type.delete'
     _title: 'Simple XML Sitemap'
   requirements:
     _permission: 'administer sitemap settings'

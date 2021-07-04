@@ -2,16 +2,10 @@
 
 namespace Drupal\simple_sitemap\Entity;
 
-
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorInterface;
 
 interface SimpleSitemapTypeInterface extends ConfigEntityInterface {
-
-  /**
-   * @return string
-   */
-  public function getDescription(): string;
 
   /**
    * @return \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorInterface

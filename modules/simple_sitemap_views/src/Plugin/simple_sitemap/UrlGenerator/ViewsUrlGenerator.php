@@ -4,7 +4,7 @@ namespace Drupal\simple_sitemap_views\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\EntityUrlGeneratorBase;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\simple_sitemap_views\SimpleSitemapViews;
@@ -93,7 +93,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimplesitemapPluginBase {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimpleSitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,

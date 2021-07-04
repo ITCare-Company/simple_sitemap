@@ -3,7 +3,7 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Exception\SkipElementException;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,7 +12,7 @@ use Drupal\simple_sitemap\Logger;
 /**
  * Class UrlGeneratorBase
  */
-abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGeneratorInterface {
+abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGeneratorInterface {
 
   /**
    * @var \Drupal\simple_sitemap\Logger
@@ -50,7 +50,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
     $this->settings = $settings;
   }
 
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimplesitemapPluginBase {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimpleSitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,

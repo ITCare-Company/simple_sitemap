@@ -6,6 +6,7 @@ use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -32,6 +33,30 @@ class SimpleSitemapTypeStorage extends ConfigEntityStorage {
       $container->get('entity.memory_cache'),
       $container->get('entity_type.manager')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doSave($id, EntityInterface $entity) {
+    /** @var SimpleSitemapInterface $entity */
+    if (!preg_match('/^[\w\-_]+$/', $id)) {
+      throw new \InvalidArgumentException("The sitemap ID can only include alphanumeric characters, dashes and underscores.");
+    }
+
+    if ($entity->get('sitemap_generator') === NULL || $entity->get('sitemap_generator') === '') {
+      throw new \InvalidArgumentException("The sitemap type must define its sitemap generator.");
+    }
+
+    if (empty($entity->get('url_generators'))) {
+      throw new \InvalidArgumentException("The sitemap type must define its URL generators");
+    }
+
+    if ($entity->label() === NULL || $entity->label() === '') {
+      $entity->set('label', $id);
+    }
+
+    return parent::doSave($id, $entity);
   }
 
   /**

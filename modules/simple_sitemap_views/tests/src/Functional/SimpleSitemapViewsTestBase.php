@@ -72,7 +72,7 @@ abstract class SimpleSitemapViewsTestBase extends SimplesitemapTestBase {
     $this->testView2->setDisplay('page_2');
 
     $sitemap_type = SimpleSitemapType::load('default_hreflang');
-    $sitemap_type->set('url_generators', $sitemap_type->get('url_generators') + ['views'])->save();
+    $sitemap_type->set('url_generators', array_merge($sitemap_type->get('url_generators'), ['views']))->save();
   }
 
   /**

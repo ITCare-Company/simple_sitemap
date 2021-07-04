@@ -2,7 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -11,7 +11,7 @@ use Drupal\Core\Extension\ModuleHandler;
 /**
  * Class SitemapGeneratorBase
  */
-abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements SitemapGeneratorInterface {
+abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements SitemapGeneratorInterface {
 
   protected const XMLNS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 
@@ -66,7 +66,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $this->settings = $settings;
   }
 
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimplesitemapPluginBase {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimpleSitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,
@@ -96,6 +96,8 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
 
   /**
    * @return string
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function getIndexXml(): string {
     $this->writer->openMemory();

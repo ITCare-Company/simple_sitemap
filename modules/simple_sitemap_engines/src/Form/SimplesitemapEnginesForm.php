@@ -105,8 +105,8 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
 
     $form['engines'] = [
       '#type' => 'fieldset',
-      '#title' => $this->t('Variant specific settings'),
-      '#markup' => '<div class="description">' . $this->t('Choose which sitemap variants are to be submitted to which search engines.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']) . '</div>',
+      '#title' => $this->t('Sitemap specific settings'),
+      '#markup' => '<div class="description">' . $this->t('Choose which sitemaps are to be submitted to which search engines.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap']) . '</div>',
     ];
 
     $engines = SimpleSitemapEngine::loadMultiple();
@@ -118,7 +118,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
       ];
       $form['engines'][$engine_id]['variants'] = [
         '#type' => 'select',
-        '#title' => $this->t('Sitemap variants'),
+        '#title' => $this->t('Sitemaps'),
         '#options' => array_map(
           function ($variant) { return $this->t($variant->label()); },
           SimpleSitemap::loadMultiple()

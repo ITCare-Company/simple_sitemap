@@ -246,7 +246,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     $this->drupalLogin($this->createUser(['administer sitemap settings']));
     $this->drupalGet('admin/config/search/simplesitemap');
-    $link_count_elements = $this->xpath('//*[@id="simple-sitemap-sitemaps-form"]//table/tbody/tr/td[3]');
+    $link_count_elements = $this->xpath('//*[@id="simple-sitemap-status-form"]//table/tbody/tr/td[4]');
     $this->assertSame('2', $link_count_elements[0]->getText());
 
     $this->createNode(['title' => 'Another node', 'type' => 'page']);
@@ -255,17 +255,8 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
     $this->drupalLogin($this->createUser(['administer sitemap settings']));
     $this->drupalGet('admin/config/search/simplesitemap');
-    $link_count_elements = $this->xpath('//*[@id="simple-sitemap-sitemaps-form"]//table/tbody/tr/td[3]');
+    $link_count_elements = $this->xpath('//*[@id="simple-sitemap-status-form"]//table/tbody/tr/td[4]');
     $this->assertSame('3', $link_count_elements[0]->getText());
-
-    // Pretend that we've just run the simple_sitemap_update_8305() update on a
-    // site with existing sitemaps.
-    \Drupal::database()->update('simple_sitemap')
-      ->fields(['link_count' => 0])
-      ->execute();
-    $this->drupalGet('admin/config/search/simplesitemap');
-    $link_count_elements = $this->xpath('//*[@id="simple-sitemap-sitemaps-form"]//table/tbody/tr/td[3]');
-    $this->assertSame('unavailable', $link_count_elements[0]->getText());
   }
 
   /**

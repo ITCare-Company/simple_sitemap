@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -87,10 +88,10 @@ class CustomLinksForm extends SimpleSitemapFormBase {
       '#type' => 'select',
       '#multiple' => TRUE,
       '#title' => $this->t('Sitemap variants'),
-      '#description' => $this->t('The sitemap variants to include the above links in.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
+      '#description' => $this->t('The sitemaps to include the above links in.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap']),
       '#options' => array_map(
         function($variant) { return $this->t($variant->label()); },
-        \Drupal\simple_sitemap\Entity\SimpleSitemap::loadMultiple()
+        SimpleSitemap::loadMultiple()
       ),
       '#default_value' => array_keys(array_filter(
           $this->generator->setVariants(TRUE)->customLinks()->get(NULL, FALSE, TRUE),

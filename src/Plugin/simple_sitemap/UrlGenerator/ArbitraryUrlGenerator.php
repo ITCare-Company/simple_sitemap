@@ -3,7 +3,7 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -53,7 +53,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition): SimplesitemapPluginBase {
+    $plugin_definition): SimpleSitemapPluginBase {
 
     return new static(
       $configuration,

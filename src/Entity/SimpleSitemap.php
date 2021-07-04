@@ -12,9 +12,23 @@ use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
  *
  * @ConfigEntityType(
  *   id = "simple_sitemap",
- *   label = @Translation("Simple XML sitemap"),
+ *   label = @Translation("Sitemap"),
+ *   label_collection = @Translation("Sitemaps"),
+ *   label_singular = @Translation("sitemap"),
+ *   label_plural = @Translation("sitemaps"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count sitemap",
+ *     plural = "@count sitemaps",
+ *   ),
  *   handlers = {
  *     "storage" = "Drupal\simple_sitemap\Entity\SimpleSitemapStorage",
+ *     "list_builder" = "\Drupal\simple_sitemap\SimpleSitemapListBuilder",
+ *     "form" = {
+ *       "default" = "\Drupal\simple_sitemap\Form\SimpleSitemapEntityForm",
+ *       "add" = "\Drupal\simple_sitemap\Form\SimpleSitemapEntityForm",
+ *       "edit" = "\Drupal\simple_sitemap\Form\SimpleSitemapEntityForm",
+ *       "delete" = "\Drupal\Core\Entity\EntityDeleteForm"
+ *     },
  *   },
  *   config_prefix = "sitemap",
  *   admin_permission = "administer sitemap settings",
@@ -22,12 +36,20 @@ use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
  *     "id" = "id",
  *     "uuid" = "uuid",
  *     "label" = "label",
+ *     "weight" = "weight",
  *   },
  *   config_export = {
  *     "id",
  *     "label",
+ *     "description",
  *     "type",
  *     "weight",
+ *   },
+ *   links = {
+ *     "add-form" = "/admin/config/search/simplesitemap/variants/add",
+ *     "edit-form" = "/admin/config/search/simplesitemap/variants/{simple_sitemap}",
+ *     "delete-form" = "/admin/config/search/simplesitemap/variants/{simple_sitemap}/delete",
+ *     "collection" = "/admin/config/search/simplesitemap",
  *   },
  * )
  *
@@ -173,6 +195,10 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   }
 
   public function toUrl($rel = 'canonical', array $options = []) {
+    if ($rel !== 'canonical') {
+      return parent::toUrl($rel, $options);
+    }
+
     $parameters = isset($options['delta']) ? ['page' => $options['delta']] : [];
     unset($options['delta']);
 
@@ -245,6 +271,17 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
 
   public static function purgeContent($variants = NULL, ?bool $status = self::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED) {
     \Drupal::entityTypeManager()->getStorage('simple_sitemap')->purgeContent($variants, $status);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function set($property_name, $value) {
+    if ($property_name === 'type') {
+      $this->sitemapType = NULL;
+    }
+
+    return parent::set($property_name, $value);
   }
 
 }

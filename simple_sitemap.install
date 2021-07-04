@@ -98,7 +98,7 @@ function simple_sitemap_schema() {
       'type' => [
         'description' => 'Type of sitemap this chunk belongs to.',
         'type' => 'varchar',
-        'length' => 50,
+        'length' => \Drupal\Core\Entity\EntityTypeInterface::ID_MAX_LENGTH,
         'not null' => TRUE,
         'default' => '',
       ],
@@ -161,13 +161,13 @@ function simple_sitemap_schema() {
       'entity_type' => [
         'description' => 'Entity type of the overriding entity.',
         'type' => 'varchar',
-        'length' => 32,
+        'length' => \Drupal\Core\Entity\EntityTypeInterface::BUNDLE_MAX_LENGTH,
         'not null' => TRUE,
       ],
       'entity_id' => [
         'description' => 'ID of the overriding entity.',
         'type' => 'varchar',
-        'length' => 32,
+        'length' => \Drupal\Core\Entity\EntityTypeInterface::ID_MAX_LENGTH,
         'not null' => TRUE,
       ],
       'inclusion_settings' => [
@@ -268,7 +268,7 @@ function simple_sitemap_update_8202() {
 
   foreach ($entity_types as $entity_type_name => &$entity_type) {
     if (is_array($entity_type)) {
-      foreach ($entity_type as $bundle_name => &$bundle) {
+      foreach ($entity_type as &$bundle) {
         if (isset($bundle['entities'])) {
           foreach ($bundle['entities'] as $entity_id => $entity_settings) {
             $database->insert('simple_sitemap_entity_overrides')
@@ -867,7 +867,7 @@ function simple_sitemap_update_8403() {
   foreach ($old_variants_config->get('variants') as $variant_id => $variant_definition) {
     if ($sitemap_storage->load($variant_id) === NULL) {
       $sitemap_storage->create([
-        'id' => $variant_id,
+        'id' => substr($variant_id, 0, 32),
         'label' => $variant_definition['label'] ?? $variant_id,
         'type' => 'default_hreflang',
         'weight' => $variant_definition['weight'] ?? 0,

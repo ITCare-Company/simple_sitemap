@@ -5,6 +5,7 @@ namespace Drupal\simple_sitemap\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\simple_sitemap\Entity\EntityHelper;
+use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\simple_sitemap\Settings;
@@ -299,10 +300,10 @@ class FormHelper {
       ? $this->entityHelper->getBundleLabel($this->getEntityTypeId(), $this->getBundleName())
       : $this->t('undefined');
 
-    $variants = \Drupal\simple_sitemap\Entity\SimpleSitemap::loadMultiple();
+    $variants = SimpleSitemap::loadMultiple();
     $form_fragment['settings']['#markup'] = empty($variants)
-      ? $this->t('At least one sitemap variants needs to be defined for a bundle to be indexable.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants'])
-      : '<strong>' . $this->t('Sitemap variants') . '</strong>';
+      ? $this->t('At least one sitemap needs to be defined for a bundle to be indexable.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap'])
+      : '<strong>' . $this->t('Sitemaps') . '</strong>';
 
     foreach ($variants as $variant_id => $variant) {
       $form_fragment['settings'][$variant_id] = [
@@ -515,7 +516,7 @@ class FormHelper {
   public function getVariantSelectValues(): array {
     return array_map(
       function($variant) { return $this->t($variant->label()); },
-      \Drupal\simple_sitemap\Entity\SimpleSitemap::loadMultiple()
+      SimpleSitemap::loadMultiple()
     );
   }
 

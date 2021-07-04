@@ -98,6 +98,9 @@ simple_sitemap.sitemap.*:
     label:
       label: 'Label'
       type: string
+    description:
+      label: 'Description'
+      type: string
     type:
       label: 'Type'
       type: string

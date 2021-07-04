@@ -8,7 +8,7 @@ use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Manager\CustomLinks;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Path\PathValidator;
@@ -87,7 +87,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition): SimplesitemapPluginBase {
+    $plugin_definition): SimpleSitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,

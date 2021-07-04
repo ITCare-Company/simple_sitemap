@@ -120,11 +120,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
       throw new \InvalidArgumentException("The sitemap ID can only include alphanumeric characters, dashes and underscores.");
     }
 
-    if (is_numeric($id)) {
-      throw new \InvalidArgumentException("The sitemap ID cannot be numeric.");
-    }
-
-    if ($entity->get('type') === NULL) {
+    if ($entity->get('type') === NULL || $entity->get('type') === '') {
       throw new \InvalidArgumentException("The sitemap must define its sitemap type information.");
     }
 
@@ -132,11 +128,11 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
       throw new \InvalidArgumentException("Sitemap type {$entity->get('type')} does not exist.");
     }
 
-    if ($entity->label() === NULL) {
+    if ($entity->label() === NULL || $entity->label() === '') {
       $entity->set('label', $id);
     }
 
-    if ($entity->get('weight') === NULL) {
+    if ($entity->get('weight') === NULL || $entity->get('weight') === '') {
       $entity->set('weight', 0);
     }
 
