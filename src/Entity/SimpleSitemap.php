@@ -79,6 +79,16 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return $this->toString();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    parent::calculateDependencies();
+    $this->addDependency('config', $this->getType()->getConfigDependencyName());
+
+    return $this;
+  }
+
   public function fromPublished(): SimpleSitemapInterface {
     $this->fetchByStatus = self::FETCH_BY_STATUS_PUBLISHED;
     return $this;

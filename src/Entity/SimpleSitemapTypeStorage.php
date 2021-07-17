@@ -59,19 +59,4 @@ class SimpleSitemapTypeStorage extends ConfigEntityStorage {
     return parent::doSave($id, $entity);
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function doDelete($entities) {
-    /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapTypeInterface[] $entities */
-    $sitemap_storage = $this->entityTypeManager->getStorage('simple_sitemap');
-    $sitemaps_by_type = [];
-    foreach ($entities as $entity) {
-      $sitemaps_by_type[] = $sitemap_storage->loadByProperties(['type' => $entity->id()]);
-    }
-    $sitemap_storage->delete(array_merge([], ...$sitemaps_by_type));
-
-    parent::doDelete($entities);
-  }
-
 }
