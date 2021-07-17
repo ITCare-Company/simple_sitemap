@@ -167,7 +167,7 @@ class QueueWorker {
     }
     $this->getQueuedElementCount(TRUE);
 
-    // Remove all sitemap instances of variants which did not yield any queue elements.
+    // Remove all sitemap content of variants which did not yield any queue elements.
     foreach ($empty_variants as $empty_variant) {
       $variants[$empty_variant]->deleteContent();
     }

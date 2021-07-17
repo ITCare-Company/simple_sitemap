@@ -87,11 +87,8 @@ simple_sitemap.custom_links.*:
 
 simple_sitemap.sitemap.*:
   label: 'Sitemaps'
-  type: config_object
+  type: config_entity
   mapping:
-    uuid:
-      label: 'UUID'
-      type: string
     id:
       label: 'ID'
       type: string
@@ -107,22 +104,11 @@ simple_sitemap.sitemap.*:
     weight:
       label: 'Weight'
       type: integer
-    status:
-      type: boolean
-      label: 'Status'
-    dependencies:
-      type: config_dependencies
-      label: 'Dependencies'
-    _core:
-      type: _core_config_info
 
 simple_sitemap.type.*:
   label: 'Sitemap types'
-  type: config_object
+  type: config_entity
   mapping:
-    uuid:
-      label: 'UUID'
-      type: string
     id:
       label: 'ID'
       type: string
@@ -140,11 +126,3 @@ simple_sitemap.type.*:
       type: sequence
       sequence:
         type: string
-    status:
-      type: boolean
-      label: 'Status'
-    dependencies:
-      type: config_dependencies
-      label: 'Dependencies'
-    _core:
-      type: _core_config_info

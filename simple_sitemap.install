@@ -865,7 +865,7 @@ function simple_sitemap_update_8403() {
   $sitemap_storage = \Drupal::entityTypeManager()->getStorage('simple_sitemap');
   $old_variants_config = $config_factory->get('simple_sitemap.variants.default_hreflang');
   foreach ($old_variants_config->get('variants') as $variant_id => $variant_definition) {
-    if ($sitemap_storage->load($variant_id) === NULL) {
+    if ($sitemap_storage->load(substr($variant_id, 0, 32)) === NULL) {
       $sitemap_storage->create([
         'id' => substr($variant_id, 0, 32),
         'label' => $variant_definition['label'] ?? $variant_id,
@@ -878,7 +878,7 @@ function simple_sitemap_update_8403() {
     $config_factory->getEditable($config)->delete();
   }
   \Drupal::service('simple_sitemap.queue_worker')->deleteQueue();
-  Drupal\simple_sitemap\Entity\SimpleSitemap::purgeContent();
+  \Drupal\simple_sitemap\Entity\SimpleSitemap::purgeContent();
 
   return t('All variants belonging to the built-in "Default hreflang" sitemap type have been converted to entities. Custom sitemap types added via plugins will have to be recreated manually. See simple_sitemap.type.default_hreflang.yml. The sitemaps need to be regenerated now.');
 }

@@ -67,7 +67,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[] $entities */
     foreach ($entities as $entity) {
 
-      // Remove sitemap instance.
+      // Remove sitemap content.
       $this->deleteContent($entity);
 
       // Unset default variant setting if necessary.

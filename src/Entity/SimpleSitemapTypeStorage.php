@@ -39,11 +39,7 @@ class SimpleSitemapTypeStorage extends ConfigEntityStorage {
    * {@inheritdoc}
    */
   protected function doSave($id, EntityInterface $entity) {
-    /** @var SimpleSitemapInterface $entity */
-    if (!preg_match('/^[\w\-_]+$/', $id)) {
-      throw new \InvalidArgumentException("The sitemap ID can only include alphanumeric characters, dashes and underscores.");
-    }
-
+    /** @var SimpleSitemapTypeInterface $entity */
     if ($entity->get('sitemap_generator') === NULL || $entity->get('sitemap_generator') === '') {
       throw new \InvalidArgumentException("The sitemap type must define its sitemap generator.");
     }
