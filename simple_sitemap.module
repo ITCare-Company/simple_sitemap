@@ -119,12 +119,12 @@ function simple_sitemap_entity_form_submit($form, FormStateInterface &$form_stat
 
         switch ($f->getEntityCategory()) {
           case 'bundle':
-            $generator->entities()->setBundleSettings($f->getEntityTypeId(), $f->getBundleName(), $settings);
+            $generator->entityManager()->setBundleSettings($f->getEntityTypeId(), $f->getBundleName(), $settings);
             break;
 
           case 'instance':
             if (!$f->entityIsNew()) { // Make sure the entity is saved first for multi-step forms, see https://www.drupal.org/project/simple_sitemap/issues/3080510.
-              $generator->entities()->setEntityInstanceSettings($f->getEntityTypeId(), $f->getInstanceId(), $settings);
+              $generator->entityManager()->setEntityInstanceSettings($f->getEntityTypeId(), $f->getInstanceId(), $settings);
             }
             break;
         }
@@ -201,7 +201,7 @@ function simple_sitemap_entity_delete(EntityInterface $entity) {
 
     /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
     $generator = \Drupal::service('simple_sitemap.generator');
-    $generator->setVariants(TRUE)->entities()->removeEntityInstanceSettings(
+    $generator->setVariants(TRUE)->entityManager()->removeEntityInstanceSettings(
       $entity->getEntityTypeId(), $entity->id()
     );
   }
@@ -221,7 +221,7 @@ function simple_sitemap_entity_bundle_delete($entity_type_id, $bundle) {
 
   /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
   $generator = \Drupal::service('simple_sitemap.generator');
-  $generator->setVariants(TRUE)->entities()->removeBundleSettings($entity_type_id, $bundle);
+  $generator->setVariants(TRUE)->entityManager()->removeBundleSettings($entity_type_id, $bundle);
 }
 
 /**
@@ -237,7 +237,7 @@ function simple_sitemap_menu_delete(MenuInterface $menu) {
 
   /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
   $generator = \Drupal::service('simple_sitemap.generator');
-  $generator->setVariants(TRUE)->entities()->removeBundleSettings('menu_link_content', $menu->id());
+  $generator->setVariants(TRUE)->entityManager()->removeBundleSettings('menu_link_content', $menu->id());
 }
 
 /**

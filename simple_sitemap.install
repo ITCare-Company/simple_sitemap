@@ -195,7 +195,7 @@ function _simple_sitemap_update_8216_get_default_variant() {
   }
 
   if (Drupal\simple_sitemap\Entity\SimpleSitemap::load($default_variant) === NULL) {
-    Drupal\simple_sitemap\Entity\SimpleSitemap::createOrUpdate($default_variant, 'default_hreflang');
+    Drupal\simple_sitemap\Entity\SimpleSitemap::create(['id' => $default_variant, 'type' => 'default_hreflang'])->save();
   }
 
   return $default_variant;

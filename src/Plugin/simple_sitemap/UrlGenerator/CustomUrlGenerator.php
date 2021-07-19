@@ -7,7 +7,7 @@ use Drupal\simple_sitemap\Annotation\UrlGenerator;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\Manager\CustomLinks;
+use Drupal\simple_sitemap\Manager\CustomLinkManager;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -30,7 +30,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
   protected const PATH_DOES_NOT_EXIST_MESSAGE = 'The custom path @path has been omitted from the XML sitemaps as it does not exist. You can review custom paths <a href="@custom_paths_url">here</a>.';
 
   /**
-   * @var \Drupal\simple_sitemap\Manager\CustomLinks
+   * @var \Drupal\simple_sitemap\Manager\CustomLinkManager
    */
   protected $customLinks;
 
@@ -55,7 +55,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
-   * @param \Drupal\simple_sitemap\Manager\CustomLinks $custom_links
+   * @param \Drupal\simple_sitemap\Manager\CustomLinkManager $custom_links
    * @param \Drupal\Core\Path\PathValidator $path_validator
    */
   public function __construct(
@@ -67,7 +67,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entity_helper,
-    CustomLinks $custom_links,
+    CustomLinkManager $custom_links,
     PathValidator $path_validator) {
     parent::__construct(
       $configuration,
@@ -97,7 +97,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
       $container->get('language_manager'),
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
-      $container->get('simple_sitemap.custom_links'),
+      $container->get('simple_sitemap.custom_link_manager'),
       $container->get('path.validator')
     );
   }

@@ -6,9 +6,9 @@ use Drupal\Core\Path\PathValidator;
 use Drupal\Core\Config\ConfigFactory;
 
 /**
- * Class CustomLinks
+ * Class CustomLinkManager
  */
-class CustomLinks {
+class CustomLinkManager {
 
   use VariantSetterTrait;
   use LinkSettingsTrait;
@@ -50,11 +50,10 @@ class CustomLinks {
    * @param array $settings
    *  Settings that are not provided are supplemented by defaults.
    *
-   * @return \Drupal\simple_sitemap\Manager\CustomLinks
-   *
+   * @return \Drupal\simple_sitemap\Manager\CustomLinkManager
    * @todo Validate $settings and throw exceptions
    */
-  public function add(string $path, array $settings = []): CustomLinks {
+  public function add(string $path, array $settings = []): CustomLinkManager {
     if (empty($variants = $this->getVariants(FALSE))) {
       return $this;
     }
@@ -153,9 +152,9 @@ class CustomLinks {
    * @param array|string|null $paths
    *  Limits the removal to certain paths.
    *
-   * @return \Drupal\simple_sitemap\Manager\CustomLinks
+   * @return \Drupal\simple_sitemap\Manager\CustomLinkManager
    */
-  public function remove($paths = NULL): CustomLinks {
+  public function remove($paths = NULL): CustomLinkManager {
     if (empty($variants = $this->getVariants(FALSE))) {
       return $this;
     }

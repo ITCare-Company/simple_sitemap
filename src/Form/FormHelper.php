@@ -231,7 +231,7 @@ class FormHelper {
     }
 
     // Do not alter the form if entity is not enabled in sitemap settings.
-    if (!$this->generator->entities()->entityTypeIsEnabled($this->getEntityTypeId())) {
+    if (!$this->generator->entityManager()->entityTypeIsEnabled($this->getEntityTypeId())) {
       return FALSE;
     }
 
@@ -272,7 +272,7 @@ class FormHelper {
   public function negotiateSettings(): FormHelper {
 
     $this->bundleSettings = $this->generator->setVariants(TRUE)
-      ->entities()->getBundleSettings($this->getEntityTypeId(), $this->getBundleName(), TRUE, TRUE);
+      ->entityManager()->getBundleSettings($this->getEntityTypeId(), $this->getBundleName(), TRUE, TRUE);
     if ($this->getEntityCategory() === 'instance') {
 
       //todo Should spit out variant => settings and not just settings; to do this, alter getEntityInstanceSettings() to include 'multiple variants' option.
@@ -280,7 +280,7 @@ class FormHelper {
         if (NULL !== $instance_id = $this->getInstanceId()) {
           $this->bundleSettings[$variant_id] = $this->generator
             ->setVariants($variant_id)
-            ->entities()->getEntityInstanceSettings($this->getEntityTypeId(), $instance_id);
+            ->entityManager()->getEntityInstanceSettings($this->getEntityTypeId(), $instance_id);
         }
         $this->bundleSettings[$variant_id]['bundle_settings'] = $settings;
       }

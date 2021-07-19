@@ -42,7 +42,5 @@ interface SimpleSitemapInterface extends ConfigEntityInterface {
 
   public function isMultilingual(): bool;
 
-  public static function createOrUpdate(string $id, string $type, ?string $label = NULL, int $weight = 0): SimpleSitemapInterface;
-
   public static function purgeContent(?array $variants = NULL, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED);
 }

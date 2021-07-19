@@ -80,7 +80,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
     $form['simple_sitemap_custom']['custom_links'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Relative Drupal paths'),
-      '#default_value' => $this->customLinksToString($this->generator->setVariants(TRUE)->customLinks()->get(NULL, FALSE)),
+      '#default_value' => $this->customLinksToString($this->generator->setVariants(TRUE)->customLinkManager()->get(NULL, FALSE)),
       '#description' => $this->t("Please specify drupal internal (relative) paths, one per line. Do not forget to prepend the paths with a '/'.<br>Optionally link priority <em>(0.0 - 1.0)</em> can be added by appending it after a space.<br> Optionally link change frequency <em>(always / hourly / daily / weekly / monthly / yearly / never)</em> can be added by appending it after a space.<br/<br><strong>Examples:</strong><br><em>/ 1.0 daily</em> -> home page with the highest priority and daily change frequency<br><em>/contact</em> -> contact page with the default priority and no change frequency information"),
     ];
 
@@ -94,7 +94,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
         SimpleSitemap::loadMultiple()
       ),
       '#default_value' => array_keys(array_filter(
-          $this->generator->setVariants(TRUE)->customLinks()->get(NULL, FALSE, TRUE),
+          $this->generator->setVariants(TRUE)->customLinkManager()->get(NULL, FALSE, TRUE),
           function($e) { return !empty($e);})
       ),
     ];
@@ -157,11 +157,11 @@ class CustomLinksForm extends SimpleSitemapFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->generator->setVariants(TRUE)->customLinks()->remove();
+    $this->generator->setVariants(TRUE)->customLinkManager()->remove();
     if (!empty($variants = $form_state->getValue('variants')) && !empty($links = $form_state->getValue('custom_links'))) {
       $this->generator->setVariants(array_values($variants));
       foreach ($this->stringToCustomLinks($links) as $link_config) {
-        $this->generator->customLinks()->add($link_config['path'], $link_config);
+        $this->generator->customLinkManager()->add($link_config['path'], $link_config);
       }
     }
 

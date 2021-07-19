@@ -10,9 +10,9 @@ use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Settings;
 
 /**
- * Class Entities
+ * Class EntityManager
  */
-class Entities {
+class EntityManager {
 
   use VariantSetterTrait;
   use LinkSettingsTrait;
@@ -89,9 +89,9 @@ class Entities {
    * @param string $entity_type_id
    *  Entity type id like 'node'.
    *
-   * @return \Drupal\simple_sitemap\Manager\Entities
+   * @return \Drupal\simple_sitemap\Manager\EntityManager
    */
-  public function enableEntityType(string $entity_type_id): Entities {
+  public function enableEntityType(string $entity_type_id): EntityManager {
     $enabled_entity_types = $this->settings->get('enabled_entity_types');
     if (!in_array($entity_type_id, $enabled_entity_types, TRUE)) {
       $enabled_entity_types[] = $entity_type_id;
@@ -108,9 +108,9 @@ class Entities {
    *
    * @param string $entity_type_id
    *
-   * @return \Drupal\simple_sitemap\Manager\Entities
+   * @return \Drupal\simple_sitemap\Manager\EntityManager
    */
-  public function disableEntityType(string $entity_type_id): Entities {
+  public function disableEntityType(string $entity_type_id): EntityManager {
 
     // Updating settings.
     $enabled_entity_types = $this->settings->get('enabled_entity_types');
@@ -143,15 +143,13 @@ class Entities {
    * @param string|null $bundle_name
    * @param array $settings
    *
-   * @return \Drupal\simple_sitemap\Manager\Entities
-   *
+   * @return \Drupal\simple_sitemap\Manager\EntityManager
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   *
    * @todo multiple variants
    * @todo Pass entity object instead of id and bundle.
    */
-  public function setBundleSettings(string $entity_type_id, ?string $bundle_name = NULL, array $settings = ['index' => TRUE]): Entities {
+  public function setBundleSettings(string $entity_type_id, ?string $bundle_name = NULL, array $settings = ['index' => TRUE]): EntityManager {
     if (empty($variants = $this->getVariants(FALSE))) {
       return $this;
     }
@@ -294,14 +292,12 @@ class Entities {
    * @param string|null $bundle_name
    *  Limit the removal to a specific bundle name.
    *
-   * @return \Drupal\simple_sitemap\Manager\Entities
-   *
+   * @return \Drupal\simple_sitemap\Manager\EntityManager
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   *
    * @todo Pass entity object instead of id and bundle.
    */
-  public function removeBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL): Entities {
+  public function removeBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL): EntityManager {
     if (empty($variants = $this->getVariants(FALSE))) {
       return $this;
     }
@@ -339,15 +335,13 @@ class Entities {
    * @param string $id
    * @param array $settings
    *
-   * @return \Drupal\simple_sitemap\Manager\Entities
-   *
+   * @return \Drupal\simple_sitemap\Manager\EntityManager
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   *
    * @todo Check functionality (variant setting etc).
    * @todo Pass entity object instead of id and bundle.
    */
-  public function setEntityInstanceSettings(string $entity_type_id, string $id, array $settings): Entities {
+  public function setEntityInstanceSettings(string $entity_type_id, string $id, array $settings): EntityManager {
     if (empty($this->getVariants(FALSE))) {
       return $this;
     }
@@ -451,14 +445,12 @@ class Entities {
    * @param string|null $entity_type_id
    *  Limits the removal to a certain entity type.
    * @param string|array|null $entity_ids
-   *
    *  Limits the removal to entities with certain IDs.
    *
-   * @return \Drupal\simple_sitemap\Manager\Entities
-   *
+   * @return \Drupal\simple_sitemap\Manager\EntityManager
    * @todo Pass entity object instead of id and bundle.
    */
-  public function removeEntityInstanceSettings(?string $entity_type_id = NULL, $entity_ids = NULL): Entities {
+  public function removeEntityInstanceSettings(?string $entity_type_id = NULL, $entity_ids = NULL): EntityManager {
     if (empty($variants = $this->getVariants(FALSE))) {
       return $this;
     }

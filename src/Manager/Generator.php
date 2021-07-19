@@ -172,16 +172,16 @@ class Generator {
     return $this;
   }
 
-  public function entities(): Entities {
-    /** @var \Drupal\simple_sitemap\Manager\Entities $entities */
-    $entities = \Drupal::service('simple_sitemap.entities');
+  public function entityManager(): EntityManager {
+    /** @var \Drupal\simple_sitemap\Manager\EntityManager $entities */
+    $entities = \Drupal::service('simple_sitemap.entity_manageer');
 
     return $entities->setVariants($this->getVariants());
   }
 
-  public function customLinks(): CustomLinks {
-    /** @var \Drupal\simple_sitemap\Manager\CustomLinks $custom_links */
-    $custom_links = \Drupal::service('simple_sitemap.custom_links');
+  public function customLinkManager(): CustomLinkManager {
+    /** @var \Drupal\simple_sitemap\Manager\CustomLinkManager $custom_links */
+    $custom_links = \Drupal::service('simple_sitemap.custom_link_manager');
 
     return $custom_links->setVariants($this->getVariants());
   }

@@ -268,17 +268,6 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return $url_negotiation_method_enabled && $has_multiple_indexable_languages;
   }
 
-  public static function createOrUpdate(string $id, string $type, ?string $label = NULL, int $weight = 0): SimpleSitemapInterface {
-    $variant = (($old_variant = self::load($id)) !== NULL) ? $old_variant : self::create(['id' => $id]);
-    $variant
-      ->set('type', $type)
-      ->set('label', $label ?? $id)
-      ->set('weight', $weight)
-      ->save();
-
-    return $variant;
-  }
-
   public static function purgeContent($variants = NULL, ?bool $status = self::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED) {
     \Drupal::entityTypeManager()->getStorage('simple_sitemap')->purgeContent($variants, $status);
   }

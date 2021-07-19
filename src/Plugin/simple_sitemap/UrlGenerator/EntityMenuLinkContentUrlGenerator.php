@@ -5,7 +5,7 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
-use Drupal\simple_sitemap\Manager\Entities;
+use Drupal\simple_sitemap\Manager\EntityManager;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -37,7 +37,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
   protected $menuLinkTree;
 
   /**
-   * @var \Drupal\simple_sitemap\Manager\Entities
+   * @var \Drupal\simple_sitemap\Manager\EntityManager
    */
   protected $entitiesManager;
 
@@ -52,7 +52,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
-   * @param \Drupal\simple_sitemap\Manager\Entities $entities_manager
+   * @param \Drupal\simple_sitemap\Manager\EntityManager $entities_manager
    * @param \Drupal\Core\Menu\MenuLinkTreeInterface $menu_link_tree
    */
   public function __construct(
@@ -64,7 +64,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entity_helper,
-    Entities $entities_manager,
+    EntityManager $entities_manager,
     MenuLinkTreeInterface $menu_link_tree
   ) {
     parent::__construct(
@@ -95,7 +95,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       $container->get('language_manager'),
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
-      $container->get('simple_sitemap.entities'),
+      $container->get('simple_sitemap.entity_manageer'),
       $container->get('menu.link_tree')
     );
   }

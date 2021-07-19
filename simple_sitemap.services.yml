@@ -8,8 +8,8 @@ services:
       - '@lock'
       - '@simple_sitemap.logger'
 
-  simple_sitemap.entities:
-    class: Drupal\simple_sitemap\Manager\Entities
+  simple_sitemap.entity_manageer:
+    class: Drupal\simple_sitemap\Manager\EntityManager
     public: true
     arguments:
       - '@simple_sitemap.entity_helper'
@@ -18,8 +18,8 @@ services:
       - '@database'
       - '@entity_type.manager'
 
-  simple_sitemap.custom_links:
-    class: Drupal\simple_sitemap\Manager\CustomLinks
+  simple_sitemap.custom_link_manager:
+    class: Drupal\simple_sitemap\Manager\CustomLinkManager
     public: true
     arguments:
       - '@config.factory'

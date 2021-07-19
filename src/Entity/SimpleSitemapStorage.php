@@ -111,6 +111,19 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     return $sitemaps;
   }
 
+  public function create(array $values = []) {
+    if (isset($values['id']) && ($sitemap = SimpleSitemap::load($values['id'])) !== NULL) {
+      foreach (['type', 'label', 'weight'] as $property) {
+        if (isset($values[$property])) {
+          $sitemap->set('type', $values[$property]);
+        }
+      }
+      return $sitemap;
+    }
+
+    return parent::create($values);
+  }
+
   /**
    * {@inheritdoc}
    */

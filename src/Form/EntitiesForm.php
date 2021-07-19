@@ -3,7 +3,7 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\simple_sitemap\Manager\Entities;
+use Drupal\simple_sitemap\Manager\EntityManager;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,7 +31,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
    * @param \Drupal\simple_sitemap\Settings $settings
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
-   * @param \Drupal\simple_sitemap\Manager\Entities $sitemap_entities
+   * @param \Drupal\simple_sitemap\Manager\EntityManager $sitemap_entities
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
@@ -39,7 +39,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
     Settings $settings,
     FormHelper $form_helper,
     EntityHelper $entity_helper,
-    Entities $sitemap_entities
+    EntityManager $sitemap_entities
   ) {
     parent::__construct(
       $config_factory,
@@ -61,7 +61,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
       $container->get('simple_sitemap.settings'),
       $container->get('simple_sitemap.form_helper'),
       $container->get('simple_sitemap.entity_helper'),
-      $container->get('simple_sitemap.entities'),
+      $container->get('simple_sitemap.entity_manageer'),
     );
   }
 
@@ -88,7 +88,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
     $form['#attached']['library'][] = 'simple_sitemap/sitemapEntities';
     $form['#attached']['drupalSettings']['simple_sitemap'] = ['all_entities' => [], 'atomic_entities' => []];
 
-    $all_bundle_settings = $this->generator->setVariants(TRUE)->entities()->getBundleSettings(NULL, NULL, TRUE, TRUE);
+    $all_bundle_settings = $this->generator->setVariants(TRUE)->entityManager()->getBundleSettings(NULL, NULL, TRUE, TRUE);
     $indexed_bundles = [];
     foreach ($all_bundle_settings as $variant => $entity_types) {
       foreach ($entity_types as $entity_type_name => $bundles) {
@@ -108,7 +108,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
     asort($entity_type_labels);
 
     foreach ($entity_type_labels as $entity_type_id => $entity_type_label) {
-      $enabled_entity_type = $this->generator->entities()->entityTypeIsEnabled($entity_type_id);
+      $enabled_entity_type = $this->generator->entityManager()->entityTypeIsEnabled($entity_type_id);
       $atomic_entity_type = $this->entityHelper->entityTypeIsAtomic($entity_type_id);
       $css_entity_type_id = str_replace('_', '-', $entity_type_id);
 
@@ -188,13 +188,13 @@ class EntitiesForm extends SimpleSitemapFormBase {
       if (substr($field_name, -strlen('_enabled')) === '_enabled') {
         $entity_type_id = substr($field_name, 0, -8);
         if ($value) {
-          $this->generator->entities()->enableEntityType($entity_type_id);
+          $this->generator->entityManager()->enableEntityType($entity_type_id);
           if ($this->entityHelper->entityTypeIsAtomic($entity_type_id)) {
             foreach (SimpleSitemap::loadMultiple() as $variant_id => $variant) {
               if (isset($values['index_' . $variant_id . '_' . $entity_type_id . '_settings'])) {
                 $this->generator
                   ->setVariants($variant_id)
-                  ->entities()->setBundleSettings($entity_type_id, $entity_type_id, [
+                  ->entityManager()->setBundleSettings($entity_type_id, $entity_type_id, [
                     'index' => (bool) $values['index_' . $variant_id . '_' . $entity_type_id . '_settings'],
                     'priority' => $values['priority_' . $variant_id . '_' . $entity_type_id . '_settings'],
                     'changefreq' => $values['changefreq_' . $variant_id . '_' . $entity_type_id . '_settings'],
@@ -205,7 +205,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
           }
         }
         else {
-          $this->generator->entities()->disableEntityType($entity_type_id);
+          $this->generator->entityManager()->disableEntityType($entity_type_id);
         }
       }
     }
