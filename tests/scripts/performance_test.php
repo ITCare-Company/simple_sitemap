@@ -72,10 +72,12 @@ class Tester {
     ]);
     $node_type->save();
     node_add_body_field($node_type);
-    \Drupal::service('simple_sitemap.generator')
-      ->entities()->setBundleSettings('node', 'simple_sitemap_performance_test', [
+
+    /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
+    $generator = \Drupal::service('simple_sitemap.generator');
+    $generator->entityManager()->setBundleSettings('node', 'simple_sitemap_performance_test', [
         'index' => TRUE,
-      ]);
+    ]);
   }
 
   public function createNode() {

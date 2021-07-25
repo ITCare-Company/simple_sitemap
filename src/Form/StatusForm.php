@@ -12,7 +12,7 @@ use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
 use Drupal\Core\Database\Connection;
 
 /**
- * Class SitemapsForm
+ * Class StatusForm
  */
 class StatusForm extends SimpleSitemapFormBase {
 

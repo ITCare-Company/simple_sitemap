@@ -210,7 +210,7 @@ programmatic sitemap generation. These include:
      * get
      * remove
 
-These service methods can be chained like so:
+These service methods can be used/chained like so:
 
 ```php
 // Create a new sitemap variant of the default_hreflang sitemap type.
@@ -305,7 +305,7 @@ See https://gbyte.dev/projects/simple-xml-sitemap for further details.
    possible help out by submitting patches.
    http://drupal.org/project/issues/simple_sitemap
 
- * Do you know a non-English language? Help translating the module.
+ * Do you know a non-English language? Help to translate the module.
    https://localize.drupal.org/translate/projects/simple_sitemap
 
  * If you would like to say thanks and support the development of this module, a
