@@ -120,10 +120,8 @@ class EntityManager {
     }
 
     // Deleting inclusion settings.
-    $config_names = $this->configFactory->listAll('simple_sitemap.bundle_settings.');
-    foreach ($config_names as $config_name) {
-      $config_name_parts = explode('.', $config_name);
-      if ($config_name_parts[3] === $entity_type_id) {
+    foreach ($this->configFactory->listAll('simple_sitemap.bundle_settings.') as $config_name) {
+      if (explode('.', $config_name)[3] === $entity_type_id) {
         $this->configFactory->getEditable($config_name)->delete();
       }
     }
@@ -147,7 +145,6 @@ class EntityManager {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @todo multiple variants
-   * @todo Pass entity object instead of id and bundle.
    */
   public function setBundleSettings(string $entity_type_id, ?string $bundle_name = NULL, array $settings = ['index' => TRUE]): EntityManager {
     if (empty($variants = $this->getVariants(FALSE))) {
@@ -235,8 +232,6 @@ class EntityManager {
    * @return array|false
    *  Array of settings or array of settings keyed by variant name. False if
    *  entity type does not exist.
-   *
-   * @todo Pass entity object instead of id and bundle.
    */
   public function getBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE) {
     $bundle_name = $bundle_name ?? $entity_type_id;
@@ -295,7 +290,6 @@ class EntityManager {
    * @return \Drupal\simple_sitemap\Manager\EntityManager
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @todo Pass entity object instead of id and bundle.
    */
   public function removeBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL): EntityManager {
     if (empty($variants = $this->getVariants(FALSE))) {

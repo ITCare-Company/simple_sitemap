@@ -42,5 +42,5 @@ interface SimpleSitemapInterface extends ConfigEntityInterface {
 
   public function isMultilingual(): bool;
 
-  public static function purgeContent(?array $variants = NULL, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED);
+  public static function purgeContent(?array $variants = NULL, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_ALL);
 }

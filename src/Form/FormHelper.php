@@ -443,6 +443,7 @@ class FormHelper {
       default:
         return FALSE;
     }
+
     return TRUE;
   }
 
@@ -506,18 +507,6 @@ class FormHelper {
 //    return FALSE;
 
     return TRUE;
-  }
-
-  /**
-   * Gets the values needed to display the variant dropdown setting.
-   *
-   * @return array
-   */
-  public function getVariantSelectValues(): array {
-    return array_map(
-      function($variant) { return $this->t($variant->label()); },
-      SimpleSitemap::loadMultiple()
-    );
   }
 
   /**

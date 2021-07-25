@@ -61,7 +61,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   public const SITEMAP_PUBLISHED = 1;
   public const SITEMAP_PUBLISHED_GENERATING = 2;
 
-  public const FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED = NULL;
+  public const FETCH_BY_STATUS_ALL = NULL;
   public const FETCH_BY_STATUS_UNPUBLISHED = 0;
   public const FETCH_BY_STATUS_PUBLISHED = 1;
 
@@ -100,7 +100,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   }
 
   public function fromPublishedAndUnpublished(): SimpleSitemapInterface {
-    $this->fetchByStatus = self::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED;
+    $this->fetchByStatus = self::FETCH_BY_STATUS_ALL;
     return $this;
   }
 
@@ -268,7 +268,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return $url_negotiation_method_enabled && $has_multiple_indexable_languages;
   }
 
-  public static function purgeContent($variants = NULL, ?bool $status = self::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED) {
+  public static function purgeContent($variants = NULL, ?bool $status = self::FETCH_BY_STATUS_ALL) {
     \Drupal::entityTypeManager()->getStorage('simple_sitemap')->purgeContent($variants, $status);
   }
 

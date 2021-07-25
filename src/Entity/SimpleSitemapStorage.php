@@ -216,12 +216,12 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
       ->execute();
   }
 
-  public function getChunkCount(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): int {
+  public function getChunkCount(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_ALL): int {
     $query = $this->database->select('simple_sitemap', 's')
       ->condition('s.type', $entity->id())
       ->condition('s.delta', self::SITEMAP_INDEX_DELTA, '<>');
 
-    if ($status !== SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED) {
+    if ($status !== SimpleSitemap::FETCH_BY_STATUS_ALL) {
       $query->condition('s.status', $status);
     }
 
@@ -302,9 +302,9 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     return SimpleSitemap::SITEMAP_PUBLISHED_GENERATING;
   }
 
-  public function getCreated(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): ?string {
+  public function getCreated(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_ALL): ?string {
     foreach ($this->getChunkData($entity) as $chunk) {
-      if ($status === SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED || $chunk->status == $status) {
+      if ($status === SimpleSitemap::FETCH_BY_STATUS_ALL || $chunk->status == $status) {
         return $chunk->sitemap_created;
       }
     }
@@ -312,11 +312,11 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     return NULL;
   }
 
-  public function getLinkCount(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): int {
+  public function getLinkCount(SimpleSitemap $entity, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_ALL): int {
     $count = 0;
     foreach ($this->getChunkData($entity) as $chunk) {
       if ($chunk->delta != self::SITEMAP_INDEX_DELTA
-        && ($status === SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED || $chunk->status == $status)) {
+        && ($status === SimpleSitemap::FETCH_BY_STATUS_ALL || $chunk->status == $status)) {
         $count += (int) $chunk->link_count;
       }
     }
@@ -324,9 +324,9 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
     return $count;
   }
 
-  public function purgeContent($variants = NULL, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED): void {
+  public function purgeContent($variants = NULL, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_ALL): void {
     $query = \Drupal::database()->delete('simple_sitemap');
-    if ($status !== SimpleSitemap::FETCH_BY_STATUS_PUBLISHED_UNPUBLISHED) {
+    if ($status !== SimpleSitemap::FETCH_BY_STATUS_ALL) {
       $query->condition('status', $status);
     }
     if ($variants !== NULL) {
