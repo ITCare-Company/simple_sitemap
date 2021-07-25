@@ -26,7 +26,7 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['label'] = $this->t('Sitemap');
+    $header['name'] = $this->t('Sitemap');
     $header['type'] = $this->t('Type');
     $header['status'] = $this->t('Status');
     $header['count'] = $this->t('Link count');
@@ -38,7 +38,7 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = '<span title="' . $entity->get('description') . '">' . $this->t($entity->label()) . '</span>';
+    $row['name']['#markup'] = '<span title="' . $entity->get('description') . '">' . $this->t($entity->label()) . '</span>';
     $row['type']['#markup'] = '<span title="' . $entity->getType()->get('description') . '">' . $this->t($entity->getType()->label()) . '</span>';
     $row['status']['#markup'] = $this->t('pending');
     $row['count']['#markup'] = '';
@@ -53,7 +53,7 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
 
         case SimpleSitemap::SITEMAP_PUBLISHED:
         case SimpleSitemap::SITEMAP_PUBLISHED_GENERATING:
-          $row['label'] = $this->t('<a title ="' . $entity->get('description') . '" href="@url" target="_blank">@sitemap</a>',
+          $row['name']['#markup'] = $this->t('<a title ="' . $entity->get('description') . '" href="@url" target="_blank">@sitemap</a>',
             ['@url' => $entity->toUrl()->toString(), '@sitemap' => $this->t($entity->label())]
           );
           $row['status']['#markup'] = $this->t(($entity->contentStatus() === SimpleSitemap::SITEMAP_PUBLISHED
