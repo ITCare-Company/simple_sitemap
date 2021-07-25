@@ -38,8 +38,8 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['name']['#markup'] = '<span title="' . $entity->get('description') . '">' . $this->t($entity->label()) . '</span>';
-    $row['type']['#markup'] = '<span title="' . $entity->getType()->get('description') . '">' . $this->t($entity->getType()->label()) . '</span>';
+    $row['name']['#markup'] = '<span title="' . $this->t((string) $entity->get('description')) . '">' . $this->t($entity->label()) . '</span>';
+    $row['type']['#markup'] = '<span title="' . $this->t((string) $entity->getType()->get('description')) . '">' . $this->t($entity->getType()->label()) . '</span>';
     $row['status']['#markup'] = $this->t('pending');
     $row['count']['#markup'] = '';
 
@@ -53,9 +53,9 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
 
         case SimpleSitemap::SITEMAP_PUBLISHED:
         case SimpleSitemap::SITEMAP_PUBLISHED_GENERATING:
-          $row['name']['#markup'] = $this->t('<a title ="' . $entity->get('description') . '" href="@url" target="_blank">@sitemap</a>',
-            ['@url' => $entity->toUrl()->toString(), '@sitemap' => $this->t($entity->label())]
-          );
+          $row['name']['#markup'] = '<a title ="' . $this->t((string) $entity->get('description'))
+            . '" href="' . $entity->toUrl()->toString() . '" target="_blank">'
+            . $this->t($entity->label()) . '</a>';
           $row['status']['#markup'] = $this->t(($entity->contentStatus() === SimpleSitemap::SITEMAP_PUBLISHED
             ? 'published on @time'
             : 'published on @time, regenerating'
@@ -73,8 +73,8 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
    */
   public function getDefaultOperations(EntityInterface $entity): array {
     return [
-      ['title' => t('Edit'), 'url' => $entity->toUrl('edit-form')],
-      ['title' => t('Delete'), 'url' => $entity->toUrl('delete-form')],
+      ['title' => $this->t('Edit'), 'url' => $entity->toUrl('edit-form')],
+      ['title' => $this->t('Delete'), 'url' => $entity->toUrl('delete-form')],
     ];
   }
 

@@ -28,12 +28,12 @@ class SimpleSitemapTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $entity->label();
-    $row['description'] = $entity->get('description') ?: '';
-    $row['sitemap_generator'] = (string) $entity->getSitemapGenerator()->label();
+    $row['label'] = $this->t($entity->label());
+    $row['description'] = $this->t((string) $entity->get('description'));
+    $row['sitemap_generator'] = $this->t($entity->getSitemapGenerator()->label());
     $row['url_generators']['data']['#markup'] = '';
     foreach ($entity->getUrlGenerators() as $generator) {
-      $row['url_generators']['data']['#markup'] .= '<div>' . $generator->label() . '</div>';
+      $row['url_generators']['data']['#markup'] .= '<div>' . $this->t($generator->label()) . '</div>';
     }
 
     return $row + parent::buildRow($entity);
@@ -44,8 +44,8 @@ class SimpleSitemapTypeListBuilder extends ConfigEntityListBuilder {
    */
   public function getDefaultOperations(EntityInterface $entity): array {
     return [
-      ['title' => t('Edit'), 'url' => $entity->toUrl('edit-form')],
-      ['title' => t('Delete'), 'url' => $entity->toUrl('delete-form')],
+      ['title' => $this->t('Edit'), 'url' => $entity->toUrl('edit-form')],
+      ['title' => $this->t('Delete'), 'url' => $entity->toUrl('delete-form')],
     ];
   }
 
