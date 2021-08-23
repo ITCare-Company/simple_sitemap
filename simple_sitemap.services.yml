@@ -8,7 +8,7 @@ services:
       - '@lock'
       - '@simple_sitemap.logger'
 
-  simple_sitemap.entity_manageer:
+  simple_sitemap.entity_manager:
     class: Drupal\simple_sitemap\Manager\EntityManager
     public: true
     arguments:

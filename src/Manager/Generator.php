@@ -174,7 +174,7 @@ class Generator {
 
   public function entityManager(): EntityManager {
     /** @var \Drupal\simple_sitemap\Manager\EntityManager $entities */
-    $entities = \Drupal::service('simple_sitemap.entity_manageer');
+    $entities = \Drupal::service('simple_sitemap.entity_manager');
 
     return $entities->setVariants($this->getVariants());
   }

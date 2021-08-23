@@ -95,7 +95,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       $container->get('language_manager'),
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
-      $container->get('simple_sitemap.entity_manageer'),
+      $container->get('simple_sitemap.entity_manager'),
       $container->get('menu.link_tree')
     );
   }
