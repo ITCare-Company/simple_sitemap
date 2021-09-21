@@ -2,11 +2,11 @@
 
 namespace Drupal\simple_sitemap_views\Plugin\views\display_extender;
 
-use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\views\Plugin\views\display_extender\DisplayExtenderPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\views\Plugin\views\display\DisplayRouterInterface;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
+use Drupal\simple_sitemap_views\SimpleSitemapViews;
 use Drupal\simple_sitemap\Form\FormHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ViewExecutable;
@@ -35,7 +35,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
   /**
    * The sitemap variants.
    *
-   * @var SimpleSitemap[]
+   * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[]
    */
   protected $variants = [];
 
@@ -50,11 +50,13 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    *   The plugin implementation definition.
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
    *   Simple XML Sitemap form helper.
+   * @param \Drupal\simple_sitemap_views\SimpleSitemapViews $sitemap_views
+   *   Views sitemap data.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, FormHelper $form_helper) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, FormHelper $form_helper, SimpleSitemapViews $sitemap_views) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->formHelper = $form_helper;
-    $this->variants = SimpleSitemap::loadMultiple();
+    $this->variants = $sitemap_views->getVariants();
   }
 
   /**
@@ -65,7 +67,8 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('simple_sitemap.form_helper')
+      $container->get('simple_sitemap.form_helper'),
+      $container->get('simple_sitemap.views')
     );
   }
 
@@ -304,7 +307,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    *   Has sitemap settings (TRUE) or not (FALSE).
    */
   public function hasSitemapSettings(): bool {
-    return $this->displayHandler instanceof DisplayRouterInterface;
+    return $this->displayHandler instanceof DisplayRouterInterface && !empty($this->variants);
   }
 
   /**

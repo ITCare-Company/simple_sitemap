@@ -65,14 +65,14 @@ abstract class SimpleSitemapViewsTestBase extends SimplesitemapTestBase {
     $this->cron = $this->container->get('cron');
     $this->sitemapVariant = 'default';
 
+    $sitemap_type = SimpleSitemapType::load('default_hreflang');
+    $sitemap_type->set('url_generators', array_merge($sitemap_type->get('url_generators'), ['views']))->save();
+
     $this->testView = Views::getView('simple_sitemap_views_test_view');
     $this->testView->setDisplay('page_1');
 
     $this->testView2 = Views::getView('simple_sitemap_views_test_view');
     $this->testView2->setDisplay('page_2');
-
-    $sitemap_type = SimpleSitemapType::load('default_hreflang');
-    $sitemap_type->set('url_generators', array_merge($sitemap_type->get('url_generators'), ['views']))->save();
   }
 
   /**

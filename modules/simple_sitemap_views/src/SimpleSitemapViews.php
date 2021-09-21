@@ -248,7 +248,7 @@ class SimpleSitemapViews {
    * @throws \Exception
    */
   public function addArgumentsToIndex(ViewExecutable $view, array $args, ?string $display_id = NULL): bool {
-    foreach (SimpleSitemap::loadMultiple() as $variant) {
+    foreach ($this->getVariants() as $variant) {
       if ($this->addArgumentsToIndexByVariant($view, $variant->id(), $args, $display_id)) {
         return TRUE;
       }
@@ -513,7 +513,7 @@ class SimpleSitemapViews {
    * @param string|null $display_id
    *   The display id. If empty uses the current display.
    *
-   * @return array
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[]
    *   An array of sitemap variants.
    */
   public function getIndexableVariants(ViewExecutable $view, ?string $display_id = NULL): array {
@@ -522,9 +522,28 @@ class SimpleSitemapViews {
       return [];
     }
 
-    $variants = SimpleSitemap::loadMultiple();
+    $variants = $this->getVariants();
     foreach ($variants as $variant_id => $variant) {
       if (!$this->getSitemapSettings($view, $variant_id)) {
+        unset($variants[$variant_id]);
+      }
+    }
+
+    return $variants;
+  }
+
+  /**
+   * Returns an array of correctly configured sitemap variants.
+   *
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[]
+   *   An array of sitemap variants.
+   */
+  public function getVariants(): array {
+    $variants = SimpleSitemap::loadMultiple();
+
+    /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $variant */
+    foreach ($variants as $variant_id => $variant) {
+      if (!$variant->getType()->hasUrlGenerator('views')) {
         unset($variants[$variant_id]);
       }
     }

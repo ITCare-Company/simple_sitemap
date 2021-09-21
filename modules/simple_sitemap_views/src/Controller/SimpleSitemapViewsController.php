@@ -57,6 +57,10 @@ class SimpleSitemapViewsController extends ControllerBase {
       '#empty' => $this->t('No view displays are set to be indexed yet. <a href="@url">Edit a view.</a>', ['@url' => $GLOBALS['base_url'] . '/admin/structure/views']),
     ];
 
+    if (empty($this->sitemapViews->getVariants())) {
+      $table['#empty'] = $this->t('Please configure at least one <a href="@sitemaps_url">sitemap</a> to be of a <a href="@types_url">type</a> that implements the views URL generator.', ['@sitemaps_url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap', '@types_url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/types']);
+    }
+
     foreach ($this->sitemapViews->getIndexableViews() as $index => $view) {
       $table[$index]['view'] = ['#markup' => $view->storage->label()];
       $table[$index]['display'] = ['#markup' => $view->display_handler->display['display_title']];

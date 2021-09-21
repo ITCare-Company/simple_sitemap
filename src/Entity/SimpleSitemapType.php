@@ -55,11 +55,15 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGenerato
 class SimpleSitemapType extends ConfigEntityBase implements SimpleSitemapTypeInterface {
 
   /**
+   * The sitemap generator.
+   *
    * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorInterface
    */
   protected $sitemapGenerator;
 
   /**
+   * The URL generators.
+   *
    * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorInterface[]
    */
   protected $urlGenerators;
@@ -89,6 +93,13 @@ class SimpleSitemapType extends ConfigEntityBase implements SimpleSitemapTypeInt
     }
 
     return $this->urlGenerators;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasUrlGenerator(string $generator_id): bool {
+    return in_array($generator_id, $this->get('url_generators'), TRUE);
   }
 
   /**
