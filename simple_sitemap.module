@@ -87,7 +87,7 @@ function simple_sitemap_form_alter(&$form, FormStateInterface $form_state, $form
  * @throws \Drupal\Component\Plugin\Exception\PluginException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function simple_sitemap_entity_form_submit($form, FormStateInterface &$form_state) {
+function simple_sitemap_entity_form_submit($form, FormStateInterface $form_state) {
 
   /** @var Drupal\simple_sitemap\Form\FormHelper $f */
   $f = \Drupal::service('simple_sitemap.form_helper');

@@ -15,7 +15,7 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGenerato
  *   label_singular = @Translation("sitemap type"),
  *   label_plural = @Translation("sitemap types"),
  *   label_count = @PluralTranslation(
- *     singular = "@count sitema type",
+ *     singular = "@count sitemap type",
  *     plural = "@count sitemap types",
  *   ),
  *   handlers = {
