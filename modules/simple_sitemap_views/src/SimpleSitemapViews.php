@@ -472,9 +472,10 @@ class SimpleSitemapViews {
     }
 
     // Load views with display plugins that use the route.
-    $query = $this->viewStorage->getQuery();
-    $query->condition('status', TRUE);
-    $query->condition("display.*.display_plugin", $this->getRouterDisplayPluginIds(), 'IN');
+    $query = $this->viewStorage->getQuery()
+      ->condition('status', TRUE)
+      ->condition("display.*.display_plugin", $this->getRouterDisplayPluginIds(), 'IN')
+      ->accessCheck(TRUE);
     $view_ids = $query->execute();
 
     // If there are no such views, then return an empty array.

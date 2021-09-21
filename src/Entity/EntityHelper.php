@@ -197,7 +197,10 @@ class EntityHelper {
       return [];
     }
 
-    $entity_query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
+    $entity_query = $this->entityTypeManager
+      ->getStorage($entity_type_id)
+      ->getQuery()
+      ->accessCheck(TRUE);
     if ($bundle_name !== NULL && !$this->entityTypeIsAtomic($entity_type_id)) {
       $keys = $sitemap_entity_types[$entity_type_id]->getKeys();
 
