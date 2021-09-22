@@ -100,7 +100,7 @@ class SettingsForm extends SimpleSitemapFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Add styling and sorting to sitemaps'),
       '#description' => $this->t('If checked, sitemaps will be displayed as tables with sortable entries and thus become much friendlier towards human visitors. Search engines will not care.'),
-      '#default_value' => $this->settings->get('xsl', TRUE),
+      '#default_value' => $this->settings->get('xsl', FALSE),
     ];
 
     $form['simple_sitemap_settings']['settings']['languages'] = [
