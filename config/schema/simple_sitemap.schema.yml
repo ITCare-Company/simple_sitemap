@@ -94,10 +94,10 @@ simple_sitemap.sitemap.*:
       type: string
     label:
       label: 'Label'
-      type: string
+      type: label
     description:
       label: 'Description'
-      type: string
+      type: text
     type:
       label: 'Type'
       type: string
@@ -114,10 +114,10 @@ simple_sitemap.type.*:
       type: string
     label:
       label: 'Label'
-      type: string
+      type: label
     description:
       label: 'Description'
-      type: string
+      type: text
     sitemap_generator:
       label: 'Sitemap generator'
       type: string
