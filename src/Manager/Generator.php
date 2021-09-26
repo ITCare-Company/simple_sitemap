@@ -11,30 +11,38 @@ use Drupal\simple_sitemap\Settings;
 /**
  * Main managing service.
  *
- * Capable of setting/loading module settings, queuing elements and generating the
- * sitemap. Services for custom link and entity link generation can be fetched from this
- * service as well.
+ * Capable of setting/loading module settings, queuing elements and generating
+ * the sitemap. Services for custom link and entity link generation can be
+ * fetched from this service as well.
  */
 class Generator {
 
   use VariantSetterTrait;
 
   /**
+   * The simple_sitemap.settings service.
+   *
    * @var \Drupal\simple_sitemap\Settings
    */
   protected $settings;
 
   /**
+   * The simple_sitemap.queue_worker service.
+   *
    * @var \Drupal\simple_sitemap\Queue\QueueWorker
    */
   protected $queueWorker;
 
   /**
+   * The lock backend that should be used.
+   *
    * @var \Drupal\Core\Lock\LockBackendInterface
    */
   protected $lock;
 
   /**
+   * Simple XML Sitemap logger.
+   *
    * @var \Drupal\simple_sitemap\Logger
    */
   protected $logger;
@@ -43,9 +51,13 @@ class Generator {
    * Simplesitemap constructor.
    *
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    * @param \Drupal\simple_sitemap\Queue\QueueWorker $queue_worker
+   *   The simple_sitemap.queue_worker service.
    * @param \Drupal\Core\Lock\LockBackendInterface|null $lock
+   *   The lock backend that should be used.
    * @param \Drupal\simple_sitemap\Logger|null $logger
+   *   Simple XML Sitemap logger.
    */
   public function __construct(
     Settings $settings,
@@ -60,17 +72,15 @@ class Generator {
   }
 
   /**
-   * Returns a specific sitemap setting or a default value if setting does not
-   * exist.
+   * Returns a specific setting or a default value if setting does not exist.
    *
    * @param string $name
-   *  Name of the setting, like 'max_links'.
-   *
+   *   Name of the setting, like 'max_links'.
    * @param mixed $default
-   *  Value to be returned if the setting does not exist in the configuration.
+   *   Value to be returned if the setting does not exist in the configuration.
    *
    * @return mixed
-   *  The current setting from configuration or a default value.
+   *   The current setting from configuration or a default value.
    */
   public function getSetting(string $name, $default = FALSE) {
     return $this->settings->get($name, $default);
@@ -80,10 +90,9 @@ class Generator {
    * Stores a specific sitemap setting in configuration.
    *
    * @param string $name
-   *  Setting name, like 'max_links'.
-   *
+   *   Setting name, like 'max_links'.
    * @param mixed $setting
-   *  The setting to be saved.
+   *   The setting to be saved.
    *
    * @return $this
    */
@@ -97,13 +106,13 @@ class Generator {
    * Returns a sitemap variant, its index, or its requested chunk.
    *
    * @param int|null $delta
-   *  Optional delta of the chunk.
+   *   Optional delta of the chunk.
    *
    * @return string|null
-   *  If no chunk delta is provided, either the sitemap variant is returned,
-   *  or its index in case of a chunked sitemap.
-   *  If a chunk delta is provided, the relevant chunk is returned.
-   *  Returns null if the sitemap variant is not retrievable from the database.
+   *   If no chunk delta is provided, either the sitemap variant is returned,
+   *   or its index in case of a chunked sitemap.
+   *   If a chunk delta is provided, the relevant chunk is returned.
+   *   Returns null if the sitemap variant is not retrievable from the database.
    */
   public function getSitemap(?int $delta = NULL): ?string {
     /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap */
@@ -119,9 +128,10 @@ class Generator {
    * Generates all sitemaps.
    *
    * @param string $from
-   *  Can be 'form', 'drush', 'cron' and 'backend'.
+   *   Can be 'form', 'drush', 'cron' and 'backend'.
    *
    * @return $this
+   *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function generateSitemap(string $from = QueueWorker::GENERATE_TYPE_FORM): Generator {
@@ -148,6 +158,7 @@ class Generator {
    * Queues links from currently set variants.
    *
    * @return $this
+   *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function queue(): Generator {
@@ -160,6 +171,7 @@ class Generator {
    * Deletes the queue and queues links from currently set variants.
    *
    * @return $this
+   *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function rebuildQueue(): Generator {
@@ -172,6 +184,12 @@ class Generator {
     return $this;
   }
 
+  /**
+   * Gets the simple_sitemap.entity_manager service.
+   *
+   * @return \Drupal\simple_sitemap\Manager\EntityManager
+   *   The simple_sitemap.entity_manager service.
+   */
   public function entityManager(): EntityManager {
     /** @var \Drupal\simple_sitemap\Manager\EntityManager $entities */
     $entities = \Drupal::service('simple_sitemap.entity_manager');
@@ -179,6 +197,12 @@ class Generator {
     return $entities->setVariants($this->getVariants());
   }
 
+  /**
+   * Gets the simple_sitemap.custom_link_manager service.
+   *
+   * @return \Drupal\simple_sitemap\Manager\CustomLinkManager
+   *   The simple_sitemap.custom_link_manager service.
+   */
   public function customLinkManager(): CustomLinkManager {
     /** @var \Drupal\simple_sitemap\Manager\CustomLinkManager $custom_links */
     $custom_links = \Drupal::service('simple_sitemap.custom_link_manager');

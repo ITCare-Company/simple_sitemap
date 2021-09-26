@@ -6,36 +6,46 @@ use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SitemapGeneratorBase
+ * Provides a base class for SitemapGenerator plugins.
  */
 abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements SitemapGeneratorInterface {
 
   protected const XMLNS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 
   /**
-   * @var \Drupal\Core\Extension\ModuleHandler
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
 
   /**
+   * The simple_sitemap.settings service.
+   *
    * @var \Drupal\simple_sitemap\Settings
    */
   protected $settings;
 
   /**
+   * Sitemap XML writer.
+   *
    * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter
    */
   protected $writer;
 
   /**
+   * The sitemap entity.
+   *
    * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface
    */
   protected $sitemapVariant;
 
   /**
+   * An array of index attributes.
+   *
    * @var array
    */
   protected static $indexAttributes = [
@@ -46,17 +56,23 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
    * SitemapGeneratorBase constructor.
    *
    * @param array $configuration
-   * @param $plugin_id
-   * @param $plugin_definition
-   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
    * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter $sitemap_writer
+   *   Sitemap XML writer.
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    ModuleHandler $module_handler,
+    ModuleHandlerInterface $module_handler,
     SitemapWriter $sitemap_writer,
     Settings $settings
   ) {
@@ -66,6 +82,9 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
     $this->settings = $settings;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimpleSitemapPluginBase {
     return new static(
       $configuration,
@@ -78,24 +97,21 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
   }
 
   /**
-   * @param \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap
-   *
-   * @return $this
+   * {@inheritdoc}
    */
-  public function setSitemapVariant(SimpleSitemapInterface $sitemap): SitemapGeneratorInterface  {
+  public function setSitemapVariant(SimpleSitemapInterface $sitemap): SitemapGeneratorInterface {
     $this->sitemapVariant = $sitemap;
 
     return $this;
   }
 
   /**
-   * @param array $links
-   * @return string
+   * {@inheritdoc}
    */
   abstract public function getChunkXml(array $links): string;
 
   /**
-   * @return string
+   * {@inheritdoc}
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
@@ -124,7 +140,8 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
     for ($delta = 1; $delta <= $this->sitemapVariant->fromUnpublished()->getChunkCount(); $delta++) {
       $this->writer->startElement('sitemap');
       $this->writer->writeElement('loc', $this->sitemapVariant->toUrl('canonical', ['delta' => $delta])->toString());
-      $this->writer->writeElement('lastmod', date('c', $this->sitemapVariant->fromUnpublished()->getCreated())); // todo Should this be current time instead?
+      // @todo Should this be current time instead?
+      $this->writer->writeElement('lastmod', date('c', $this->sitemapVariant->fromUnpublished()->getCreated()));
       $this->writer->endElement();
     }
 

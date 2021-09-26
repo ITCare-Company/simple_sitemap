@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Exception;
 
-class SkipElementException extends \InvalidArgumentException {
-
-}
+/**
+ * Exception class thrown when an element is skipped during sitemap generation.
+ */
+class SkipElementException extends \InvalidArgumentException {}

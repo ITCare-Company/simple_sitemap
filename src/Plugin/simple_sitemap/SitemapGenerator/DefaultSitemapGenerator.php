@@ -3,7 +3,7 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 /**
- * Class DefaultSitemapGenerator
+ * Provides the default sitemap generator.
  *
  * @SitemapGenerator(
  *   id = "default",
@@ -17,6 +17,8 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
   protected const XMLNS_IMAGE = 'http://www.google.com/schemas/sitemap-image/1.1';
 
   /**
+   * An array of attributes.
+   *
    * @var array
    */
   protected const ATTRIBUTES = [
@@ -73,6 +75,7 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    * Adds URL elements to the sitemap.
    *
    * @param array $links
+   *   An array of URL elements.
    */
   protected function addLinks(array $links): void {
     foreach ($links as $url_data) {
@@ -133,6 +136,7 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    * Adds all translation variant URLs as alternate URLs to a URL.
    *
    * @param array $alternate_urls
+   *   An array of alternate URLs.
    */
   protected function addAlternateUrls(array $alternate_urls): void {
     foreach ($alternate_urls as $language_id => $alternate_url) {
@@ -146,11 +150,14 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    * Adds a translation variant URL as alternate URL to a URL.
    *
    * @param string $language_id
+   *   The language ID.
    * @param string $alternate_url
+   *   The alternate URL.
    */
   protected function addAlternateUrl(string $language_id, string $alternate_url): void {
     $this->writer->writeAttribute('rel', 'alternate');
     $this->writer->writeAttribute('hreflang', $language_id);
     $this->writer->writeAttribute('href', $alternate_url);
   }
+
 }

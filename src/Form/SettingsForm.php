@@ -12,11 +12,13 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Language\LanguageManagerInterface;
 
 /**
- * Class SettingsForm
+ * Provides form to manage settings.
  */
 class SettingsForm extends SimpleSitemapFormBase {
 
   /**
+   * The language manager.
+   *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
   protected $languageManager;
@@ -25,10 +27,15 @@ class SettingsForm extends SimpleSitemapFormBase {
    * SettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
+   *   The sitemap generator service.
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
+   *   Simple XML Sitemap form helper.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
@@ -134,8 +141,10 @@ class SettingsForm extends SimpleSitemapFormBase {
       '#type' => 'checkboxes',
       '#options' => $language_options,
       '#description' => !empty($language_options)
-        ? $this->t('There will be no links generated for languages checked here.')
-        : $this->t('There are no languages other than the default language <a href="@url">available</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/regional/language']),
+      ? $this->t('There will be no links generated for languages checked here.')
+      : $this->t('There are no languages other than the default language <a href="@url">available</a>.', [
+        '@url' => $GLOBALS['base_url'] . '/admin/config/regional/language',
+      ]),
       '#default_value' => $this->settings->get('excluded_languages', []),
     ];
 
@@ -152,8 +161,10 @@ class SettingsForm extends SimpleSitemapFormBase {
       '#title' => $this->t('Default sitemap variant'),
       '#description' => $this->t('This sitemap variant will be available under <em>/sitemap.xml</em> in addition to its default path <em>/variant-name/sitemap.xml</em>.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
       '#default_value' => isset($variants[$default_variant]) ? $default_variant : '',
-      '#options' => ['' => $this->t('- None -')] + array_map(function($variant) { return $this->t($variant->label()); }, $variants),
-      ];
+      '#options' => ['' => $this->t('- None -')] + array_map(function ($variant) {
+        return $this->t($variant->label());
+      }, $variants),
+    ];
 
     $form['simple_sitemap_settings']['advanced']['base_url'] = [
       '#type' => 'textfield',
@@ -216,15 +227,16 @@ class SettingsForm extends SimpleSitemapFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     foreach (['max_links',
-               'cron_generate',
-               'cron_generate_interval',
-               'remove_duplicates',
-               'skip_untranslated',
-               'xsl',
-               'base_url',
-               'default_variant',
-               'disable_language_hreflang',
-               'entities_per_queue_item'] as $setting_name) {
+      'cron_generate',
+      'cron_generate_interval',
+      'remove_duplicates',
+      'skip_untranslated',
+      'xsl',
+      'base_url',
+      'default_variant',
+      'disable_language_hreflang',
+      'entities_per_queue_item',
+    ] as $setting_name) {
       $this->settings->save($setting_name, $form_state->getValue($setting_name));
     }
     $this->settings->save('excluded_languages', array_filter($form_state->getValue('excluded_languages')));
@@ -239,4 +251,5 @@ class SettingsForm extends SimpleSitemapFormBase {
         ->generateSitemap();
     }
   }
+
 }

@@ -8,7 +8,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\simple_sitemap\Annotation\UrlGenerator;
 
 /**
- * Class UrlGeneratorManager
+ * Manages discovery of UrlGenerator plugins.
  */
 class UrlGeneratorManager extends DefaultPluginManager {
 
@@ -16,8 +16,12 @@ class UrlGeneratorManager extends DefaultPluginManager {
    * UrlGeneratorManager constructor.
    *
    * @param \Traversable $namespaces
+   *   An object that implements \Traversable which contains the root paths
+   *   keyed by the corresponding namespace to look for plugin implementations.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
+   *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
   public function __construct(
     \Traversable $namespaces,
@@ -35,4 +39,5 @@ class UrlGeneratorManager extends DefaultPluginManager {
     $this->alterInfo('simple_sitemap_url_generators');
     $this->setCacheBackend($cache_backend, 'simple_sitemap:url_generator');
   }
+
 }

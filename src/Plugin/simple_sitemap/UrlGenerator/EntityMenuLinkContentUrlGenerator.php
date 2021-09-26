@@ -13,10 +13,9 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
-use Drupal\Core\Menu\MenuLinkBase;
 
 /**
- * Class EntityMenuLinkContentUrlGenerator
+ * Provides the menu link URL generator.
  *
  * @UrlGenerator(
  *   id = "entity_menu_link_content",
@@ -32,11 +31,15 @@ use Drupal\Core\Menu\MenuLinkBase;
 class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
 
   /**
-   * @var \Drupal\Core\Menu\MenuLinkTree
+   * The menu tree service.
+   *
+   * @var \Drupal\Core\Menu\MenuLinkTreeInterface
    */
   protected $menuLinkTree;
 
   /**
+   * The simple_sitemap.entity_manager service.
+   *
    * @var \Drupal\simple_sitemap\Manager\EntityManager
    */
   protected $entitiesManager;
@@ -45,15 +48,25 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
    * EntityMenuLinkContentUrlGenerator constructor.
    *
    * @param array $configuration
-   * @param $plugin_id
-   * @param $plugin_definition
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\simple_sitemap\Logger $logger
+   *   Simple XML Sitemap logger.
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
+   *   Helper class for working with entities.
    * @param \Drupal\simple_sitemap\Manager\EntityManager $entities_manager
+   *   The simple_sitemap.entity_manager service.
    * @param \Drupal\Core\Menu\MenuLinkTreeInterface $menu_link_tree
+   *   The menu tree service.
    */
   public function __construct(
     array $configuration,
@@ -81,6 +94,9 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     $this->menuLinkTree = $menu_link_tree;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(
     ContainerInterface $container,
     array $configuration,
@@ -101,7 +117,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getDataSets(): array {
     $data_sets = [];
@@ -130,13 +146,13 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    *
    * @todo Find a way to be able to check if a menu link still exists. This is difficult as we don't operate on MenuLinkContent entities, but on Link entities directly (as some menu links are not MenuLinkContent entities).
    */
   protected function processDataSet($data_set): array {
 
-    /** @var  MenuLinkBase $data_set */
+    /** @var \Drupal\Core\Menu\MenuLinkInterface $data_set */
     if (!$data_set->isEnabled()) {
       throw new SkipElementException();
     }
@@ -156,7 +172,8 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
         ->getBundleSettings('menu_link_content', $data_set->getMenuName());
     }
 
-    // If menu link is of entity type menu_link_content, take under account its entity override.
+    // If menu link is of entity type menu_link_content, take under account its
+    // entity override.
     else {
       $entity_settings = $this->entitiesManager
         ->setVariants($this->sitemapVariant->id())
@@ -177,11 +194,13 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       $path = $url_object->getInternalPath();
     }
     // There can be internal paths that are not rooted, like 'base:/path'.
-    else { // Handle base scheme.
-      if (strpos($uri = $url_object->toUriString(), 'base:/') === 0 ) {
+    else {
+      // Handle base scheme.
+      if (strpos($uri = $url_object->toUriString(), 'base:/') === 0) {
         $path = $uri[6] === '/' ? substr($uri, 7) : substr($uri, 6);
       }
-      else { // Handle unforeseen schemes.
+      // Handle unforeseen schemes.
+      else {
         $path = $uri;
       }
     }
@@ -191,18 +210,18 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     $path_data = [
       'url' => $url_object,
       'lastmod' => !empty($entity) && method_exists($entity, 'getChangedTime')
-        ? date('c', $entity->getChangedTime())
-        : NULL,
+      ? date('c', $entity->getChangedTime())
+      : NULL,
       'priority' => $entity_settings['priority'] ?? NULL,
       'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
       'images' => !empty($entity_settings['include_images']) && !empty($entity)
-        ? $this->getEntityImageData($entity)
-        : [],
+      ? $this->getEntityImageData($entity)
+      : [],
 
       // Additional info useful in hooks.
       'meta' => [
         'path' => $path,
-      ]
+      ],
     ];
     if (!empty($entity)) {
       $path_data['meta']['entity_info'] = [
@@ -213,4 +232,5 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
 
     return $path_data;
   }
+
 }

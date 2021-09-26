@@ -8,7 +8,7 @@ use Drupal\Core\Url;
 use Drupal\simple_sitemap\Form\FormHelper;
 
 /**
- * Class SimpleSitemapTypeListBuilder
+ * Defines a class to build a listing of sitemap type entities.
  */
 class SimpleSitemapTypeListBuilder extends ConfigEntityListBuilder {
 

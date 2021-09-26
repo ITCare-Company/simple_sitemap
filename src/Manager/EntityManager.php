@@ -4,19 +4,24 @@ namespace Drupal\simple_sitemap\Manager;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Settings;
 
 /**
- * Class EntityManager
+ * The simple_sitemap.entity_manager service.
  */
 class EntityManager {
 
   use VariantSetterTrait;
   use LinkSettingsTrait;
 
+  /**
+   * Default link settings.
+   *
+   * @var array
+   */
   protected static $linkSettingDefaults = [
     'index' => FALSE,
     'priority' => '0.5',
@@ -25,31 +30,43 @@ class EntityManager {
   ];
 
   /**
+   * Helper class for working with entities.
+   *
    * @var \Drupal\simple_sitemap\Entity\EntityHelper
    */
   protected $entityHelper;
 
   /**
+   * The simple_sitemap.settings service.
+   *
    * @var \Drupal\simple_sitemap\Settings
    */
   protected $settings;
 
   /**
-   * @var \Drupal\Core\Config\ConfigFactory
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
   /**
+   * The database connection.
+   *
    * @var \Drupal\Core\Database\Connection
    */
   protected $database;
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * Simple XML Sitemap logger.
+   *
    * @var \Drupal\simple_sitemap\Logger
    */
   protected $logger;
@@ -58,16 +75,22 @@ class EntityManager {
    * Simplesitemap constructor.
    *
    * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
+   *   Helper class for working with entities.
    * @param \Drupal\simple_sitemap\Settings $settings
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The simple_sitemap.settings service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
    * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\simple_sitemap\Logger|null $logger
+   *   Simple XML Sitemap logger.
    */
   public function __construct(
     EntityHelper $entity_helper,
     Settings $settings,
-    ConfigFactory $config_factory,
+    ConfigFactoryInterface $config_factory,
     Connection $database,
     EntityTypeManagerInterface $entity_type_manager,
     Logger $logger = NULL
@@ -81,15 +104,17 @@ class EntityManager {
   }
 
   /**
-   * Enables sitemap support for an entity type. Enabled entity types show
+   * Enables sitemap support for an entity type.
+   *
+   * Enabled entity types show
    * sitemap settings on their bundle setting forms. If an enabled entity type
    * features bundles (e.g. 'node'), it needs to be set up with
    * setBundleSettings() as well.
    *
    * @param string $entity_type_id
-   *  Entity type id like 'node'.
+   *   Entity type ID.
    *
-   * @return \Drupal\simple_sitemap\Manager\EntityManager
+   * @return $this
    */
   public function enableEntityType(string $entity_type_id): EntityManager {
     $enabled_entity_types = $this->settings->get('enabled_entity_types');
@@ -102,20 +127,22 @@ class EntityManager {
   }
 
   /**
-   * Disables sitemap support for an entity type. Disabling support for an
-   * entity type deletes its sitemap settings permanently and removes sitemap
-   * settings from entity forms.
+   * Disables sitemap support for an entity type.
+   *
+   * Disabling support for an entity type deletes its sitemap settings
+   * permanently and removes sitemap settings from entity forms.
    *
    * @param string $entity_type_id
+   *   Entity type ID.
    *
-   * @return \Drupal\simple_sitemap\Manager\EntityManager
+   * @return $this
    */
   public function disableEntityType(string $entity_type_id): EntityManager {
 
     // Updating settings.
     $enabled_entity_types = $this->settings->get('enabled_entity_types');
     if (FALSE !== ($key = array_search($entity_type_id, $enabled_entity_types, TRUE))) {
-      unset ($enabled_entity_types[$key]);
+      unset($enabled_entity_types[$key]);
       $this->settings->save('enabled_entity_types', array_values($enabled_entity_types));
     }
 
@@ -133,17 +160,23 @@ class EntityManager {
   }
 
   /**
-   * Sets settings for bundle or non-bundle entity types. This is done for the
-   * currently set variant.
-   * Note that this method takes only the first set variant into account. See todo.
+   * Sets settings for bundle or non-bundle entity types.
+   *
+   * This is done for the currently set variant. Note that this method takes
+   * only the first set variant into account. See todo.
    *
    * @param string $entity_type_id
+   *   The entity type ID.
    * @param string|null $bundle_name
+   *   The bundle of the entity.
    * @param array $settings
+   *   Settings to set.
    *
-   * @return \Drupal\simple_sitemap\Manager\EntityManager
+   * @return $this
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
    * @todo multiple variants
    */
   public function setBundleSettings(string $entity_type_id, ?string $bundle_name = NULL, array $settings = ['index' => TRUE]): EntityManager {
@@ -180,7 +213,7 @@ class EntityManager {
       }
 
       // Delete entity overrides which are identical to new bundle settings.
-      // todo Enclose into some sensible method.
+      // @todo Enclose into some sensible method.
       $query = $this->database->select('simple_sitemap_entity_overrides', 'o')
         ->fields('o', ['id', 'inclusion_settings'])
         ->condition('o.entity_type', $entity_type_id)
@@ -205,7 +238,7 @@ class EntityManager {
       }
       if (!empty($delete_instances)) {
 
-        // todo Use removeEntityInstanceSettings() instead.
+        // @todo Use removeEntityInstanceSettings() instead.
         $this->database->delete('simple_sitemap_entity_overrides')
           ->condition('id', $delete_instances, 'IN')
           ->execute();
@@ -216,22 +249,23 @@ class EntityManager {
   }
 
   /**
-   * Gets settings for bundle or non-bundle entity types. This is done for the
-   * currently set variants.
+   * Gets settings for bundle or non-bundle entity types.
+   *
+   * This is done for the currently set variants.
    *
    * @param string|null $entity_type_id
-   *  Limit the result set to a specific entity type.
+   *   Limit the result set to a specific entity type.
    * @param string|null $bundle_name
-   *  Limit the result set to a specific bundle name.
+   *   Limit the result set to a specific bundle name.
    * @param bool $supplement_defaults
-   *  Supplements the result set with default bundle settings.
+   *   Supplements the result set with default bundle settings.
    * @param bool $multiple_variants
-   *  If true, returns an array of results keyed by variant name, otherwise it
-   *  returns the result set for the first variant only.
+   *   If true, returns an array of results keyed by variant name, otherwise it
+   *   returns the result set for the first variant only.
    *
    * @return array|false
-   *  Array of settings or array of settings keyed by variant name. False if
-   *  entity type does not exist.
+   *   Array of settings or array of settings keyed by variant name. False if
+   *   entity type does not exist.
    */
   public function getBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE) {
     $bundle_name = $bundle_name ?? $entity_type_id;
@@ -255,10 +289,11 @@ class EntityManager {
           $bundle_settings[$config_name_parts[3]][$config_name_parts[4]] = $this->configFactory->get($config_name)->get();
         }
 
-        // Supplement default bundle settings for all bundles not found in simple_sitemap.bundle_settings.*.* configuration.
+        // Supplement default bundle settings for all bundles not found in
+        // simple_sitemap.bundle_settings.*.* configuration.
         if ($supplement_defaults) {
           foreach ($this->entityHelper->getSupportedEntityTypes() as $type_id => $type_definition) {
-            foreach($this->entityHelper->getBundleInfo($type_id) as $bundle => $bundle_definition) {
+            foreach ($this->entityHelper->getBundleInfo($type_id) as $bundle => $bundle_definition) {
               if (!isset($bundle_settings[$type_id][$bundle])) {
                 self::supplementDefaultSettings($bundle_settings[$type_id][$bundle]);
               }
@@ -279,15 +314,17 @@ class EntityManager {
   }
 
   /**
-   * Removes settings for bundle or a non-bundle entity types. This is done for
-   * the currently set variants.
+   * Removes settings for bundle or a non-bundle entity types.
+   *
+   * This is done for the currently set variants.
    *
    * @param string|null $entity_type_id
-   *  Limit the removal to a specific entity type.
+   *   Limit the removal to a specific entity type.
    * @param string|null $bundle_name
-   *  Limit the removal to a specific bundle name.
+   *   Limit the removal to a specific bundle name.
    *
-   * @return \Drupal\simple_sitemap\Manager\EntityManager
+   * @return $this
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
@@ -322,16 +359,20 @@ class EntityManager {
   }
 
   /**
-   * Overrides sitemap settings for a single entity for the currently set
-   * variants.
+   * Overrides settings for a single entity for the currently set variants.
    *
    * @param string $entity_type_id
+   *   The entity type ID.
    * @param string $id
+   *   The entity identifier.
    * @param array $settings
+   *   Settings to set.
    *
-   * @return \Drupal\simple_sitemap\Manager\EntityManager
+   * @return $this
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
    * @todo Check functionality (variant setting etc).
    * @todo Pass entity object instead of id and bundle.
    */
@@ -341,7 +382,7 @@ class EntityManager {
     }
 
     if (($entity = $this->entityTypeManager->getStorage($entity_type_id)->load($id)) === NULL) {
-      // todo exception
+      // @todo Exception.
       return $this;
     }
 
@@ -367,12 +408,14 @@ class EntityManager {
             ->keys([
               'type' => $variant,
               'entity_type' => $entity_type_id,
-              'entity_id' => $id])
+              'entity_id' => $id,
+            ])
             ->fields([
               'type' => $variant,
               'entity_type' => $entity_type_id,
               'entity_id' => $id,
-              'inclusion_settings' => serialize(array_merge($bundle_settings, $settings))])
+              'inclusion_settings' => serialize(array_merge($bundle_settings, $settings)),
+            ])
             ->execute();
         }
         // Else unset override.
@@ -386,18 +429,21 @@ class EntityManager {
   }
 
   /**
-   * Gets sitemap settings for an entity instance which overrides bundle
-   * settings, or gets bundle settings, if they are not overridden. This is
-   * done for the currently set variant.
+   * Gets sitemap settings for an entity instance.
+   *
+   * This settings overrides bundle settings, or gets bundle settings, if they
+   * are not overridden. This is done for the currently set variant.
    * Please note, this method takes only the first set
    * variant into account. See todo.
    *
    * @param string $entity_type_id
+   *   The entity type ID.
    * @param string $id
+   *   The entity identifier.
    *
    * @return array|false
-   *  Array of entity instance settings or the settings of its bundle. False if
-   *  entity type or variant does not exist.
+   *   Array of entity instance settings or the settings of its bundle. False if
+   *   entity type or variant does not exist.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -433,15 +479,17 @@ class EntityManager {
   }
 
   /**
-   * Removes sitemap settings for entities that override bundle settings. This
-   * is done for the currently set variants.
+   * Removes sitemap settings for entities that override bundle settings.
+   *
+   * This is done for the currently set variants.
    *
    * @param string|null $entity_type_id
-   *  Limits the removal to a certain entity type.
+   *   Limits the removal to a certain entity type.
    * @param string|array|null $entity_ids
-   *  Limits the removal to entities with certain IDs.
+   *   Limits the removal to entities with certain IDs.
    *
-   * @return \Drupal\simple_sitemap\Manager\EntityManager
+   * @return $this
+   *
    * @todo Pass entity object instead of id and bundle.
    */
   public function removeEntityInstanceSettings(?string $entity_type_id = NULL, $entity_ids = NULL): EntityManager {
@@ -466,14 +514,18 @@ class EntityManager {
   }
 
   /**
+   * Checks the index status for an entity bundle.
+   *
    * Checks if an entity bundle (or a non-bundle entity type) is set to be
    * indexed for any of the currently set variants.
    *
    * @param string $entity_type_id
+   *   The entity type ID.
    * @param string|null $bundle_name
+   *   The bundle of the entity.
    *
    * @return bool
-   *
+   *   TRUE if an entity bundle is indexed, FALSE otherwise.
    */
   public function bundleIsIndexed(string $entity_type_id, ?string $bundle_name = NULL): bool {
     foreach ($this->getBundleSettings($entity_type_id, $bundle_name, FALSE, TRUE) as $settings) {
@@ -489,9 +541,10 @@ class EntityManager {
    * Checks if an entity type is enabled in the sitemap settings.
    *
    * @param string $entity_type_id
+   *   The entity type ID.
    *
    * @return bool
-   *
+   *   TRUE if an entity type is enabled, FALSE otherwise.
    */
   public function entityTypeIsEnabled(string $entity_type_id): bool {
     return in_array($entity_type_id, $this->settings->get('enabled_entity_types', []), TRUE);

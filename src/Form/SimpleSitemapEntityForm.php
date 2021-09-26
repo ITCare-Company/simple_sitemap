@@ -10,7 +10,7 @@ use Drupal\simple_sitemap\Entity\SimpleSitemapType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SimpleSitemapEntityForm
+ * Form handler for sitemap edit forms.
  */
 class SimpleSitemapEntityForm extends EntityForm {
 
@@ -34,6 +34,7 @@ class SimpleSitemapEntityForm extends EntityForm {
    * SimpleSitemapEntityForm constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
+   *   Entity type manager service.
    */
   public function __construct(EntityTypeManagerInterface $entity_manager) {
     $this->entityTypeManager = $entity_manager;
@@ -69,7 +70,9 @@ class SimpleSitemapEntityForm extends EntityForm {
     $form['type'] = [
       '#type' => 'select',
       '#title' => $this->t('Sitemap type'),
-      '#options' => array_map(function($sitemap_type) { return $sitemap_type->label(); }, SimpleSitemapType::loadMultiple()),
+      '#options' => array_map(function ($sitemap_type) {
+        return $sitemap_type->label();
+      }, SimpleSitemapType::loadMultiple()),
       '#default_value' => !$this->entity->isNew() ? $this->entity->getType()->id() : NULL,
       '#required' => TRUE,
     ];

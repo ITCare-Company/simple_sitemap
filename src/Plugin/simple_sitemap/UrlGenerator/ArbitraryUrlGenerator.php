@@ -4,12 +4,12 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
-use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class ArbitraryUrlGenerator
+ * Provides the arbitrary URL generator.
  *
  * @UrlGenerator(
  *   id = "arbitrary",
@@ -19,17 +19,28 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ArbitraryUrlGenerator extends UrlGeneratorBase {
 
+  /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
   protected $moduleHandler;
 
   /**
    * ArbitraryUrlGenerator constructor.
    *
    * @param array $configuration
-   * @param $plugin_id
-   * @param $plugin_definition
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\simple_sitemap\Logger $logger
+   *   Simple XML Sitemap logger.
    * @param \Drupal\simple_sitemap\Settings $settings
-   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   *   The simple_sitemap.settings service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
    */
   public function __construct(
     array $configuration,
@@ -37,7 +48,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     $plugin_definition,
     Logger $logger,
     Settings $settings,
-    ModuleHandler $module_handler
+    ModuleHandlerInterface $module_handler
   ) {
     parent::__construct(
       $configuration,
@@ -49,6 +60,9 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     $this->moduleHandler = $module_handler;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(
     ContainerInterface $container,
     array $configuration,
@@ -66,7 +80,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getDataSets(): array {
     $arbitrary_links = [];
@@ -77,9 +91,10 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   protected function processDataSet($data_set): array {
     return $data_set;
   }
+
 }

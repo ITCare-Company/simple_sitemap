@@ -2,11 +2,11 @@
 
 namespace Drupal\simple_sitemap\Manager;
 
-use Drupal\Core\Path\PathValidator;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Path\PathValidatorInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
- * Class CustomLinkManager
+ * The simple_sitemap.custom_link_manager service.
  */
 class CustomLinkManager {
 
@@ -14,43 +14,57 @@ class CustomLinkManager {
   use LinkSettingsTrait;
 
   /**
-   * @var \Drupal\Core\Config\ConfigFactory
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
   /**
-   * @var \Drupal\Core\Path\PathValidator
+   * The path validator service.
+   *
+   * @var \Drupal\Core\Path\PathValidatorInterface
    */
   protected $pathValidator;
 
   /**
+   * Default link settings.
+   *
    * @var array
    */
-  protected static $linkSettingDefaults = ['priority' => '0.5', 'changefreq' => '',];
+  protected static $linkSettingDefaults = [
+    'priority' => '0.5',
+    'changefreq' => '',
+  ];
 
   /**
-   * CustomLinks constructor.
+   * CustomLinkManager constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
-   * @param \Drupal\Core\Path\PathValidator $path_validator
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
+   * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
+   *   The path validator service.
    */
   public function __construct(
-    ConfigFactory $config_factory,
-    PathValidator $path_validator
+    ConfigFactoryInterface $config_factory,
+    PathValidatorInterface $path_validator
   ) {
     $this->configFactory = $config_factory;
     $this->pathValidator = $path_validator;
   }
 
   /**
-   * Stores a custom path along with its settings to configuration for the
-   * currently set variants.
+   * Stores a custom path along with its settings to configuration.
+   *
+   * For the currently set variants.
    *
    * @param string $path
+   *   The path to add.
    * @param array $settings
-   *  Settings that are not provided are supplemented by defaults.
+   *   Settings that are not provided are supplemented by defaults.
    *
-   * @return \Drupal\simple_sitemap\Manager\CustomLinkManager
+   * @return $this
+   *
    * @todo Validate $settings and throw exceptions
    */
   public function add(string $path, array $settings = []): CustomLinkManager {
@@ -59,11 +73,11 @@ class CustomLinkManager {
     }
 
     if (!(bool) $this->pathValidator->getUrlIfValidWithoutAccessCheck($path)) {
-      // todo: log error.
+      // @todo Log error.
       return $this;
     }
     if ($path[0] !== '/') {
-      // todo: log error.
+      // @todo Log error.
       return $this;
     }
 
@@ -94,15 +108,15 @@ class CustomLinkManager {
    * Gets custom link settings for the currently set variants.
    *
    * @param string|null $path
-   *  Limits the result set by an internal path.
+   *   Limits the result set by an internal path.
    * @param bool $supplement_defaults
-   *  Supplements the result set with default custom link settings.
+   *   Supplements the result set with default custom link settings.
    * @param bool $multiple_variants
-   *  If true, returns an array of results keyed by variant name, otherwise it
-   *  returns the result set for the first variant only.
+   *   If true, returns an array of results keyed by variant name, otherwise it
+   *   returns the result set for the first variant only.
    *
-   * @return array|mixed|null
-   *
+   * @return array
+   *   Custom link settings.
    */
   public function get(?string $path = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE): array {
     $all_custom_links = [];
@@ -132,7 +146,6 @@ class CustomLinkManager {
         ? array_values($custom_links)[0]
         : array_values($custom_links);
 
-
       if (!empty($custom_links)) {
         if ($multiple_variants) {
           $all_custom_links[$variant] = $custom_links;
@@ -150,9 +163,9 @@ class CustomLinkManager {
    * Removes custom links from currently set variants.
    *
    * @param array|string|null $paths
-   *  Limits the removal to certain paths.
+   *   Limits the removal to certain paths.
    *
-   * @return \Drupal\simple_sitemap\Manager\CustomLinkManager
+   * @return $this
    */
   public function remove($paths = NULL): CustomLinkManager {
     if (empty($variants = $this->getVariants(FALSE))) {
@@ -170,7 +183,7 @@ class CustomLinkManager {
       foreach ($variant_links as $variant => $links) {
         $custom_links = $links;
         $save = FALSE;
-        foreach ((array) $paths  as $path) {
+        foreach ((array) $paths as $path) {
           foreach ($custom_links as $key => $link) {
             if ($link['path'] === $path) {
               unset($custom_links[$key]);

@@ -15,10 +15,6 @@ use Drupal\language\ConfigurableLanguageInterface;
 
 /**
  * Implements hook_help().
- *
- * @param $route_name
- * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
- * @return \Drupal\Component\Render\MarkupInterface|null
  */
 function simple_sitemap_help($route_name, RouteMatchInterface $route_match) {
   return $route_name === 'help.page.simple_sitemap'
@@ -31,9 +27,6 @@ function simple_sitemap_help($route_name, RouteMatchInterface $route_match) {
  *
  * Adds sitemap settings to entity types that are supported via plugins.
  *
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
@@ -59,7 +52,7 @@ function simple_sitemap_form_alter(&$form, FormStateInterface $form_state, $form
   }
 
   $f->displayEntitySettings($form['simple_sitemap'])
-  // todo: do not show setting when creating new bundle.
+  // @todo Do not show setting when creating new bundle.
     ->displayRegenerateNow($form['simple_sitemap']);
 
   // Add submission handler.
@@ -81,13 +74,16 @@ function simple_sitemap_form_alter(&$form, FormStateInterface $form_state, $form
 /**
  * Form submission handler called in hook_form_alter.
  *
- * @param $form
+ * @param array $form
+ *   An associative array containing the structure of the form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function simple_sitemap_entity_form_submit($form, FormStateInterface $form_state) {
+function simple_sitemap_entity_form_submit(array $form, FormStateInterface $form_state) {
 
   /** @var Drupal\simple_sitemap\Form\FormHelper $f */
   $f = \Drupal::service('simple_sitemap.form_helper');
@@ -107,7 +103,8 @@ function simple_sitemap_entity_form_submit($form, FormStateInterface $form_state
 
     foreach (SimpleSitemap::loadMultiple() as $variant_id => $variant) {
 
-      if (isset($values['index_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'])) { // Variants may have changed since form load.
+      // Variants may have changed since form load.
+      if (isset($values['index_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'])) {
         $settings = [
           'index' => (bool) $values['index_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'],
           'priority' => $values['priority_' . $variant_id . '_' . $f->getEntityTypeId() . '_settings'],
@@ -123,7 +120,9 @@ function simple_sitemap_entity_form_submit($form, FormStateInterface $form_state
             break;
 
           case 'instance':
-            if (!$f->entityIsNew()) { // Make sure the entity is saved first for multi-step forms, see https://www.drupal.org/project/simple_sitemap/issues/3080510.
+            // Make sure the entity is saved first for multi-step forms,
+            // see https://www.drupal.org/project/simple_sitemap/issues/3080510.
+            if (!$f->entityIsNew()) {
               $generator->entityManager()->setEntityInstanceSettings($f->getEntityTypeId(), $f->getInstanceId(), $settings);
             }
             break;
@@ -190,8 +189,6 @@ function simple_sitemap_configurable_language_delete(ConfigurableLanguageInterfa
  * Implements hook_entity_delete().
  *
  * Removes settings of the removed entity.
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
  */
 function simple_sitemap_entity_delete(EntityInterface $entity) {
 
@@ -212,8 +209,6 @@ function simple_sitemap_entity_delete(EntityInterface $entity) {
  *
  * Removes settings of the removed bundle.
  *
- * @param string $entity_type_id
- * @param string $bundle
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
@@ -229,7 +224,6 @@ function simple_sitemap_entity_bundle_delete($entity_type_id, $bundle) {
  *
  * Removes settings for the removed menu.
  *
- * @param \Drupal\system\MenuInterface $menu
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */

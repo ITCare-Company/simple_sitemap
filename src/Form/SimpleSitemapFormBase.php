@@ -9,21 +9,27 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\simple_sitemap\Manager\Generator;
 
 /**
- * Class SimpleSitemapFormBase
+ * Base class for Simple XML Sitemap forms.
  */
 abstract class SimpleSitemapFormBase extends ConfigFormBase {
 
   /**
+   * The sitemap generator service.
+   *
    * @var \Drupal\simple_sitemap\Manager\Generator
    */
   protected $generator;
 
   /**
+   * The simple_sitemap.settings service.
+   *
    * @var \Drupal\simple_sitemap\Settings
    */
   protected $settings;
 
   /**
+   * Simple XML Sitemap form helper.
+   *
    * @var \Drupal\simple_sitemap\Form\FormHelper
    */
   protected $formHelper;
@@ -32,9 +38,13 @@ abstract class SimpleSitemapFormBase extends ConfigFormBase {
    * SimpleSitemapFormBase constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
+   *   The sitemap generator service.
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
+   *   Simple XML Sitemap form helper.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
@@ -45,7 +55,6 @@ abstract class SimpleSitemapFormBase extends ConfigFormBase {
     $this->generator = $generator;
     $this->settings = $settings;
     $this->formHelper = $form_helper;
-
 
     parent::__construct($config_factory);
   }

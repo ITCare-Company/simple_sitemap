@@ -2,15 +2,15 @@
  * @file
  * Attaches simple_sitemap behaviors to the entity form.
  */
-(function($) {
+(function ($) {
 
   "use strict";
 
   Drupal.behaviors.simple_sitemapFieldsetSummaries = {
-    attach: function(context, settings) {
-      $(context).find('#edit-simple-sitemap').drupalSetSummary(function(context) {
+    attach: function (context, settings) {
+      $(context).find('#edit-simple-sitemap').drupalSetSummary(function (context) {
         var enabledVariants = [];
-        $('input:radio.enabled-for-variant').each(function() {
+        $('input:radio.enabled-for-variant').each(function () {
           if ($(this).is(':checked') && $(this).val() == 1) {
             enabledVariants.push($(this).attr('class').split(' ')[1])
           }

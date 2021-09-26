@@ -12,26 +12,39 @@ use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 
 /**
- * Class EntitiesForm
+ * Provides form to manage entity settings.
  */
 class EntitiesForm extends SimpleSitemapFormBase {
 
   /**
+   * Helper class for working with entities.
+   *
    * @var \Drupal\simple_sitemap\Entity\EntityHelper
    */
   protected $entityHelper;
 
+  /**
+   * The simple_sitemap.entity_manager service.
+   *
+   * @var \Drupal\simple_sitemap\Manager\EntityManager
+   */
   protected $sitemapEntities;
 
   /**
    * EntitiesForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
+   *   The sitemap generator service.
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
+   *   Simple XML Sitemap form helper.
    * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
+   *   Helper class for working with entities.
    * @param \Drupal\simple_sitemap\Manager\EntityManager $sitemap_entities
+   *   The simple_sitemap.entity_manager service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
@@ -86,7 +99,10 @@ class EntitiesForm extends SimpleSitemapFormBase {
     ];
 
     $form['#attached']['library'][] = 'simple_sitemap/sitemapEntities';
-    $form['#attached']['drupalSettings']['simple_sitemap'] = ['all_entities' => [], 'atomic_entities' => []];
+    $form['#attached']['drupalSettings']['simple_sitemap'] = [
+      'all_entities' => [],
+      'atomic_entities' => [],
+    ];
 
     $all_bundle_settings = $this->generator->setVariants(TRUE)->entityManager()->getBundleSettings(NULL, NULL, TRUE, TRUE);
     $indexed_bundles = [];
@@ -103,7 +119,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
 
     $entity_type_labels = [];
     foreach ($this->entityHelper->getSupportedEntityTypes() as $entity_type_id => $entity_type) {
-      $entity_type_labels[$entity_type_id] = $entity_type->getLabel() ? : $entity_type_id;
+      $entity_type_labels[$entity_type_id] = $entity_type->getLabel() ?: $entity_type_id;
     }
     asort($entity_type_labels);
 
@@ -120,10 +136,13 @@ class EntitiesForm extends SimpleSitemapFormBase {
 
       $form['simple_sitemap_entities']['entities'][$entity_type_id][$entity_type_id . '_enabled'] = [
         '#type' => 'checkbox',
-        '#title' => $this->t('Enable @entity_type_label <em>(@entity_type_id)</em> support', ['@entity_type_label' => $entity_type_label, '@entity_type_id' => $entity_type_id]),
+        '#title' => $this->t('Enable @entity_type_label <em>(@entity_type_id)</em> support', [
+          '@entity_type_label' => $entity_type_label,
+          '@entity_type_id' => $entity_type_id,
+        ]),
         '#description' => $atomic_entity_type
-          ? $this->t('Sitemap settings for the entity type <em>@entity_type_label</em> can be set below and overridden on its entity pages.', ['@entity_type_label' => $entity_type_label])
-          : $this->t('Sitemap settings for the entity type <em>@entity_type_label</em> can be set on its bundle pages and overridden on its entity pages.', ['@entity_type_label' => $entity_type_label]),
+        ? $this->t('Sitemap settings for the entity type <em>@entity_type_label</em> can be set below and overridden on its entity pages.', ['@entity_type_label' => $entity_type_label])
+        : $this->t('Sitemap settings for the entity type <em>@entity_type_label</em> can be set on its bundle pages and overridden on its entity pages.', ['@entity_type_label' => $entity_type_label]),
         '#default_value' => $enabled_entity_type,
       ];
 
@@ -199,7 +218,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
                     'priority' => $values['priority_' . $variant_id . '_' . $entity_type_id . '_settings'],
                     'changefreq' => $values['changefreq_' . $variant_id . '_' . $entity_type_id . '_settings'],
                     'include_images' => (bool) $values['include_images_' . $variant_id . '_' . $entity_type_id . '_settings'],
-                    ]);
+                  ]);
               }
             }
           }

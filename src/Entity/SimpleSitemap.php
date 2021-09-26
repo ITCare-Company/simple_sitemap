@@ -66,15 +66,22 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   public const FETCH_BY_STATUS_PUBLISHED = 1;
 
   /**
+   * The fetch status.
+   *
    * @var int
    */
   protected $fetchByStatus;
 
   /**
+   * The sitemap type entity.
+   *
    * @var \Drupal\simple_sitemap\Entity\SimpleSitemapTypeInterface
    */
   protected $sitemapType;
 
+  /**
+   * Implements the magic __toString() method.
+   */
   public function __toString(): string {
     return $this->toString();
   }
@@ -89,32 +96,47 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function fromPublished(): SimpleSitemapInterface {
     $this->fetchByStatus = self::FETCH_BY_STATUS_PUBLISHED;
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function fromUnpublished(): SimpleSitemapInterface {
     $this->fetchByStatus = self::FETCH_BY_STATUS_UNPUBLISHED;
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function fromPublishedAndUnpublished(): SimpleSitemapInterface {
     $this->fetchByStatus = self::FETCH_BY_STATUS_ALL;
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getType(): SimpleSitemapTypeInterface {
     if ($this->sitemapType === NULL) {
-      $this->sitemapType = \Drupal::entityTypeManager()->getStorage('simple_sitemap_type')->load($this->get('type'));
+      $this->sitemapType = $this->entityTypeManager()->getStorage('simple_sitemap_type')->load($this->get('type'));
     }
 
     return $this->sitemapType;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function toString(?int $delta = NULL): string {
     $status = $this->fetchByStatus ?? self::FETCH_BY_STATUS_PUBLISHED;
-    $storage = \Drupal::entityTypeManager()->getStorage('simple_sitemap');
+    $storage = $this->entityTypeManager()->getStorage('simple_sitemap');
 
     if ($delta) {
       try {
@@ -136,47 +158,79 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function publish(): SimpleSitemapInterface {
-    \Drupal::entityTypeManager()->getStorage('simple_sitemap')->publish($this);
+    $this->entityTypeManager()->getStorage('simple_sitemap')->publish($this);
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function deleteContent(): SimpleSitemapInterface {
-    \Drupal::entityTypeManager()->getStorage('simple_sitemap')->deleteContent($this);
+    $this->entityTypeManager()->getStorage('simple_sitemap')->deleteContent($this);
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function addChunk(array $links): SimpleSitemapInterface {
-    $xml = $this->getType()->getSitemapGenerator()->setSitemapVariant($this)->getChunkXml($links); //todo automatically set variant
-    \Drupal::entityTypeManager()->getStorage('simple_sitemap')->addChunk($this, $xml, count($links));
+    // @todo Automatically set variant.
+    $xml = $this->getType()->getSitemapGenerator()->setSitemapVariant($this)->getChunkXml($links);
+    $this->entityTypeManager()->getStorage('simple_sitemap')->addChunk($this, $xml, count($links));
 
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function generateIndex(): SimpleSitemapInterface {
     if ($this->isIndexable()) {
-      $xml = $this->getType()->getSitemapGenerator()->setSitemapVariant($this)->getIndexXml(); //todo automatically set variant
-      \Drupal::entityTypeManager()->getStorage('simple_sitemap')->generateIndex($this, $xml);
+      // @todo Automatically set variant.
+      $xml = $this->getType()->getSitemapGenerator()->setSitemapVariant($this)->getIndexXml();
+      $this->entityTypeManager()->getStorage('simple_sitemap')->generateIndex($this, $xml);
     }
 
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getChunk(int $delta = SimpleSitemapStorage::SITEMAP_CHUNK_FIRST_DELTA): string {
-    return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getChunk($this, $this->fetchByStatus, $delta);
+    return $this->entityTypeManager()->getStorage('simple_sitemap')->getChunk($this, $this->fetchByStatus, $delta);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getChunkCount(): int {
-    return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getChunkCount($this, $this->fetchByStatus);
+    return $this->entityTypeManager()->getStorage('simple_sitemap')->getChunkCount($this, $this->fetchByStatus);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function hasIndex(): bool {
-    return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->hasIndex($this, $this->fetchByStatus);
+    return $this->entityTypeManager()->getStorage('simple_sitemap')->hasIndex($this, $this->fetchByStatus);
   }
 
+  /**
+   * Returns whether the sitemap is indexable.
+   *
+   * @return bool
+   *   TRUE if the sitemap is indexable and FALSE otherwise.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
   protected function isIndexable(): bool {
     try {
-      \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getChunk($this, self::FETCH_BY_STATUS_UNPUBLISHED, 2);
+      $this->entityTypeManager()->getStorage('simple_sitemap')->getChunk($this, self::FETCH_BY_STATUS_UNPUBLISHED, 2);
       return TRUE;
     }
     catch (SitemapNotExistsException $e) {
@@ -184,26 +238,44 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getIndex(): string {
-    return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getIndex($this, $this->fetchByStatus);
+    return $this->entityTypeManager()->getStorage('simple_sitemap')->getIndex($this, $this->fetchByStatus);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function status(): bool {
     return parent::status() && $this->contentStatus();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function contentStatus(): ?int {
-    return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->status($this);
+    return $this->entityTypeManager()->getStorage('simple_sitemap')->status($this);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getCreated(): ?string {
-    return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getCreated($this, $this->fetchByStatus);
+    return $this->entityTypeManager()->getStorage('simple_sitemap')->getCreated($this, $this->fetchByStatus);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getLinkCount(): int {
-    return \Drupal::entityTypeManager()->getStorage('simple_sitemap')->getLinkCount($this, $this->fetchByStatus);
+    return $this->entityTypeManager()->getStorage('simple_sitemap')->getLinkCount($this, $this->fetchByStatus);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function toUrl($rel = 'canonical', array $options = []) {
     if ($rel !== 'canonical') {
       return parent::toUrl($rel, $options);
@@ -213,9 +285,9 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     unset($options['delta']);
 
     $options['base_url'] = $options['base_url'] ?? (\Drupal::service('simple_sitemap.settings')
-        ->get('base_url') ?: $GLOBALS['base_url']);
+      ->get('base_url') ?: $GLOBALS['base_url']);
 
-    $options['language'] = \Drupal::languageManager()->getLanguage(LanguageInterface::LANGCODE_NOT_APPLICABLE);
+    $options['language'] = $this->languageManager()->getLanguage(LanguageInterface::LANGCODE_NOT_APPLICABLE);
 
     return $this->isDefault()
       ? Url::fromRoute(
@@ -228,26 +300,18 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
         $options);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function isDefault(): bool {
     return $this->id() === \Drupal::service('simple_sitemap.settings')->get('default_variant');
   }
 
   /**
-   * Determines if the sitemap is to be a multilingual sitemap based on several
-   * factors.
-   *
-   * A hreflang/multilingual sitemap is only wanted if there are indexable
-   * languages available and if there is a language negotiation method enabled
-   * that is based on URL discovery. Any other language negotiation methods
-   * should be irrelevant, as a sitemap can only use URLs to guide to the
-   * correct language.
-   *
-   * @see https://www.drupal.org/project/simple_sitemap/issues/3154570#comment-13730522
-   *
-   * @return bool
+   * {@inheritdoc}
    */
   public function isMultilingual(): bool {
-    if (!\Drupal::service('module_handler')->moduleExists('language')) {
+    if (!\Drupal::moduleHandler()->moduleExists('language')) {
       return FALSE;
     }
 
@@ -261,13 +325,16 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     }
 
     $has_multiple_indexable_languages = count(
-        array_diff_key(\Drupal::languageManager()->getLanguages(),
+        array_diff_key($this->languageManager()->getLanguages(),
           \Drupal::service('simple_sitemap.settings')->get('excluded_languages', []))
       ) > 1;
 
     return $url_negotiation_method_enabled && $has_multiple_indexable_languages;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function purgeContent($variants = NULL, ?bool $status = self::FETCH_BY_STATUS_ALL) {
     \Drupal::entityTypeManager()->getStorage('simple_sitemap')->purgeContent($variants, $status);
   }

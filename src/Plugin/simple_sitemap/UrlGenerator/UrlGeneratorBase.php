@@ -10,21 +10,27 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\simple_sitemap\Logger;
 
 /**
- * Class UrlGeneratorBase
+ * Provides a base class for UrlGenerator plugins.
  */
 abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGeneratorInterface {
 
   /**
+   * Simple XML Sitemap logger.
+   *
    * @var \Drupal\simple_sitemap\Logger
    */
   protected $logger;
 
   /**
+   * The simple_sitemap.settings service.
+   *
    * @var \Drupal\simple_sitemap\Settings
    */
   protected $settings;
 
   /**
+   * The sitemap entity.
+   *
    * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface
    */
   protected $sitemapVariant;
@@ -33,10 +39,15 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
    * UrlGeneratorBase constructor.
    *
    * @param array $configuration
-   * @param $plugin_id
-   * @param $plugin_definition
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\simple_sitemap\Logger $logger
+   *   Simple XML Sitemap logger.
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    */
   public function __construct(
     array $configuration,
@@ -50,6 +61,9 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
     $this->settings = $settings;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimpleSitemapPluginBase {
     return new static(
       $configuration,
@@ -61,20 +75,22 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
   }
 
   /**
-   * @param \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap_variant
-   *
-   * @return $this
+   * {@inheritdoc}
    */
-  public function setSitemapVariant(SimpleSitemapInterface $sitemap_variant): UrlGeneratorInterface {
-    $this->sitemapVariant = $sitemap_variant;
+  public function setSitemapVariant(SimpleSitemapInterface $sitemap): UrlGeneratorInterface {
+    $this->sitemapVariant = $sitemap;
 
     return $this;
   }
 
   /**
+   * Replaces the base URL with custom URL from settings.
+   *
    * @param string $url
+   *   URL to process.
    *
    * @return string
+   *   The processed URL.
    */
   protected function replaceBaseUrlWithCustom(string $url): string {
     return !empty($base_url = $this->settings->get('base_url'))
@@ -83,21 +99,25 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    *
    * @todo Throw and catch SkipElementException here and children.
    */
   abstract public function getDataSets(): array;
 
   /**
-   * @param $data_set
+   * Processes the specified dataset.
+   *
+   * @param mixed $data_set
+   *   Dataset to process.
+   *
    * @return mixed
+   *   Processing result.
    */
   abstract protected function processDataSet($data_set): array;
 
   /**
-   * @param $data_set
-   * @return array
+   * {@inheritdoc}
    *
    * @todo catch SkipElementException here and children.
    */
@@ -109,4 +129,5 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
       return [];
     }
   }
+
 }

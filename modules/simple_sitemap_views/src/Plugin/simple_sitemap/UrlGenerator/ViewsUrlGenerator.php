@@ -53,6 +53,8 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
    *   The plugin implementation definition.
    * @param \Drupal\simple_sitemap\Logger $logger
    *   The simple_sitemap.logger service.
+   * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager

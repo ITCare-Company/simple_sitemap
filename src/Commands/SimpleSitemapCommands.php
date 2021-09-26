@@ -8,11 +8,13 @@ use Drupal\simple_sitemap\Manager\Generator;
 use Drush\Commands\DrushCommands;
 
 /**
- * Class SimpleSitemapCommands
+ * Provides Drush commands for managing sitemaps.
  */
 class SimpleSitemapCommands extends DrushCommands {
 
   /**
+   * The simple_sitemap.generator service.
+   *
    * @var \Drupal\simple_sitemap\Manager\Generator
    */
   protected $generator;
@@ -21,6 +23,7 @@ class SimpleSitemapCommands extends DrushCommands {
    * SimplesitemapCommands constructor.
    *
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
+   *   The simple_sitemap.generator service.
    */
   public function __construct(Generator $generator) {
     $this->generator = $generator;
@@ -47,6 +50,9 @@ class SimpleSitemapCommands extends DrushCommands {
   /**
    * Queue all or specific sitemap variants for regeneration.
    *
+   * @param array $options
+   *   The command options.
+   *
    * @command simple-sitemap:rebuild-queue
    *
    * @option variants
@@ -60,8 +66,6 @@ class SimpleSitemapCommands extends DrushCommands {
    * @validate-module-enabled simple_sitemap
    *
    * @aliases ssr, simple-sitemap-rebuild-queue
-   *
-   * @param array $options
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
@@ -82,4 +86,5 @@ class SimpleSitemapCommands extends DrushCommands {
 
     $this->logger()->log('notice', 'The following variants have been queued for regeneration: ' . implode(', ', $variants) . '.');
   }
+
 }

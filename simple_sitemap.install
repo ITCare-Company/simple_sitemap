@@ -5,11 +5,12 @@
  * Module install and update procedures.
  */
 
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Database\Database;
+use Drupal\simple_sitemap\Entity\SimpleSitemap;
+
 /**
  * Implements hook_requirements().
- *
- * @param $phase
- * @return array
  */
 function simple_sitemap_requirements($phase) {
   $requirements = [];
@@ -27,7 +28,8 @@ function simple_sitemap_requirements($phase) {
 
     case 'runtime':
 
-      // todo Implement for 4.x
+      // @todo Implement for 4.x
+      // @codingStandardsIgnoreStart
 //      /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
 //      $generator = \Drupal::service('simple_sitemap.generator');
 //      $generated_ago = $generator->getGeneratedAgo();
@@ -62,6 +64,7 @@ function simple_sitemap_requirements($phase) {
 //        'description' => $description,
 //        'severity' => $severity,
 //      ];
+      // @codingStandardsIgnoreEnd
       break;
   }
   return $requirements;
@@ -98,7 +101,7 @@ function simple_sitemap_schema() {
       'type' => [
         'description' => 'Type of sitemap this chunk belongs to.',
         'type' => 'varchar',
-        'length' => \Drupal\Core\Entity\EntityTypeInterface::ID_MAX_LENGTH,
+        'length' => EntityTypeInterface::ID_MAX_LENGTH,
         'not null' => TRUE,
         'default' => '',
       ],
@@ -161,13 +164,13 @@ function simple_sitemap_schema() {
       'entity_type' => [
         'description' => 'Entity type of the overriding entity.',
         'type' => 'varchar',
-        'length' => \Drupal\Core\Entity\EntityTypeInterface::BUNDLE_MAX_LENGTH,
+        'length' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
         'not null' => TRUE,
       ],
       'entity_id' => [
         'description' => 'ID of the overriding entity.',
         'type' => 'varchar',
-        'length' => \Drupal\Core\Entity\EntityTypeInterface::ID_MAX_LENGTH,
+        'length' => EntityTypeInterface::ID_MAX_LENGTH,
         'not null' => TRUE,
       ],
       'inclusion_settings' => [
@@ -184,6 +187,9 @@ function simple_sitemap_schema() {
   return $schema;
 }
 
+/**
+ * Setting the default variant.
+ */
 function _simple_sitemap_update_8216_get_default_variant() {
   $config_factory = \Drupal::service('config.factory');
   $default_variant = $config_factory->get('simple_sitemap.settings')->get('default_variant');
@@ -415,7 +421,7 @@ function simple_sitemap_update_8208() {
     $settings = unserialize($row->inclusion_settings);
     if (!isset($settings['changefreq'])) {
       \Drupal::database()->update('simple_sitemap_entity_overrides')
-        ->fields(['inclusion_settings' => serialize($settings + ['changefreq' => '']),])
+        ->fields(['inclusion_settings' => serialize($settings + ['changefreq' => ''])])
         ->condition('id', $row->id)
         ->execute();
     }
@@ -451,7 +457,7 @@ function simple_sitemap_update_8209() {
     $settings = unserialize($row->inclusion_settings);
     if (!isset($settings['include_images'])) {
       \Drupal::database()->update('simple_sitemap_entity_overrides')
-        ->fields(['inclusion_settings' => serialize($settings + ['include_images' => 0]),])
+        ->fields(['inclusion_settings' => serialize($settings + ['include_images' => 0])])
         ->condition('id', $row->id)
         ->execute();
     }
@@ -522,7 +528,7 @@ function simple_sitemap_update_8211() {
       'default' => [
         'label' => 'Default',
         'type' => 'default_hreflang',
-      ]
+      ],
     ])->save();
 }
 
@@ -632,7 +638,7 @@ function simple_sitemap_update_8215() {
   foreach ($config_factory->listAll('simple_sitemap.variants.') as $type) {
     $type = $config_factory->getEditable($type);
     $variants = $type->get('variants');
-    foreach($variants as $i => $variant) {
+    foreach ($variants as $i => $variant) {
       $variants[$i]['weight'] = 0;
     }
     $type->set('variants', $variants)->save();
@@ -729,7 +735,7 @@ function simple_sitemap_update_8302() {
  * Add indexes to the simple_sitemap and simple_sitemap_entity_overrides tables.
  */
 function simple_sitemap_update_8303() {
-  $schema = Drupal\Core\Database\Database::getConnection()->schema();
+  $schema = Database::getConnection()->schema();
   $spec = [
     'fields' => [
       'type' => [
@@ -755,7 +761,8 @@ function simple_sitemap_update_8303() {
       ],
     ],
   ];
-  $schema->addIndex('simple_sitemap', 'type_status_delta', ['type', 'status', 'delta'], $spec);
+  $fields = ['type', 'status', 'delta'];
+  $schema->addIndex('simple_sitemap', 'type_status_delta', $fields, $spec);
 
   $spec = [
     'fields' => [
@@ -779,7 +786,8 @@ function simple_sitemap_update_8303() {
       ],
     ],
   ];
-  $schema->addIndex('simple_sitemap_entity_overrides', 'entity_key', ['type', 'entity_type', 'entity_id'], $spec);
+  $fields = ['type', 'entity_type', 'entity_id'];
+  $schema->addIndex('simple_sitemap_entity_overrides', 'entity_key', $fields, $spec);
 }
 
 /**
@@ -874,7 +882,7 @@ function simple_sitemap_update_8403() {
     $config_factory->getEditable($config)->delete();
   }
   \Drupal::service('simple_sitemap.queue_worker')->deleteQueue();
-  \Drupal\simple_sitemap\Entity\SimpleSitemap::purgeContent();
+  SimpleSitemap::purgeContent();
 
   return t('All variants belonging to the built-in "Default hreflang" sitemap type have been converted to entities. Custom sitemap types added via plugins will have to be recreated manually. See simple_sitemap.type.default_hreflang.yml. The sitemaps need to be regenerated now.');
 }
@@ -883,7 +891,7 @@ function simple_sitemap_update_8403() {
  * Add dependencies to sitemap entities.
  */
 function simple_sitemap_update_8404() {
-  foreach (\Drupal\simple_sitemap\Entity\SimpleSitemap::loadMultiple() as $sitemap) {
+  foreach (SimpleSitemap::loadMultiple() as $sitemap) {
     $sitemap->save();
   }
 }

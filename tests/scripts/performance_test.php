@@ -1,5 +1,7 @@
 <?php
 
+// @codingStandardsIgnoreFile
+
 use Drupal\Component\Utility\Timer;
 use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Database\Database;

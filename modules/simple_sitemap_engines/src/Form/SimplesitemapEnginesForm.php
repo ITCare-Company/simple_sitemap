@@ -89,7 +89,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     $form['settings']['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Submit the sitemap to search engines'),
-      '#description' => $this->t('This enables/disables sitemap submitting; don\'t forget to choose variants below.'),
+      '#description' => $this->t("This enables/disables sitemap submitting; don't forget to choose variants below."),
       '#default_value' => $config->get('enabled'),
     ];
 
@@ -120,7 +120,9 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
         '#type' => 'select',
         '#title' => $this->t('Sitemaps'),
         '#options' => array_map(
-          function ($variant) { return $this->t($variant->label()); },
+          function ($variant) {
+            return $this->t($variant->label());
+          },
           SimpleSitemap::loadMultiple()
         ),
         '#default_value' => $engine->sitemap_variants,
@@ -136,7 +138,11 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     foreach (SimpleSitemapEngine::loadMultiple() as $engine_id => $engine) {
-      if (!empty($values = $form_state->getValue(['engines', $engine_id, 'variants']))) {
+      if (!empty($values = $form_state->getValue([
+        'engines',
+        $engine_id,
+        'variants',
+      ]))) {
         $submit = TRUE;
       }
       $engine->sitemap_variants = $values;
@@ -147,7 +153,10 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
 
     $enabled = (bool) $form_state->getValue(['settings', 'enabled']);
     $config->set('enabled', $enabled);
-    $config->set('submission_interval', $form_state->getValue(['settings', 'submission_interval']));
+    $config->set('submission_interval', $form_state->getValue([
+      'settings',
+      'submission_interval',
+    ]));
     $config->save();
 
     if ($enabled && empty($submit)) {

@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SimpleSitemapTypeEntityForm
+ * Form handler for sitemap type edit forms.
  */
 class SimpleSitemapTypeEntityForm extends EntityForm {
 
@@ -30,9 +30,10 @@ class SimpleSitemapTypeEntityForm extends EntityForm {
   }
 
   /**
-   * SimpleSitemapEntityForm constructor.
+   * SimpleSitemapTypeEntityForm constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
+   *   Entity type manager service.
    */
   public function __construct(EntityTypeManagerInterface $entity_manager) {
     $this->entityTypeManager = $entity_manager;
@@ -59,13 +60,15 @@ class SimpleSitemapTypeEntityForm extends EntityForm {
       '#required' => TRUE,
       '#machine_name' => [
         'exists' => '\Drupal\simple_sitemap\Entity\SimpleSitemapType::load',
-        ],
-      ];
+      ],
+    ];
 
     $form['sitemap_generator'] = [
       '#type' => 'select',
       '#title' => $this->t('Sitemap generator'),
-      '#options' => array_map(function($sitemap_generator) { return $sitemap_generator['label']; }, \Drupal::service('plugin.manager.simple_sitemap.sitemap_generator')->getDefinitions()),
+      '#options' => array_map(function ($sitemap_generator) {
+        return $sitemap_generator['label'];
+      }, \Drupal::service('plugin.manager.simple_sitemap.sitemap_generator')->getDefinitions()),
       '#default_value' => !$this->entity->isNew() ? $this->entity->get('sitemap_generator') : NULL,
       '#required' => TRUE,
     ];
@@ -73,7 +76,9 @@ class SimpleSitemapTypeEntityForm extends EntityForm {
     $form['url_generators'] = [
       '#type' => 'select',
       '#title' => $this->t('URL generators'),
-      '#options' => array_map(function($url_generator) { return $url_generator['label']; }, \Drupal::service('plugin.manager.simple_sitemap.url_generator')->getDefinitions()),
+      '#options' => array_map(function ($url_generator) {
+        return $url_generator['label'];
+      }, \Drupal::service('plugin.manager.simple_sitemap.url_generator')->getDefinitions()),
       '#default_value' => !$this->entity->isNew() ? $this->entity->get('url_generators') : NULL,
       '#multiple' => TRUE,
       '#required' => TRUE,

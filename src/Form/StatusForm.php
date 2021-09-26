@@ -12,35 +12,48 @@ use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
 use Drupal\Core\Database\Connection;
 
 /**
- * Class StatusForm
+ * Provides form to manage sitemap status.
  */
 class StatusForm extends SimpleSitemapFormBase {
 
   /**
+   * The database connection.
+   *
    * @var \Drupal\Core\Database\Connection
    */
   protected $db;
 
   /**
+   * The date formatter service.
+   *
    * @var \Drupal\Core\Datetime\DateFormatter
    */
   protected $dateFormatter;
 
   /**
+   * The simple_sitemap.queue_worker service.
+   *
    * @var \Drupal\simple_sitemap\Queue\QueueWorker
    */
   protected $queueWorker;
 
   /**
-   * SitemapsForm constructor.
+   * StatusForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   * @param SimplesitemapOld $generator
+   *   The config factory service.
+   * @param \Drupal\simple_sitemap\Manager\Generator $generator
+   *   The sitemap generator service.
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
+   *   Simple XML Sitemap form helper.
    * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
+   *   The date formatter service.
    * @param \Drupal\simple_sitemap\Queue\QueueWorker $queue_worker
+   *   The simple_sitemap.queue_worker service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
@@ -112,8 +125,8 @@ class StatusForm extends SimpleSitemapFormBase {
     $form['status']['actions']['regenerate_submit'] = [
       '#type' => 'submit',
       '#value' => $this->queueWorker->generationInProgress()
-        ? $this->t('Resume generation')
-        : $this->t('Rebuild queue & generate'),
+      ? $this->t('Resume generation')
+      : $this->t('Rebuild queue & generate'),
       '#submit' => [self::class . '::generateSitemap'],
       '#validate' => [],
     ];
@@ -130,13 +143,17 @@ class StatusForm extends SimpleSitemapFormBase {
       $indexed_count = $this->queueWorker->getProcessedElementCount();
       $percent = round(100 * $indexed_count / $total_count);
 
-      // With all results processed, there still may be some stashed results to be indexed.
+      // With all results processed, there still may be some stashed results to
+      // be indexed.
       $percent = $percent === 100 && $this->queueWorker->generationInProgress() ? 99 : $percent;
 
       $index_progress = [
         '#theme' => 'progress_bar',
         '#percent' => $percent,
-        '#message' => $this->t('@indexed out of @total queue items have been processed.<br>Each sitemap is published after all of its items have been processed.', ['@indexed' => $indexed_count, '@total' => $total_count]),
+        '#message' => $this->t('@indexed out of @total queue items have been processed.<br>Each sitemap is published after all of its items have been processed.', [
+          '@indexed' => $indexed_count,
+          '@total' => $total_count,
+        ]),
       ];
       $form['status']['progress']['bar']['#markup'] = render($index_progress);
     }
@@ -148,16 +165,24 @@ class StatusForm extends SimpleSitemapFormBase {
   }
 
   /**
+   * Generates the sitemap content.
+   *
    * @param array $form
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
   public static function generateSitemap(array &$form, FormStateInterface $form_state): void {
     \Drupal::service('simple_sitemap.generator')->generateSitemap();
   }
 
   /**
+   * Rebuilds the queue.
+   *
    * @param array $form
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
   public static function rebuildQueue(array &$form, FormStateInterface $form_state): void {
     \Drupal::service('simple_sitemap.generator')->rebuildQueue();

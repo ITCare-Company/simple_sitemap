@@ -42,7 +42,7 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
   protected $generator;
 
   /**
-   * The Drupal logger service.
+   * Simple XML Sitemap logger.
    *
    * @var \Drupal\simple_sitemap\Logger
    */
@@ -126,19 +126,23 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
           try {
             $this->httpClient->request('GET', $submit_url);
             // Log if submission was successful.
-            $this->logger->m('Sitemap @variant submitted to @url', ['@variant' => $sitemap_id, '@url' => $submit_url])->log();
+            $this->logger->m('Sitemap @variant submitted to @url', [
+              '@variant' => $sitemap_id,
+              '@url' => $submit_url,
+            ])->log();
             // Record last submission time. This is purely informational; the
-            // variable that determines when the next submission should be run is
-            // stored in the global state.
+            // variable that determines when the next submission should be run
+            // is stored in the global state.
             $this->state->set("simple_sitemap_engines.simple_sitemap_engine.{$engine_id}.last_submitted", $this->time->getRequestTime());
           }
           catch (RequestException $e) {
             // Catch and log exceptions so this submission gets removed from the
             // queue whether or not it succeeded.
-            // If the error was caused by network failure, it's fine to just wait
-            // until next time the submission is queued to try again.
-            // If the error was caused by a malformed URL, keeping the submission
-            // in the queue to retry is pointless since it will always fail.
+            // If the error was caused by network failure, it's fine to just
+            // wait until next time the submission is queued to try again.
+            // If the error was caused by a malformed URL, keeping the
+            // submission in the queue to retry is pointless since it will
+            // always fail.
             watchdog_exception('simple_sitemap', $e);
           }
         }

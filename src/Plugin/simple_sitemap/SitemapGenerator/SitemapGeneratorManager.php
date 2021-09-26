@@ -8,15 +8,20 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\simple_sitemap\Annotation\SitemapGenerator;
 
 /**
- * Class SitemapGeneratorManager
+ * Manages discovery of SitemapGenerator plugins.
  */
 class SitemapGeneratorManager extends DefaultPluginManager {
 
   /**
    * SitemapGeneratorManager constructor.
+   *
    * @param \Traversable $namespaces
+   *   An object that implements \Traversable which contains the root paths
+   *   keyed by the corresponding namespace to look for plugin implementations.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
+   *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
   public function __construct(
     \Traversable $namespaces,
@@ -34,4 +39,5 @@ class SitemapGeneratorManager extends DefaultPluginManager {
     $this->alterInfo('simple_sitemap_sitemap_generators');
     $this->setCacheBackend($cache_backend, 'simple_sitemap:sitemap_generator');
   }
+
 }

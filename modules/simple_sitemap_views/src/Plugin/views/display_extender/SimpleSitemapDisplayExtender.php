@@ -189,7 +189,8 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
       $required_arguments = $this->getRequiredArguments();
 
       foreach ($this->variants as $variant_id => $variant) {
-        $arguments = &$form_state->getValue(['variants', $variant_id, 'arguments'], []);
+        $key = ['variants', $variant_id, 'arguments'];
+        $arguments = &$form_state->getValue($key, []);
         $arguments = array_merge($arguments, $required_arguments);
         $errors = $this->validateIndexedArguments($arguments);
 

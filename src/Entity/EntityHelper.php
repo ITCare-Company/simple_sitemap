@@ -23,20 +23,28 @@ class EntityHelper {
   protected $entityTypeManager;
 
   /**
+   * The bundle info service.
+   *
    * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
    */
   protected $entityTypeBundleInfo;
 
   /**
+   * The configuration factory.
+   *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
   /**
    * EntityHelper constructor.
+   *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The bundle info service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The configuration factory.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, ConfigFactoryInterface $configFactory) {
     $this->entityTypeManager = $entity_type_manager;
@@ -45,22 +53,32 @@ class EntityHelper {
   }
 
   /**
+   * Gets the bundle info of an entity type.
+   *
    * @param string $entity_type_id
+   *   The entity type ID.
    *
    * @return array
+   *   An array of bundle information.
    */
   public function getBundleInfo(string $entity_type_id): array {
     return $this->entityTypeBundleInfo->getBundleInfo($entity_type_id);
   }
 
   /**
-   * @param string $entity_type_id
-   * @param string $bundle_name
+   * Gets the label for the bundle.
    *
-   * @return mixed
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string $bundle_name
+   *   The entity bundle.
+   *
+   * @return string
+   *   The bundle label.
    */
   public function getBundleLabel(string $entity_type_id, string $bundle_name) {
-    return $this->getBundleInfo($entity_type_id)[$bundle_name]['label'] ?? $bundle_name; // Menu fix.
+    // Menu fix.
+    return $this->getBundleInfo($entity_type_id)[$bundle_name]['label'] ?? $bundle_name;
   }
 
   /**
@@ -100,13 +118,17 @@ class EntityHelper {
    *   Objects of entity types that can be indexed by the sitemap.
    */
   public function getSupportedEntityTypes(): array {
-    return array_filter($this->entityTypeManager->getDefinitions(), [$this, 'supports']);
+    return array_filter($this->entityTypeManager->getDefinitions(), [
+      $this,
+      'supports',
+    ]);
   }
 
   /**
    * Determines if an entity type is supported or not.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type definition.
    *
    * @return bool
    *   TRUE if entity type is supported, FALSE if not.
@@ -119,7 +141,7 @@ class EntityHelper {
     }
 
     return TRUE;
-   }
+  }
 
   /**
    * Checks whether an entity type does not provide bundles.
@@ -140,7 +162,7 @@ class EntityHelper {
     $entity_types = $this->entityTypeManager->getDefinitions();
 
     if (!isset($entity_types[$entity_type_id])) {
-      // todo: Throw exception.
+      // @todo Throw exception.
     }
 
     return empty($entity_types[$entity_type_id]->getBundleEntityType());
@@ -170,7 +192,7 @@ class EntityHelper {
 
       if (!empty($route_parameters = $url_object->getRouteParameters())
         && $this->entityTypeManager->getDefinition($entity_type_id = key($route_parameters), FALSE)) {
-          return $this->entityTypeManager->getStorage($entity_type_id)->load($route_parameters[$entity_type_id]);
+        return $this->entityTypeManager->getStorage($entity_type_id)->load($route_parameters[$entity_type_id]);
       }
     }
 

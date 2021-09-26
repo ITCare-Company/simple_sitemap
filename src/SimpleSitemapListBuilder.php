@@ -11,7 +11,7 @@ use Drupal\simple_sitemap\Form\FormHelper;
 use Drupal\simple_sitemap\Form\StatusForm;
 
 /**
- * Class SimpleSitemapListBuilder
+ * Defines a class to build a listing of sitemap entities.
  */
 class SimpleSitemapListBuilder extends DraggableListBuilder {
 
@@ -59,7 +59,7 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
           $row['status']['#markup'] = $this->t(($entity->contentStatus() === SimpleSitemap::SITEMAP_PUBLISHED
             ? 'published on @time'
             : 'published on @time, regenerating'
-          ), ['@time' =>\Drupal::service('date.formatter')->format($entity->fromPublished()->getCreated())]);
+          ), ['@time' => \Drupal::service('date.formatter')->format($entity->fromPublished()->getCreated())]);
           $row['count']['#markup'] = $entity->fromPublished()->getLinkCount();
           break;
       }
@@ -78,6 +78,9 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
     $form = \Drupal::formBuilder()->getForm(StatusForm::class) + $form;

@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Exception;
 
-class SitemapNotExistsException extends \InvalidArgumentException {
-
-}
+/**
+ * Exception class thrown when sitemap data does not exist.
+ */
+class SitemapNotExistsException extends \InvalidArgumentException {}

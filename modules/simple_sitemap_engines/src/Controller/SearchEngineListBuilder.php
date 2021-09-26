@@ -24,6 +24,8 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
   protected $dateFormatter;
 
   /**
+   * The state key/value store.
+   *
    * @var \Drupal\Core\State\StateInterface
    */
   protected $state;

@@ -87,7 +87,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   }
 
   /**
-   * Tests locks
+   * Tests locks.
    */
   public function testLocking() {
     $this->generator->customLinkManager()
@@ -149,10 +149,10 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     // Index new bundle.
     $this->generator->customLinkManager()->remove();
     $this->generator->entityManager()->setBundleSettings('node', 'page', [
-        'index' => TRUE,
-        'priority' => 0.5,
-        'changefreq' => 'hourly',
-      ]);
+      'index' => TRUE,
+      'priority' => 0.5,
+      'changefreq' => 'hourly',
+    ]);
     $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
 
     $this->drupalGet($this->defaultSitemapUrl);
@@ -338,9 +338,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->assertSession()->responseNotContains('node/' . $this->node->id());
   }
 
-  /**
-   * @todo testGenerateDurationSetting
-   */
+  // @todo testGenerateDurationSetting
 
   /**
    * Test setting the base URL.
@@ -370,12 +368,15 @@ class SimplesitemapTest extends SimplesitemapTestBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Behat\Mink\Exception\ExpectationException
    *
-   * @todo: Use form testing instead of responseContains().
+   * @todo Use form testing instead of responseContains().
    */
   public function testSetEntityInstanceSettings() {
     $this->generator->entityManager()
       ->setBundleSettings('node', 'page')
-      ->setEntityInstanceSettings('node', $this->node->id(), ['priority' => 0.1, 'changefreq' => 'never'])
+      ->setEntityInstanceSettings('node', $this->node->id(), [
+        'priority' => 0.1,
+        'changefreq' => 'never',
+      ])
       ->setEntityInstanceSettings('node', $this->node2->id(), ['index' => FALSE]);
     $this->generator->customLinkManager()->remove();
     $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
@@ -398,7 +399,10 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     // Test database changes.
     $this->assertEquals(1, $this->getOverridesCount('node', $this->node->id()));
 
-    $this->generator->entityManager()->setBundleSettings('node', 'page', ['priority' => 0.1, 'changefreq' => 'never']);
+    $this->generator->entityManager()->setBundleSettings('node', 'page', [
+      'priority' => 0.1,
+      'changefreq' => 'never',
+    ]);
     $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
 
     // Test sitemap result.
@@ -485,7 +489,9 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->assertSession()->responseNotContains('user/' . $user_id);
 
     user_role_grant_permissions('anonymous', ['access user profiles']);
-    drupal_flush_all_caches(); //todo Not pretty.
+
+    // @todo Not pretty.
+    drupal_flush_all_caches();
 
     $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
 
@@ -493,13 +499,8 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->assertSession()->responseContains('user/' . $user_id);
   }
 
-  /**
-   * @todo Test indexing menu.
-   */
-
-  /**
-   * @todo Test deleting a bundle.
-   */
+  // @todo Test indexing menu.
+  // @todo Test deleting a bundle.
 
   /**
    * Test disabling sitemap support for an entity type.
@@ -550,9 +551,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->assertTrue($this->generator->entityManager()->entityTypeIsEnabled('node'));
   }
 
-  /**
-   * @todo testSitemapLanguages
-   */
+  // @todo testSitemapLanguages.
 
   /**
    * Test adding and removing sitemap variants.
@@ -595,9 +594,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->assertSession()->statusCodeEquals(404);
   }
 
-  /**
-   * @todo Test removeSitemap().
-   */
+  // @todo Test removeSitemap().
 
   /**
    * Test cases for ::testGenerationResume.
@@ -612,8 +609,9 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   }
 
   /**
-   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * Test resuming sitemap generation.
    *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException|\Drupal\Core\Entity\EntityStorageException
    * @dataProvider generationResumeProvider
    */
   public function testGenerationResume($element_count, $generate_duration, $max_links, $langcodes = []) {
@@ -674,4 +672,3 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   }
 
 }
-

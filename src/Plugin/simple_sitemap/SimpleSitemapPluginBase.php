@@ -6,30 +6,36 @@ use Drupal\Core\Plugin\PluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SimpleSitemapPluginBase
+ * Provides a base class for Simple XML Sitemap plugins.
  */
 abstract class SimpleSitemapPluginBase extends PluginBase implements SimpleSitemapPluginInterface {
 
   /**
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @return static
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimpleSitemapPluginBase {
     return new static($configuration, $plugin_id, $plugin_definition);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function label(): string {
     return $this->getPluginDefinition()['label'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function description(): string {
     return $this->getPluginDefinition()['description'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function settings(): array {
     return $this->getPluginDefinition()['settings'];
   }
+
 }

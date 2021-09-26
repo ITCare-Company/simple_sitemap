@@ -3,7 +3,6 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\Core\Url;
-use Drupal\simple_sitemap\Annotation\UrlGenerator;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
@@ -11,35 +10,40 @@ use Drupal\simple_sitemap\Manager\CustomLinkManager;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Path\PathValidator;
+use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class CustomUrlGenerator
+ * Provides the custom URL generator.
  *
  * @UrlGenerator(
  *   id = "custom",
  *   label = @Translation("Custom URL generator"),
  *   description = @Translation("Generates URLs set in admin/config/search/simplesitemap/custom."),
  * )
- *
  */
 class CustomUrlGenerator extends EntityUrlGeneratorBase {
 
   protected const PATH_DOES_NOT_EXIST_MESSAGE = 'The custom path @path has been omitted from the XML sitemaps as it does not exist. You can review custom paths <a href="@custom_paths_url">here</a>.';
 
   /**
+   * The simple_sitemap.custom_link_manager service.
+   *
    * @var \Drupal\simple_sitemap\Manager\CustomLinkManager
    */
   protected $customLinks;
 
   /**
-   * @var \Drupal\Core\Path\PathValidator
+   * The path validator service.
+   *
+   * @var \Drupal\Core\Path\PathValidatorInterface
    */
   protected $pathValidator;
 
   /**
+   * Include images of custom links.
+   *
    * @var bool
    */
   protected $includeImages;
@@ -48,15 +52,25 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    * CustomUrlGenerator constructor.
    *
    * @param array $configuration
-   * @param $plugin_id
-   * @param $plugin_definition
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\simple_sitemap\Logger $logger
+   *   Simple XML Sitemap logger.
    * @param \Drupal\simple_sitemap\Settings $settings
+   *   The simple_sitemap.settings service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
+   *   Helper class for working with entities.
    * @param \Drupal\simple_sitemap\Manager\CustomLinkManager $custom_links
-   * @param \Drupal\Core\Path\PathValidator $path_validator
+   *   The simple_sitemap.custom_link_manager service.
+   * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
+   *   The path validator service.
    */
   public function __construct(
     array $configuration,
@@ -68,7 +82,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entity_helper,
     CustomLinkManager $custom_links,
-    PathValidator $path_validator) {
+    PathValidatorInterface $path_validator) {
     parent::__construct(
       $configuration,
       $plugin_id,
@@ -83,6 +97,9 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     $this->pathValidator = $path_validator;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(
     ContainerInterface $container,
     array $configuration,
@@ -103,7 +120,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getDataSets(): array {
     $this->includeImages = $this->settings->get('custom_links_include_images', FALSE);
@@ -112,12 +129,14 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   protected function processDataSet($data_set): array {
     if (!(bool) $this->pathValidator->getUrlIfValidWithoutAccessCheck($data_set['path'])) {
-      $this->logger->m(self::PATH_DOES_NOT_EXIST_MESSAGE,
-        ['@path' => $data_set['path'], '@custom_paths_url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/custom'])
+      $this->logger->m(self::PATH_DOES_NOT_EXIST_MESSAGE, [
+        '@path' => $data_set['path'],
+        '@custom_paths_url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/custom',
+      ])
         ->display('warning', 'administer sitemap settings')
         ->log('warning');
 
@@ -132,16 +151,16 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     $path_data = [
       'url' => $url_object,
       'lastmod' => !empty($entity) && method_exists($entity, 'getChangedTime')
-        ? date('c', $entity->getChangedTime())
-        : NULL,
+      ? date('c', $entity->getChangedTime())
+      : NULL,
       'priority' => $data_set['priority'] ?? NULL,
       'changefreq' => !empty($data_set['changefreq']) ? $data_set['changefreq'] : NULL,
       'images' => $this->includeImages && !empty($entity)
-        ? $this->getEntityImageData($entity)
-        : [],
+      ? $this->getEntityImageData($entity)
+      : [],
       'meta' => [
         'path' => $path,
-      ]
+      ],
     ];
 
     // Additional info useful in hooks.
@@ -154,4 +173,5 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
 
     return $path_data;
   }
+
 }

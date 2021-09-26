@@ -24,18 +24,18 @@ class SitemapGenerator extends Plugin {
   /**
    * The human-readable name of the generator.
    *
-   * @ingroup plugin_translatable
-   *
    * @var \Drupal\Core\Annotation\Translation
+   *
+   * @ingroup plugin_translatable
    */
   public $label;
 
   /**
    * A short description of the generator.
    *
-   * @ingroup plugin_translatable
-   *
    * @var \Drupal\Core\Annotation\Translation
+   *
+   * @ingroup plugin_translatable
    */
   public $description;
 
@@ -45,4 +45,5 @@ class SitemapGenerator extends Plugin {
    * @var array
    */
   public $settings = [];
+
 }
