@@ -177,7 +177,7 @@ class EntityManager {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
-   * @todo multiple variants
+   * @todo Make work for multiple variants.
    */
   public function setBundleSettings(string $entity_type_id, ?string $bundle_name = NULL, array $settings = ['index' => TRUE]): EntityManager {
     if (empty($variants = $this->getVariants(FALSE))) {
@@ -266,6 +266,8 @@ class EntityManager {
    * @return array|false
    *   Array of settings or array of settings keyed by variant name. False if
    *   entity type does not exist.
+   *
+   * @todo Simplify method signature.
    */
   public function getBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE) {
     $bundle_name = $bundle_name ?? $entity_type_id;
@@ -374,7 +376,7 @@ class EntityManager {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
    * @todo Check functionality (variant setting etc).
-   * @todo Pass entity object instead of id and bundle.
+   * @todo Pass entity object instead of id and entity type.
    */
   public function setEntityInstanceSettings(string $entity_type_id, string $id, array $settings): EntityManager {
     if (empty($this->getVariants(FALSE))) {
@@ -431,8 +433,8 @@ class EntityManager {
   /**
    * Gets sitemap settings for an entity instance.
    *
-   * This settings overrides bundle settings, or gets bundle settings, if they
-   * are not overridden. This is done for the currently set variant.
+   * If instance-specific setting overrides are not saved, returns bundle
+   * settings. This is done for the currently set variant.
    * Please note, this method takes only the first set
    * variant into account. See todo.
    *
@@ -448,8 +450,8 @@ class EntityManager {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
-   * @todo multiple variants
-   * @todo Pass entity object instead of id and bundle.
+   * @todo Make work for multiple variants.
+   * @todo Pass entity object instead of id and entity type.
    */
   public function getEntityInstanceSettings(string $entity_type_id, string $id) {
     if (empty($variants = $this->getVariants(FALSE))) {
@@ -489,8 +491,6 @@ class EntityManager {
    *   Limits the removal to entities with certain IDs.
    *
    * @return $this
-   *
-   * @todo Pass entity object instead of id and bundle.
    */
   public function removeEntityInstanceSettings(?string $entity_type_id = NULL, $entity_ids = NULL): EntityManager {
     if (empty($variants = $this->getVariants(FALSE))) {
