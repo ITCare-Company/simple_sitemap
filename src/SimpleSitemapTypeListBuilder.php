@@ -28,12 +28,12 @@ class SimpleSitemapTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $this->t($entity->label());
-    $row['description'] = $this->t((string) $entity->get('description'));
-    $row['sitemap_generator'] = $this->t($entity->getSitemapGenerator()->label());
+    $row['label'] = $entity->label();
+    $row['description'] = (string) $entity->get('description');
+    $row['sitemap_generator'] = $entity->getSitemapGenerator()->label();
     $row['url_generators']['data']['#markup'] = '';
     foreach ($entity->getUrlGenerators() as $generator) {
-      $row['url_generators']['data']['#markup'] .= '<div>' . $this->t($generator->label()) . '</div>';
+      $row['url_generators']['data']['#markup'] .= '<div>' . $generator->label() . '</div>';
     }
 
     return $row + parent::buildRow($entity);

@@ -162,7 +162,7 @@ class SettingsForm extends SimpleSitemapFormBase {
       '#description' => $this->t('This sitemap variant will be available under <em>/sitemap.xml</em> in addition to its default path <em>/variant-name/sitemap.xml</em>.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
       '#default_value' => isset($variants[$default_variant]) ? $default_variant : '',
       '#options' => ['' => $this->t('- None -')] + array_map(function ($variant) {
-        return $this->t($variant->label());
+        return $variant->label();
       }, $variants),
     ];
 

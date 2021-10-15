@@ -38,8 +38,8 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['name']['#markup'] = '<span title="' . $this->t((string) $entity->get('description')) . '">' . $this->t($entity->label()) . '</span>';
-    $row['type']['#markup'] = '<span title="' . $this->t((string) $entity->getType()->get('description')) . '">' . $this->t($entity->getType()->label()) . '</span>';
+    $row['name']['#markup'] = '<span title="' . (string) $entity->get('description') . '">' . $entity->label() . '</span>';
+    $row['type']['#markup'] = '<span title="' . (string) $entity->getType()->get('description') . '">' . $entity->getType()->label() . '</span>';
     $row['status']['#markup'] = $this->t('pending');
     $row['count']['#markup'] = '';
 
@@ -53,13 +53,14 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
 
         case SimpleSitemap::SITEMAP_PUBLISHED:
         case SimpleSitemap::SITEMAP_PUBLISHED_GENERATING:
-          $row['name']['#markup'] = '<a title ="' . $this->t((string) $entity->get('description'))
+          $created = \Drupal::service('date.formatter')->format($entity->fromPublished()->getCreated());
+
+          $row['name']['#markup'] = '<a title ="' . (string) $entity->get('description')
             . '" href="' . $entity->toUrl()->toString() . '" target="_blank">'
-            . $this->t($entity->label()) . '</a>';
-          $row['status']['#markup'] = $this->t(($entity->contentStatus() === SimpleSitemap::SITEMAP_PUBLISHED
-            ? 'published on @time'
-            : 'published on @time, regenerating'
-          ), ['@time' => \Drupal::service('date.formatter')->format($entity->fromPublished()->getCreated())]);
+            . $entity->label() . '</a>';
+          $row['status']['#markup'] = $entity->contentStatus() === SimpleSitemap::SITEMAP_PUBLISHED
+            ? $this->t('published on @time', ['@time' => $created])
+            : $this->t('published on @time, regenerating', ['@time' => $created]);
           $row['count']['#markup'] = $entity->fromPublished()->getLinkCount();
           break;
       }

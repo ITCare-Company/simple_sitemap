@@ -121,7 +121,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
         '#title' => $this->t('Sitemaps'),
         '#options' => array_map(
           function ($variant) {
-            return $this->t($variant->label());
+            return $variant->label();
           },
           SimpleSitemap::loadMultiple()
         ),

@@ -98,7 +98,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
       '#description' => $this->t('The sitemaps to include the above links in.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap']),
       '#options' => array_map(
         function ($variant) {
-          return $this->t($variant->label());
+          return $variant->label();
         },
         SimpleSitemap::loadMultiple()
       ),

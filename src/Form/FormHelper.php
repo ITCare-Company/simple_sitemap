@@ -387,7 +387,7 @@ class FormHelper {
     foreach ($variants as $variant_id => $variant) {
       $form_fragment['settings'][$variant_id] = [
         '#type' => 'details',
-        '#title' => '<em>' . $this->t($variant->label()) . '</em>',
+        '#title' => '<em>' . $variant->label() . '</em>',
         '#open' => !empty($this->bundleSettings[$variant_id]['index']),
       ];
 
@@ -400,22 +400,22 @@ class FormHelper {
         '#default_value' => (int) $this->bundleSettings[$variant_id]['index'],
         '#options' => [
           $this->getEntityCategory() === 'instance'
-            ? $this->t('Do not index this <em>@bundle</em> entity in variant <em>@variant_label</em>', [
+          ? $this->t('Do not index this <em>@bundle</em> entity in variant <em>@variant_label</em>', [
             '@bundle' => $bundle_name,
-            '@variant_label' => $this->t($variant->label()),
+            '@variant_label' => $variant->label(),
           ])
-            : $this->t('Do not index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', [
+          : $this->t('Do not index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', [
             '@bundle' => $bundle_name,
-            '@variant_label' => $this->t($variant->label()),
+            '@variant_label' => $variant->label(),
           ]),
           $this->getEntityCategory() === 'instance'
-            ? $this->t('Index this <em>@bundle entity</em> in variant <em>@variant_label</em>', [
+          ? $this->t('Index this <em>@bundle entity</em> in variant <em>@variant_label</em>', [
             '@bundle' => $bundle_name,
-            '@variant_label' => $this->t($variant->label()),
+            '@variant_label' => $variant->label(),
           ])
-            : $this->t('Index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', [
+          : $this->t('Index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', [
             '@bundle' => $bundle_name,
-            '@variant_label' => $this->t($variant->label()),
+            '@variant_label' => $variant->label(),
           ]),
         ],
         '#attributes' => ['class' => ['enabled-for-variant', $variant_id]],
