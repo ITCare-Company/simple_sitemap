@@ -178,7 +178,7 @@ function simple_sitemap_configurable_language_delete(ConfigurableLanguageInterfa
   /** @var \Drupal\simple_sitemap\Settings $settings */
   $settings = \Drupal::service('simple_sitemap.settings');
 
-  $excluded_languages = $settings->get('excluded_languages');
+  $excluded_languages = $settings->get('excluded_languages', []);
   if (isset($excluded_languages[$language->id()])) {
     unset($excluded_languages[$language->id()]);
     $settings->save('excluded_languages', $excluded_languages);

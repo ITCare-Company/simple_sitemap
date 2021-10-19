@@ -36,10 +36,8 @@ class Settings {
    *
    * @return mixed
    *   The current setting from configuration or a default value.
-   *
-   * @todo Why not NULL?
    */
-  public function get(string $name, $default = FALSE) {
+  public function get(string $name, $default = NULL) {
     $setting = $this->configFactory
       ->get('simple_sitemap.settings')
       ->get($name);

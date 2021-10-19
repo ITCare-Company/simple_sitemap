@@ -117,7 +117,7 @@ class EntityManager {
    * @return $this
    */
   public function enableEntityType(string $entity_type_id): EntityManager {
-    $enabled_entity_types = $this->settings->get('enabled_entity_types');
+    $enabled_entity_types = $this->settings->get('enabled_entity_types', []);
     if (!in_array($entity_type_id, $enabled_entity_types, TRUE)) {
       $enabled_entity_types[] = $entity_type_id;
       $this->settings->save('enabled_entity_types', $enabled_entity_types);
@@ -140,7 +140,7 @@ class EntityManager {
   public function disableEntityType(string $entity_type_id): EntityManager {
 
     // Updating settings.
-    $enabled_entity_types = $this->settings->get('enabled_entity_types');
+    $enabled_entity_types = $this->settings->get('enabled_entity_types', []);
     if (FALSE !== ($key = array_search($entity_type_id, $enabled_entity_types, TRUE))) {
       unset($enabled_entity_types[$key]);
       $this->settings->save('enabled_entity_types', array_values($enabled_entity_types));

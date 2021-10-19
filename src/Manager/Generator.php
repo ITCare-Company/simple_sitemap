@@ -82,7 +82,7 @@ class Generator {
    * @return mixed
    *   The current setting from configuration or a default value.
    */
-  public function getSetting(string $name, $default = FALSE) {
+  public function getSetting(string $name, $default = NULL) {
     return $this->settings->get($name, $default);
   }
 

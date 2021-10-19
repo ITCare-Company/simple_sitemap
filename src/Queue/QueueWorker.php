@@ -276,7 +276,7 @@ class QueueWorker {
       'remove_duplicates' => $this->settings->get('remove_duplicates', TRUE),
       'excluded_languages' => $this->settings->get('excluded_languages', []),
     ];
-    $this->maxLinks = $this->settings->get('max_links');
+    $this->maxLinks = $this->settings->get('max_links', 2000);
     $max_execution_time = $this->settings->get('generate_duration', 10000);
     Timer::start('simple_sitemap_generator');
 

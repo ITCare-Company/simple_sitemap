@@ -186,7 +186,7 @@ class SettingsForm extends SimpleSitemapFormBase {
       '#title' => $this->t('Maximum links in a sitemap'),
       '#min' => 1,
       '#description' => $this->t('The maximum number of links one sitemap can hold. If more links are generated than set here, a sitemap index will be created and the links split into several sub-sitemaps.<br>50 000 links is the maximum Google will parse per sitemap, but choosing a lower value may be needed to avoid PHP memory errors on huge sites.<br>If left blank, all links will be shown on a single sitemap.'),
-      '#default_value' => $this->settings->get('max_links'),
+      '#default_value' => $this->settings->get('max_links', 2000),
     ];
 
     $form['simple_sitemap_settings']['advanced']['generate_duration'] = [
