@@ -45,18 +45,14 @@ trait VariantSetterTrait {
   }
 
   /**
-   * Gets the currently set variants, the default variant, or all variants.
-   *
-   * @param bool $default_get_all
-   *   If true and no variants are set, all variants are returned. If false and
-   *   no variants are set, only the default variant is returned.
+   * Gets the currently set variants, or all variants if none are set.
    *
    * @return array
-   *   The currently set variants.
+   *   The currently set variants, or all variants if none are set.
    */
-  protected function getVariants(bool $default_get_all = TRUE): array {
+  protected function getVariants(): array {
     if (NULL === $this->variants) {
-      $this->setVariants($default_get_all ? TRUE : NULL);
+      $this->setVariants(TRUE);
     }
 
     return $this->variants;

@@ -68,7 +68,7 @@ class CustomLinkManager {
    * @todo Validate $settings and throw exceptions
    */
   public function add(string $path, array $settings = []): CustomLinkManager {
-    if (empty($variants = $this->getVariants(FALSE))) {
+    if (empty($variants = $this->getVariants())) {
       return $this;
     }
 
@@ -120,7 +120,7 @@ class CustomLinkManager {
    */
   public function get(?string $path = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE): array {
     $all_custom_links = [];
-    foreach ($this->getVariants(FALSE) as $variant) {
+    foreach ($this->getVariants() as $variant) {
       $custom_links = $this->configFactory
         ->get("simple_sitemap.custom_links.$variant")
         ->get('links');
@@ -168,7 +168,7 @@ class CustomLinkManager {
    * @return $this
    */
   public function remove($paths = NULL): CustomLinkManager {
-    if (empty($variants = $this->getVariants(FALSE))) {
+    if (empty($variants = $this->getVariants())) {
       return $this;
     }
 

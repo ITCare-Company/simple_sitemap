@@ -180,7 +180,7 @@ class EntityManager {
    * @todo Make work for multiple variants.
    */
   public function setBundleSettings(string $entity_type_id, ?string $bundle_name = NULL, array $settings = ['index' => TRUE]): EntityManager {
-    if (empty($variants = $this->getVariants(FALSE))) {
+    if (empty($variants = $this->getVariants())) {
       return $this;
     }
 
@@ -273,7 +273,7 @@ class EntityManager {
     $bundle_name = $bundle_name ?? $entity_type_id;
     $all_bundle_settings = [];
 
-    foreach ($this->getVariants(FALSE) as $variant) {
+    foreach ($this->getVariants() as $variant) {
       if (NULL !== $entity_type_id) {
         $bundle_settings = $this->configFactory
           ->get("simple_sitemap.bundle_settings.$variant.$entity_type_id.$bundle_name")
@@ -331,7 +331,7 @@ class EntityManager {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function removeBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL): EntityManager {
-    if (empty($variants = $this->getVariants(FALSE))) {
+    if (empty($variants = $this->getVariants())) {
       return $this;
     }
 
@@ -379,7 +379,7 @@ class EntityManager {
    * @todo Pass entity object instead of id and entity type.
    */
   public function setEntityInstanceSettings(string $entity_type_id, string $id, array $settings): EntityManager {
-    if (empty($this->getVariants(FALSE))) {
+    if (empty($this->getVariants())) {
       return $this;
     }
 
@@ -454,7 +454,7 @@ class EntityManager {
    * @todo Pass entity object instead of id and entity type.
    */
   public function getEntityInstanceSettings(string $entity_type_id, string $id) {
-    if (empty($variants = $this->getVariants(FALSE))) {
+    if (empty($variants = $this->getVariants())) {
       return FALSE;
     }
 
@@ -493,7 +493,7 @@ class EntityManager {
    * @return $this
    */
   public function removeEntityInstanceSettings(?string $entity_type_id = NULL, $entity_ids = NULL): EntityManager {
-    if (empty($variants = $this->getVariants(FALSE))) {
+    if (empty($variants = $this->getVariants())) {
       return $this;
     }
 
