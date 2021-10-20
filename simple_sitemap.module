@@ -132,7 +132,7 @@ function simple_sitemap_entity_form_submit(array $form, FormStateInterface $form
 
     // Regenerate sitemaps according to user setting.
     if (!empty($values['simple_sitemap_regenerate_now'])) {
-      $generator->setVariants(TRUE)
+      $generator->setVariants()
         ->rebuildQueue()
         ->generateSitemap();
     }
@@ -198,7 +198,7 @@ function simple_sitemap_entity_delete(EntityInterface $entity) {
 
     /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
     $generator = \Drupal::service('simple_sitemap.generator');
-    $generator->setVariants(TRUE)->entityManager()->removeEntityInstanceSettings(
+    $generator->setVariants()->entityManager()->removeEntityInstanceSettings(
       $entity->getEntityTypeId(), $entity->id()
     );
   }
@@ -216,7 +216,7 @@ function simple_sitemap_entity_bundle_delete($entity_type_id, $bundle) {
 
   /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
   $generator = \Drupal::service('simple_sitemap.generator');
-  $generator->setVariants(TRUE)->entityManager()->removeBundleSettings($entity_type_id, $bundle);
+  $generator->setVariants()->entityManager()->removeBundleSettings($entity_type_id, $bundle);
 }
 
 /**
@@ -231,7 +231,7 @@ function simple_sitemap_menu_delete(MenuInterface $menu) {
 
   /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
   $generator = \Drupal::service('simple_sitemap.generator');
-  $generator->setVariants(TRUE)->entityManager()->removeBundleSettings('menu_link_content', $menu->id());
+  $generator->setVariants()->entityManager()->removeBundleSettings('menu_link_content', $menu->id());
 }
 
 /**

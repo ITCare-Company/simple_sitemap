@@ -4,6 +4,7 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\simple_sitemap\Entity\EntityHelper;
+use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -126,7 +127,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   protected function getUrlVariants(array $path_data, Url $url_object): array {
     $url_variants = [];
 
-    if (!$this->sitemapVariant->isMultilingual() || !$url_object->isRouted()) {
+    if (!$this->sitemap->isMultilingual() || !$url_object->isRouted()) {
 
       // Not a routed URL or URL language negotiation disabled: Including only
       // default variant.
@@ -242,15 +243,18 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function generate($data_set): array {
-    $path_data = $this->processDataSet($data_set);
-    if (isset($path_data['url']) && $path_data['url'] instanceof Url) {
-      $url_object = $path_data['url'];
-      unset($path_data['url']);
-      return $this->getUrlVariants($path_data, $url_object);
+    try {
+      $path_data = $this->processDataSet($data_set);
+      if (isset($path_data['url']) && $path_data['url'] instanceof Url) {
+        $url_object = $path_data['url'];
+        unset($path_data['url']);
+        return $this->getUrlVariants($path_data, $url_object);
+      }
+      return [$path_data];
     }
-
-    // @todo May not want to return array here.
-    return FALSE !== $path_data ? [$path_data] : [];
+    catch (SkipElementException $e) {
+      return [];
+    }
   }
 
   /**
@@ -267,7 +271,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     foreach ($entity->getFieldDefinitions() as $field) {
       if ($field->getType() === 'image') {
         foreach ($entity->get($field->getName())->getValue() as $value) {
-          if (!empty($file = File::load($value['target_id']))) {
+          if (NULL !== ($file = File::load($value['target_id']))) {
             $image_data[] = [
               'path' => $this->replaceBaseUrlWithCustom(
                 file_create_url($file->getFileUri())

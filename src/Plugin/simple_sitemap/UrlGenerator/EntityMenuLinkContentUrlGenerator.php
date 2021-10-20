@@ -122,11 +122,11 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
   public function getDataSets(): array {
     $data_sets = [];
     $bundle_settings = $this->entitiesManager
-      ->setVariants($this->sitemapVariant->id())
-      ->getBundleSettings();
-    if (!empty($bundle_settings['menu_link_content'])) {
-      foreach ($bundle_settings['menu_link_content'] as $bundle_name => $bundle_settings) {
-        if ($bundle_settings['index']) {
+      ->setVariants($this->sitemap->id())
+      ->getAllBundleSettings();
+    if (!empty($bundle_settings[$this->sitemap->id()]['menu_link_content'])) {
+      foreach ($bundle_settings[$this->sitemap->id()]['menu_link_content'] as $bundle_name => $settings) {
+        if (!empty($settings['index'])) {
 
           // Retrieve the expanded tree.
           $tree = $this->menuLinkTree->load($bundle_name, new MenuTreeParameters());
@@ -168,7 +168,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     $meta_data = $data_set->getMetaData();
     if (empty($meta_data['entity_id'])) {
       $entity_settings = $this->entitiesManager
-        ->setVariants($this->sitemapVariant->id())
+        ->setVariants($this->sitemap->id())
         ->getBundleSettings('menu_link_content', $data_set->getMenuName());
     }
 
@@ -176,13 +176,13 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     // entity override.
     else {
       $entity_settings = $this->entitiesManager
-        ->setVariants($this->sitemapVariant->id())
+        ->setVariants($this->sitemap->id())
         ->getEntityInstanceSettings('menu_link_content', $meta_data['entity_id']);
-
-      if (empty($entity_settings['index'])) {
-        throw new SkipElementException();
-      }
     }
+    if (empty($entity_settings[$this->sitemap->id()]['index'])) {
+      throw new SkipElementException();
+    }
+    $entity_settings = reset($entity_settings);
 
     if ($url_object->isRouted()) {
 

@@ -179,7 +179,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
    */
   public function addChunk(array $links): SimpleSitemapInterface {
     // @todo Automatically set variant.
-    $xml = $this->getType()->getSitemapGenerator()->setSitemapVariant($this)->getChunkXml($links);
+    $xml = $this->getType()->getSitemapGenerator()->setSitemap($this)->getChunkContent($links);
     $this->entityTypeManager()->getStorage('simple_sitemap')->addChunk($this, $xml, count($links));
 
     return $this;
@@ -191,7 +191,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   public function generateIndex(): SimpleSitemapInterface {
     if ($this->isIndexable()) {
       // @todo Automatically set variant.
-      $xml = $this->getType()->getSitemapGenerator()->setSitemapVariant($this)->getIndexXml();
+      $xml = $this->getType()->getSitemapGenerator()->setSitemap($this)->getIndexContent();
       $this->entityTypeManager()->getStorage('simple_sitemap')->generateIndex($this, $xml);
     }
 

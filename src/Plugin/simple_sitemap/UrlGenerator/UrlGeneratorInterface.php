@@ -17,10 +17,8 @@ interface UrlGeneratorInterface extends SimpleSitemapPluginInterface {
    *   The sitemap entity to set.
    *
    * @return $this
-   *
-   * @todo Might want to rename this to setSitemap.
    */
-  public function setSitemapVariant(SimpleSitemapInterface $sitemap): UrlGeneratorInterface;
+  public function setSitemap(SimpleSitemapInterface $sitemap): UrlGeneratorInterface;
 
   /**
    * Gets the datasets.

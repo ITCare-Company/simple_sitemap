@@ -22,19 +22,15 @@ trait VariantSetterTrait {
    * @param array|string|true|null $variants
    *   array: Array of variants to be set.
    *   string: A particular variant to be set.
-   *   null: Default variant will be set.
-   *   true: All existing variants will be set.
+   *   null: All existing variants will be set.
    *
    * @return $this
    *
    * @todo Check if variants exist and throw exception.
+   * @todo Instead of array_keys(loadMultiple()) maybe a quicker entity query to get simple_sitemap IDs (variants)?
    */
   public function setVariants($variants = NULL) {
-    if (NULL === $variants) {
-      $this->variants = !empty($default_variant = \Drupal::service('simple_sitemap.settings')
-        ->get('default_variant', '')) ? [$default_variant] : [];
-    }
-    elseif ($variants === TRUE) {
+    if ($variants === NULL) {
       $this->variants = array_keys(SimpleSitemap::loadMultiple());
     }
     else {
@@ -52,7 +48,7 @@ trait VariantSetterTrait {
    */
   protected function getVariants(): array {
     if (NULL === $this->variants) {
-      $this->setVariants(TRUE);
+      $this->setVariants();
     }
 
     return $this->variants;

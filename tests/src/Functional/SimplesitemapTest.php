@@ -65,7 +65,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     $this->drupalGet('admin/config/search/simplesitemap/custom');
     $this->assertSession()->pageTextContains(
-      '/node/' . $this->node->id() . ' yearly'
+      '/node/' . $this->node->id() . ' 0.5 yearly'
     );
   }
 

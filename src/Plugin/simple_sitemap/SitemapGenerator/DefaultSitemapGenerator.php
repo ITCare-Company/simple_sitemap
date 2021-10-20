@@ -36,7 +36,7 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    * @return string
    *   Sitemap chunk
    */
-  public function getChunkXml(array $links): string {
+  public function getChunkContent(array $links): string {
     $this->writer->openMemory();
     $this->writer->setIndent(TRUE);
     $this->writer->startSitemapDocument();
@@ -61,10 +61,10 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    */
   protected function addSitemapAttributes(): void {
     $attributes = self::ATTRIBUTES;
-    if (!$this->sitemapVariant->isMultilingual()) {
+    if (!$this->sitemap->isMultilingual()) {
       unset($attributes['xmlns:xhtml']);
     }
-    $sitemap_variant = $this->sitemapVariant->id();
+    $sitemap_variant = $this->sitemap->id();
     $this->moduleHandler->alter('simple_sitemap_attributes', $attributes, $sitemap_variant);
     foreach ($attributes as $name => $value) {
       $this->writer->writeAttribute($name, $value);
@@ -97,7 +97,7 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
     // If more than one language is enabled, add all translation variant URLs
     // as alternate links to this link turning the sitemap into a hreflang
     // sitemap.
-    if (isset($url_data['alternate_urls']) && $this->sitemapVariant->isMultilingual()) {
+    if (isset($url_data['alternate_urls']) && $this->sitemap->isMultilingual()) {
       $this->addAlternateUrls($url_data['alternate_urls']);
     }
 

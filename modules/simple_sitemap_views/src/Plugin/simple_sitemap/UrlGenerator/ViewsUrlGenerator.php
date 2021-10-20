@@ -118,7 +118,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
 
     // Get data sets.
     foreach ($this->sitemapViews->getIndexableViews() as $view) {
-      $settings = $this->sitemapViews->getSitemapSettings($view, $this->sitemapVariant->id());
+      $settings = $this->sitemapViews->getSitemapSettings($view, $this->sitemap->id());
 
       if (empty($settings)) {
         $view->destroy();
@@ -138,7 +138,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       }
 
       // Process indexed arguments.
-      if ($args_ids = $this->sitemapViews->getIndexableArguments($view, $this->sitemapVariant->id())) {
+      if ($args_ids = $this->sitemapViews->getIndexableArguments($view, $this->sitemap->id())) {
         $args_ids = $this->sitemapViews->getArgumentsStringVariations($args_ids);
 
         // Form the condition according to the variants of the
@@ -191,7 +191,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       }
 
       // Trying to get the sitemap settings.
-      $settings = $this->sitemapViews->getSitemapSettings($view, $this->sitemapVariant->id());
+      $settings = $this->sitemapViews->getSitemapSettings($view, $this->sitemap->id());
       if (empty($settings)) {
         throw new \UnexpectedValueException('Failed to get the sitemap settings.');
       }
@@ -260,7 +260,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
     $parameters = $url->getRouteParameters();
 
     // Check that the number of params does not match the number of arguments.
-    if (count($parameters) != count($args)) {
+    if (count($parameters) !== count($args)) {
       $route_name = $url->getRouteName();
       $route = $this->routeProvider->getRouteByName($route_name);
       $variables = $route->compile()->getVariables();

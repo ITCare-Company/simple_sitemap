@@ -345,17 +345,19 @@ class FormHelper {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function negotiateSettings(): FormHelper {
+    $this->bundleSettings = $this->generator
+      ->setVariants()
+      ->entityManager()
+      ->getBundleSettings($this->getEntityTypeId(), $this->getBundleName());
 
-    $this->bundleSettings = $this->generator->setVariants(TRUE)
-      ->entityManager()->getBundleSettings($this->getEntityTypeId(), $this->getBundleName(), TRUE, TRUE);
     if ($this->getEntityCategory() === 'instance') {
-
-      // @todo Should spit out variant => settings and not just settings; to do this, alter getEntityInstanceSettings() to include 'multiple variants' option.
+      // @todo Simplify after getEntityInstanceSettings() works with multiple variants.
       foreach ($this->bundleSettings as $variant_id => $settings) {
         if (NULL !== $instance_id = $this->getInstanceId()) {
           $this->bundleSettings[$variant_id] = $this->generator
             ->setVariants($variant_id)
-            ->entityManager()->getEntityInstanceSettings($this->getEntityTypeId(), $instance_id);
+            ->entityManager()
+            ->getEntityInstanceSettings($this->getEntityTypeId(), $instance_id)[$variant_id];
         }
         $this->bundleSettings[$variant_id]['bundle_settings'] = $settings;
       }

@@ -17,10 +17,8 @@ interface SitemapGeneratorInterface extends SimpleSitemapPluginInterface {
    *   The sitemap entity to set.
    *
    * @return $this
-   *
-   * @todo Might want to rename this to setSitemap.
    */
-  public function setSitemapVariant(SimpleSitemapInterface $sitemap): SitemapGeneratorInterface;
+  public function setSitemap(SimpleSitemapInterface $sitemap): SitemapGeneratorInterface;
 
   /**
    * Generates and returns a sitemap chunk.
@@ -30,19 +28,15 @@ interface SitemapGeneratorInterface extends SimpleSitemapPluginInterface {
    *
    * @return string
    *   Sitemap chunk.
-   *
-   * @todo Might want to rename this to getChunkContent.
    */
-  public function getChunkXml(array $links): string;
+  public function getChunkContent(array $links): string;
 
   /**
    * Generates and returns a sitemap index.
    *
    * @return string
    *   Sitemap index.
-   *
-   * @todo Might want to rename this to getIndexContent.
    */
-  public function getIndexXml(): string;
+  public function getIndexContent(): string;
 
 }

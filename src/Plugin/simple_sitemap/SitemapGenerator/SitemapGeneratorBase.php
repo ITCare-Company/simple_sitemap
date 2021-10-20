@@ -41,7 +41,7 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
    *
    * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface
    */
-  protected $sitemapVariant;
+  protected $sitemap;
 
   /**
    * An array of index attributes.
@@ -99,8 +99,8 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
   /**
    * {@inheritdoc}
    */
-  public function setSitemapVariant(SimpleSitemapInterface $sitemap): SitemapGeneratorInterface {
-    $this->sitemapVariant = $sitemap;
+  public function setSitemap(SimpleSitemapInterface $sitemap): SitemapGeneratorInterface {
+    $this->sitemap = $sitemap;
 
     return $this;
   }
@@ -108,14 +108,14 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
   /**
    * {@inheritdoc}
    */
-  abstract public function getChunkXml(array $links): string;
+  abstract public function getChunkContent(array $links): string;
 
   /**
    * {@inheritdoc}
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function getIndexXml(): string {
+  public function getIndexContent(): string {
     $this->writer->openMemory();
     $this->writer->setIndent(TRUE);
     $this->writer->startSitemapDocument();
@@ -130,18 +130,18 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
 
     // Add attributes to document.
     $attributes = self::$indexAttributes;
-    $sitemap_variant = $this->sitemapVariant;
+    $sitemap_variant = $this->sitemap;
     $this->moduleHandler->alter('simple_sitemap_index_attributes', $attributes, $sitemap_variant);
     foreach ($attributes as $name => $value) {
       $this->writer->writeAttribute($name, $value);
     }
 
     // Add sitemap chunk locations to document.
-    for ($delta = 1; $delta <= $this->sitemapVariant->fromUnpublished()->getChunkCount(); $delta++) {
+    for ($delta = 1; $delta <= $this->sitemap->fromUnpublished()->getChunkCount(); $delta++) {
       $this->writer->startElement('sitemap');
-      $this->writer->writeElement('loc', $this->sitemapVariant->toUrl('canonical', ['delta' => $delta])->toString());
+      $this->writer->writeElement('loc', $this->sitemap->toUrl('canonical', ['delta' => $delta])->toString());
       // @todo Should this be current time instead?
-      $this->writer->writeElement('lastmod', date('c', $this->sitemapVariant->fromUnpublished()->getCreated()));
+      $this->writer->writeElement('lastmod', date('c', $this->sitemap->fromUnpublished()->getCreated()));
       $this->writer->endElement();
     }
 

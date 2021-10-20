@@ -104,7 +104,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
       'atomic_entities' => [],
     ];
 
-    $all_bundle_settings = $this->generator->setVariants(TRUE)->entityManager()->getBundleSettings(NULL, NULL, TRUE, TRUE);
+    $all_bundle_settings = $this->generator->setVariants()->entityManager()->getAllBundleSettings();
     $indexed_bundles = [];
     foreach ($all_bundle_settings as $variant => $entity_types) {
       foreach ($entity_types as $entity_type_name => $bundles) {
@@ -232,7 +232,8 @@ class EntitiesForm extends SimpleSitemapFormBase {
 
     // Regenerate sitemaps according to user setting.
     if ($form_state->getValue('simple_sitemap_regenerate_now')) {
-      $this->generator->setVariants(TRUE)
+      $this->generator
+        ->setVariants()
         ->rebuildQueue()
         ->generateSitemap();
     }

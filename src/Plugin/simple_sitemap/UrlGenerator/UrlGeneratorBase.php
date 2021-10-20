@@ -33,7 +33,7 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
    *
    * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface
    */
-  protected $sitemapVariant;
+  protected $sitemap;
 
   /**
    * UrlGeneratorBase constructor.
@@ -77,8 +77,8 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
   /**
    * {@inheritdoc}
    */
-  public function setSitemapVariant(SimpleSitemapInterface $sitemap): UrlGeneratorInterface {
-    $this->sitemapVariant = $sitemap;
+  public function setSitemap(SimpleSitemapInterface $sitemap): UrlGeneratorInterface {
+    $this->sitemap = $sitemap;
 
     return $this;
   }
@@ -100,8 +100,6 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Throw and catch SkipElementException here and children.
    */
   abstract public function getDataSets(): array;
 
@@ -111,15 +109,13 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
    * @param mixed $data_set
    *   Dataset to process.
    *
-   * @return mixed
+   * @return array
    *   Processing result.
    */
   abstract protected function processDataSet($data_set): array;
 
   /**
    * {@inheritdoc}
-   *
-   * @todo catch SkipElementException here and children.
    */
   public function generate($data_set): array {
     try {

@@ -81,7 +81,7 @@ class CustomLinkManager {
       return $this;
     }
 
-    $variant_links = $this->get(NULL, FALSE, TRUE);
+    $variant_links = $this->get();
     foreach ($variants as $variant) {
       $links = [];
       $link_key = 0;
@@ -109,25 +109,20 @@ class CustomLinkManager {
    *
    * @param string|null $path
    *   Limits the result set by an internal path.
-   * @param bool $supplement_defaults
-   *   Supplements the result set with default custom link settings.
-   * @param bool $multiple_variants
-   *   If true, returns an array of results keyed by variant name, otherwise it
-   *   returns the result set for the first variant only.
    *
    * @return array
-   *   Custom link settings.
+   *   An array of custom link settings keyed by variant name.
    */
-  public function get(?string $path = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE): array {
+  public function get(?string $path = NULL): array {
     $all_custom_links = [];
     foreach ($this->getVariants() as $variant) {
       $custom_links = $this->configFactory
         ->get("simple_sitemap.custom_links.$variant")
         ->get('links');
 
-      $custom_links = !empty($custom_links) ? $custom_links : [];
+      $custom_links = $custom_links ?: [];
 
-      if (!empty($custom_links) && $path !== NULL) {
+      if ($custom_links && $path !== NULL) {
         foreach ($custom_links as $key => $link) {
           if ($link['path'] !== $path) {
             unset($custom_links[$key]);
@@ -135,24 +130,17 @@ class CustomLinkManager {
         }
       }
 
-      if (!empty($custom_links) && $supplement_defaults) {
-        foreach ($custom_links as $i => $link_settings) {
-          self::supplementDefaultSettings($link_settings);
-          $custom_links[$i] = $link_settings;
-        }
+      foreach ($custom_links as $i => $link_settings) {
+        self::supplementDefaultSettings($link_settings);
+        $custom_links[$i] = $link_settings;
       }
 
-      $custom_links = $path !== NULL && !empty($custom_links)
+      $custom_links = $path !== NULL && $custom_links
         ? array_values($custom_links)[0]
         : array_values($custom_links);
 
-      if (!empty($custom_links)) {
-        if ($multiple_variants) {
-          $all_custom_links[$variant] = $custom_links;
-        }
-        else {
-          return $custom_links;
-        }
+      if ($custom_links) {
+        $all_custom_links[$variant] = $custom_links;
       }
     }
 
@@ -179,7 +167,7 @@ class CustomLinkManager {
       }
     }
     else {
-      $variant_links = $this->get(NULL, FALSE, TRUE);
+      $variant_links = $this->get();
       foreach ($variant_links as $variant => $links) {
         $custom_links = $links;
         $save = FALSE;

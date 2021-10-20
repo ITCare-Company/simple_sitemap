@@ -189,7 +189,7 @@ class QueueWorker {
       $data_sets = [];
       foreach ($variant->getType()->getUrlGenerators() as $url_generator_id => $url_generator) {
         // @todo Automatically set variant.
-        $data_sets = $url_generator->setSitemapVariant($variant)->getDataSets();
+        $data_sets = $url_generator->setSitemap($variant)->getDataSets();
         foreach ($data_sets as $data_set) {
           $all_data_sets[] = [
             'data' => $data_set,
@@ -346,7 +346,7 @@ class QueueWorker {
    */
   protected function generateResultsFromElement($element): void {
     $results = $this->variantProcessedNow->getType()->getUrlGenerators()[$element->data['url_generator']]
-      ->setSitemapVariant($this->variantProcessedNow)
+      ->setSitemap($this->variantProcessedNow)
       ->generate($element->data['data']);
 
     $this->removeDuplicates($results);

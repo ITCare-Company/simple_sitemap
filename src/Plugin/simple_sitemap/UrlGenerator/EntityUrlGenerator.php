@@ -138,22 +138,23 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
   public function getDataSets(): array {
     $data_sets = [];
     $sitemap_entity_types = $this->entityHelper->getSupportedEntityTypes();
+    $all_bundle_settings = $this->entitiesManager->setVariants($this->sitemap->id())->getAllBundleSettings();
+    if (isset($all_bundle_settings[$this->sitemap->id()])) {
+      foreach ($all_bundle_settings[$this->sitemap->id()] as $entity_type_name => $bundles) {
+        if (!isset($sitemap_entity_types[$entity_type_name])) {
+          continue;
+        }
 
-    foreach ($this->entitiesManager->setVariants($this->sitemapVariant->id())->getBundleSettings() as $entity_type_name => $bundles) {
-      if (!isset($sitemap_entity_types[$entity_type_name])) {
-        continue;
-      }
+        if ($this->isOverwrittenForEntityType($entity_type_name)) {
+          continue;
+        }
 
-      if ($this->isOverwrittenForEntityType($entity_type_name)) {
-        continue;
-      }
+        $entityTypeStorage = $this->entityTypeManager->getStorage($entity_type_name);
+        $keys = $sitemap_entity_types[$entity_type_name]->getKeys();
 
-      $entityTypeStorage = $this->entityTypeManager->getStorage($entity_type_name);
-      $keys = $sitemap_entity_types[$entity_type_name]->getKeys();
-
-      foreach ($bundles as $bundle_name => $bundle_settings) {
-        if ($bundle_settings['index']) {
-          $query = $entityTypeStorage->getQuery();
+        foreach ($bundles as $bundle_name => $bundle_settings) {
+          if ($bundle_settings['index']) {
+            $query = $entityTypeStorage->getQuery();
 
           if (!empty($keys['id'])) {
             $query->sort($keys['id']);
@@ -168,25 +169,26 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
             $query->condition($keys['status'], 1);
           }
 
-          // Shift access check to EntityUrlGeneratorBase for language
-          // specific access.
-          // See https://www.drupal.org/project/simple_sitemap/issues/3102450.
-          $query->accessCheck(FALSE);
+            // Shift access check to EntityUrlGeneratorBase for language
+            // specific access.
+            // See https://www.drupal.org/project/simple_sitemap/issues/3102450.
+            $query->accessCheck(FALSE);
 
-          $data_set = [
-            'entity_type' => $entity_type_name,
-            'id' => [],
-          ];
-          foreach ($query->execute() as $entity_id) {
-            $data_set['id'][] = $entity_id;
-            if (count($data_set['id']) >= $this->entitiesPerDataset) {
-              $data_sets[] = $data_set;
-              $data_set['id'] = [];
+            $data_set = [
+              'entity_type' => $entity_type_name,
+              'id' => [],
+            ];
+            foreach ($query->execute() as $entity_id) {
+              $data_set['id'][] = $entity_id;
+              if (count($data_set['id']) >= $this->entitiesPerDataset) {
+                $data_sets[] = $data_set;
+                $data_set['id'] = [];
+              }
             }
-          }
-          // Add the last data set if there are some IDs gathered.
-          if (!empty($data_set['id'])) {
-            $data_sets[] = $data_set;
+            // Add the last data set if there are some IDs gathered.
+            if (!empty($data_set['id'])) {
+              $data_sets[] = $data_set;
+            }
           }
         }
       }
@@ -246,13 +248,14 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    */
   protected function processEntity(ContentEntityInterface $entity): array {
     $entity_settings = $this->entitiesManager
-      ->setVariants($this->sitemapVariant->id())
+      ->setVariants($this->sitemap->id())
       ->getEntityInstanceSettings($entity->getEntityTypeId(), $entity->id());
 
-    if (empty($entity_settings['index'])) {
+    if (empty($entity_settings[$this->sitemap->id()]['index'])) {
       throw new SkipElementException();
     }
 
+    $entity_settings = $entity_settings[$this->sitemap->id()];
     $url_object = $entity->toUrl()->setAbsolute();
 
     // Do not include external paths.

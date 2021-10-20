@@ -154,7 +154,7 @@ class EntityManager {
     }
 
     // Deleting entity overrides.
-    $this->setVariants(TRUE)->removeEntityInstanceSettings($entity_type_id);
+    $this->setVariants()->removeEntityInstanceSettings($entity_type_id);
 
     return $this;
   }
@@ -163,7 +163,7 @@ class EntityManager {
    * Sets settings for bundle or non-bundle entity types.
    *
    * This is done for the currently set variant. Note that this method takes
-   * only the first set variant into account. See todo.
+   * only the first set variant into account.
    *
    * @param string $entity_type_id
    *   The entity type ID.
@@ -178,15 +178,25 @@ class EntityManager {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
    * @todo Make work for multiple variants.
+   * @todo Throw exception on non-existing entity type/bundle.
    */
   public function setBundleSettings(string $entity_type_id, ?string $bundle_name = NULL, array $settings = ['index' => TRUE]): EntityManager {
     if (empty($variants = $this->getVariants())) {
       return $this;
     }
+    if (!isset($this->entityHelper->getSupportedEntityTypes()[$entity_type_id])) {
+      return $this;
+    }
+
+    //@todo Not working with menu link content.
+//    if ($bundle_name && !isset($this->entityHelper->getBundleInfo($entity_type_id)[$bundle_name])) {
+//      return $this;
+//    }
 
     $bundle_name = $bundle_name ?? $entity_type_id;
 
-    if (!empty($old_settings = $this->getBundleSettings($entity_type_id, $bundle_name))) {
+    if ($old_settings = $this->getBundleSettings($entity_type_id, $bundle_name)) {
+      $old_settings = reset($old_settings);
       $settings = array_merge($old_settings, $settings);
     }
     self::supplementDefaultSettings($settings);
@@ -249,67 +259,73 @@ class EntityManager {
   }
 
   /**
-   * Gets settings for bundle or non-bundle entity types.
+   * Gets sitemap settings for an entity type (bundle).
    *
    * This is done for the currently set variants.
    *
-   * @param string|null $entity_type_id
+   * @param string $entity_type_id
    *   Limit the result set to a specific entity type.
    * @param string|null $bundle_name
    *   Limit the result set to a specific bundle name.
-   * @param bool $supplement_defaults
-   *   Supplements the result set with default bundle settings.
-   * @param bool $multiple_variants
-   *   If true, returns an array of results keyed by variant name, otherwise it
-   *   returns the result set for the first variant only.
    *
-   * @return array|false
-   *   Array of settings or array of settings keyed by variant name. False if
-   *   entity type does not exist.
+   * @return array
+   *   An array of settings keyed by variant name.
    *
-   * @todo Simplify method signature.
+   * @todo Throw exception on non-existing entity type/bundle.
    */
-  public function getBundleSettings(?string $entity_type_id = NULL, ?string $bundle_name = NULL, bool $supplement_defaults = TRUE, bool $multiple_variants = FALSE) {
+  public function getBundleSettings(string $entity_type_id, ?string $bundle_name = NULL): array {
+    if (!isset($this->entityHelper->getSupportedEntityTypes()[$entity_type_id])) {
+      return [];
+    }
+    //@todo Not working with menu link content.
+//    if ($bundle_name && !isset($this->entityHelper->getBundleInfo($entity_type_id)[$bundle_name])) {
+//      return [];
+//    }
     $bundle_name = $bundle_name ?? $entity_type_id;
     $all_bundle_settings = [];
 
     foreach ($this->getVariants() as $variant) {
-      if (NULL !== $entity_type_id) {
-        $bundle_settings = $this->configFactory
-          ->get("simple_sitemap.bundle_settings.$variant.$entity_type_id.$bundle_name")
-          ->get();
+      $bundle_settings = $this->configFactory
+        ->get("simple_sitemap.bundle_settings.$variant.$entity_type_id.$bundle_name")
+        ->get();
 
-        if (empty($bundle_settings) && $supplement_defaults) {
-          self::supplementDefaultSettings($bundle_settings);
-        }
+      if (empty($bundle_settings)) {
+        self::supplementDefaultSettings($bundle_settings);
       }
-      else {
-        $config_names = $this->configFactory->listAll("simple_sitemap.bundle_settings.$variant.");
-        $bundle_settings = [];
-        foreach ($config_names as $config_name) {
-          $config_name_parts = explode('.', $config_name);
-          $bundle_settings[$config_name_parts[3]][$config_name_parts[4]] = $this->configFactory->get($config_name)->get();
-        }
+      $all_bundle_settings[$variant] = $bundle_settings;
+    }
 
-        // Supplement default bundle settings for all bundles not found in
-        // simple_sitemap.bundle_settings.*.* configuration.
-        if ($supplement_defaults) {
-          foreach ($this->entityHelper->getSupportedEntityTypes() as $type_id => $type_definition) {
-            foreach ($this->entityHelper->getBundleInfo($type_id) as $bundle => $bundle_definition) {
-              if (!isset($bundle_settings[$type_id][$bundle])) {
-                self::supplementDefaultSettings($bundle_settings[$type_id][$bundle]);
-              }
-            }
+    return $all_bundle_settings;
+  }
+
+  /**
+   * Gets settings for all entity types (bundles).
+   *
+   * This is done for the currently set variants.
+   *
+   * @return array
+   *   An array of settings keyed by variant name, entity type and bundle names.
+   */
+  public function getAllBundleSettings() {
+    $all_bundle_settings = [];
+    foreach ($this->getVariants() as $variant) {
+      $config_names = $this->configFactory->listAll("simple_sitemap.bundle_settings.$variant.");
+      $bundle_settings = [];
+      foreach ($config_names as $config_name) {
+        $config_name_parts = explode('.', $config_name);
+        $bundle_settings[$config_name_parts[3]][$config_name_parts[4]] = $this->configFactory->get($config_name)->get();
+      }
+
+      // Supplement default bundle settings for all bundles not found in
+      // simple_sitemap.bundle_settings.*.* configuration.
+      foreach ($this->entityHelper->getSupportedEntityTypes() as $type_id => $type_definition) {
+        foreach ($this->entityHelper->getBundleInfo($type_id) as $bundle => $bundle_definition) {
+          if (!isset($bundle_settings[$type_id][$bundle])) {
+            self::supplementDefaultSettings($bundle_settings[$type_id][$bundle]);
           }
         }
       }
-
-      if ($multiple_variants) {
-        $all_bundle_settings[$variant] = $bundle_settings;
-      }
-      else {
-        return $bundle_settings;
-      }
+      $all_bundle_settings[$variant] = $bundle_settings;
     }
 
     return $all_bundle_settings;
@@ -375,8 +391,7 @@ class EntityManager {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
-   * @todo Check functionality (variant setting etc).
-   * @todo Pass entity object instead of id and entity type.
+   * @todo Pass entity object instead of id and entity type?
    */
   public function setEntityInstanceSettings(string $entity_type_id, string $id, array $settings): EntityManager {
     if (empty($this->getVariants())) {
@@ -389,7 +404,7 @@ class EntityManager {
     }
 
     $all_bundle_settings = $this->getBundleSettings(
-      $entity_type_id, $this->entityHelper->getEntityInstanceBundleName($entity), TRUE, TRUE
+      $entity_type_id, $this->entityHelper->getEntityInstanceBundleName($entity)
     );
 
     foreach ($all_bundle_settings as $variant => $bundle_settings) {
@@ -436,7 +451,7 @@ class EntityManager {
    * If instance-specific setting overrides are not saved, returns bundle
    * settings. This is done for the currently set variant.
    * Please note, this method takes only the first set
-   * variant into account. See todo.
+   * variant into account.
    *
    * @param string $entity_type_id
    *   The entity type ID.
@@ -445,39 +460,42 @@ class EntityManager {
    *
    * @return array|false
    *   Array of entity instance settings or the settings of its bundle. False if
-   *   entity type or variant does not exist.
+   *   entity or variant does not exist.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *
    * @todo Make work for multiple variants.
-   * @todo Pass entity object instead of id and entity type.
+   * @todo Pass entity object instead of id and entity type?
    */
   public function getEntityInstanceSettings(string $entity_type_id, string $id) {
     if (empty($variants = $this->getVariants())) {
       return FALSE;
     }
+    $variant = reset($variants);
 
     $results = $this->database->select('simple_sitemap_entity_overrides', 'o')
       ->fields('o', ['inclusion_settings'])
-      ->condition('o.type', reset($variants))
+      ->condition('o.type', $variant)
       ->condition('o.entity_type', $entity_type_id)
       ->condition('o.entity_id', $id)
       ->execute()
       ->fetchField();
 
     if (!empty($results)) {
-      return unserialize($results);
+      return [$variant => unserialize($results)];
     }
 
     if (($entity = $this->entityTypeManager->getStorage($entity_type_id)->load($id)) === NULL) {
       return FALSE;
     }
 
-    return $this->getBundleSettings(
+    $bundle_settings = $this->getBundleSettings(
       $entity_type_id,
       $this->entityHelper->getEntityInstanceBundleName($entity)
     );
+
+    return $bundle_settings ?: FALSE;
   }
 
   /**
@@ -528,8 +546,8 @@ class EntityManager {
    *   TRUE if an entity bundle is indexed, FALSE otherwise.
    */
   public function bundleIsIndexed(string $entity_type_id, ?string $bundle_name = NULL): bool {
-    foreach ($this->getBundleSettings($entity_type_id, $bundle_name, FALSE, TRUE) as $settings) {
-      if (!empty($settings['index'])) {
+    foreach ($this->getBundleSettings($entity_type_id, $bundle_name) as $bundle_settings) {
+      if (!empty($bundle_settings['index'])) {
         return TRUE;
       }
     }
