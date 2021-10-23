@@ -10,7 +10,7 @@
     attach: function (context, settings) {
       $(context).find('#edit-simple-sitemap').drupalSetSummary(function (context) {
         var enabledVariants = [];
-        $('input:radio.enabled-for-variant').each(function () {
+        $('input:radio.enabled-for-sitemap').each(function () {
           if ($(this).is(':checked') && $(this).val() == 1) {
             enabledVariants.push($(this).attr('class').split(' ')[1])
           }
