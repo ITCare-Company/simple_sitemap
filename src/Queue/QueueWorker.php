@@ -81,7 +81,7 @@ class QueueWorker {
    *
    * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface
    */
-  protected $variantProcessedNow;
+  protected $sitemapProcessedNow;
 
   /**
    * The local cache of results.
@@ -182,18 +182,18 @@ class QueueWorker {
 
     $variants = $variants !== NULL ? (array) $variants : NULL;
 
-    /** @var \Drupal\simple_sitemap\Entity\SimpleSitemap[] $variants */
-    $variants = $this->entityTypeManager->getStorage('simple_sitemap')->loadMultiple($variants);
+    /** @var \Drupal\simple_sitemap\Entity\SimpleSitemap[] $sitemaps */
+    $sitemaps = $this->entityTypeManager->getStorage('simple_sitemap')->loadMultiple($variants);
 
-    foreach ($variants as $variant_id => $variant) {
+    foreach ($sitemaps as $variant => $sitemap) {
       $data_sets = [];
-      foreach ($variant->getType()->getUrlGenerators() as $url_generator_id => $url_generator) {
-        // @todo Automatically set variant.
-        $data_sets = $url_generator->setSitemap($variant)->getDataSets();
+      foreach ($sitemap->getType()->getUrlGenerators() as $url_generator_id => $url_generator) {
+        // @todo Automatically set sitemap.
+        $data_sets = $url_generator->setSitemap($sitemap)->getDataSets();
         foreach ($data_sets as $data_set) {
           $all_data_sets[] = [
             'data' => $data_set,
-            'sitemap' => $variant_id,
+            'sitemap' => $variant,
             'url_generator' => $url_generator_id,
           ];
 
@@ -204,7 +204,7 @@ class QueueWorker {
         }
       }
       if (empty($data_sets)) {
-        $empty_variants[] = $variant_id;
+        $empty_variants[] = $variant;
       }
     }
 
@@ -216,7 +216,7 @@ class QueueWorker {
     // Remove all sitemap content of variants which did not yield any queue
     // elements.
     foreach ($empty_variants as $empty_variant) {
-      $variants[$empty_variant]->deleteContent();
+      $sitemaps[$empty_variant]->deleteContent();
     }
 
     return $this;
@@ -271,7 +271,7 @@ class QueueWorker {
     $this->generatorSettings = [
       'base_url' => $this->settings->get('base_url', ''),
       'xsl' => $this->settings->get('xsl', TRUE),
-      'default_variant' => $this->settings->get('default_variant', NULL),
+      'default_variant' => $this->settings->get('default_variant'),
       'skip_untranslated' => $this->settings->get('skip_untranslated', FALSE),
       'remove_duplicates' => $this->settings->get('remove_duplicates', TRUE),
       'excluded_languages' => $this->settings->get('excluded_languages', []),
@@ -300,21 +300,21 @@ class QueueWorker {
       }
 
       try {
-        if ($this->variantProcessedNow === NULL || $element->data['sitemap'] !== $this->variantProcessedNow->id()) {
+        if ($this->sitemapProcessedNow === NULL || $element->data['sitemap'] !== $this->sitemapProcessedNow->id()) {
 
-          if (NULL !== $this->variantProcessedNow) {
-            $this->generateVariantChunksFromResults(TRUE);
-            $this->publishCurrentVariant();
+          if (NULL !== $this->sitemapProcessedNow) {
+            $this->generateSitemapChunksFromResults(TRUE);
+            $this->publishCurrentSitemap();
           }
 
-          $this->variantProcessedNow = $this->entityTypeManager->getStorage('simple_sitemap')->load($element->data['sitemap']);
+          $this->sitemapProcessedNow = $this->entityTypeManager->getStorage('simple_sitemap')->load($element->data['sitemap']);
           $this->processedPaths = [];
         }
 
         $this->generateResultsFromElement($element);
 
         if (!empty($this->maxLinks) && count($this->results) >= $this->maxLinks) {
-          $this->generateVariantChunksFromResults();
+          $this->generateSitemapChunksFromResults();
         }
       }
       catch (\Exception $e) {
@@ -327,8 +327,8 @@ class QueueWorker {
     }
 
     if ($this->getQueuedElementCount() === 0) {
-      $this->generateVariantChunksFromResults(TRUE);
-      $this->publishCurrentVariant();
+      $this->generateSitemapChunksFromResults(TRUE);
+      $this->publishCurrentSitemap();
     }
     else {
       $this->stashResults();
@@ -345,8 +345,8 @@ class QueueWorker {
    *   Element to process.
    */
   protected function generateResultsFromElement($element): void {
-    $results = $this->variantProcessedNow->getType()->getUrlGenerators()[$element->data['url_generator']]
-      ->setSitemap($this->variantProcessedNow)
+    $results = $this->sitemapProcessedNow->getType()->getUrlGenerators()[$element->data['url_generator']]
+      ->setSitemap($this->sitemapProcessedNow)
       ->generate($element->data['data']);
 
     $this->removeDuplicates($results);
@@ -379,12 +379,12 @@ class QueueWorker {
    * @param bool $complete
    *   The complete flag.
    */
-  protected function generateVariantChunksFromResults(bool $complete = FALSE): void {
+  protected function generateSitemapChunksFromResults(bool $complete = FALSE): void {
     if (!empty($this->results)) {
       $processed_results = $this->results;
-      $variant_id = $this->variantProcessedNow->id();
+      $variant = $this->sitemapProcessedNow->id();
       // @todo Context could be sitemap object instead?
-      $this->moduleHandler->alter('simple_sitemap_links', $processed_results, $variant_id);
+      $this->moduleHandler->alter('simple_sitemap_links', $processed_results, $variant);
       $this->processedResults = array_merge($this->processedResults, $processed_results);
       $this->results = [];
     }
@@ -396,13 +396,13 @@ class QueueWorker {
     if (!empty($this->maxLinks)) {
       foreach (array_chunk($this->processedResults, $this->maxLinks, TRUE) as $chunk_links) {
         if ($complete || count($chunk_links) === $this->maxLinks) {
-          $this->variantProcessedNow->addChunk($chunk_links);
+          $this->sitemapProcessedNow->addChunk($chunk_links);
           $this->processedResults = array_diff_key($this->processedResults, $chunk_links);
         }
       }
     }
     else {
-      $this->variantProcessedNow->addChunk($this->processedResults);
+      $this->sitemapProcessedNow->addChunk($this->processedResults);
       $this->processedResults = [];
     }
   }
@@ -410,9 +410,9 @@ class QueueWorker {
   /**
    * Publishes the current sitemap.
    */
-  protected function publishCurrentVariant(): void {
-    if ($this->variantProcessedNow !== NULL) {
-      $this->variantProcessedNow->generateIndex()->publish();
+  protected function publishCurrentSitemap(): void {
+    if ($this->sitemapProcessedNow !== NULL) {
+      $this->sitemapProcessedNow->generateIndex()->publish();
     }
   }
 
@@ -423,7 +423,7 @@ class QueueWorker {
     $this->results = [];
     $this->processedPaths = [];
     $this->processedResults = [];
-    $this->variantProcessedNow = NULL;
+    $this->sitemapProcessedNow = NULL;
     $this->elementsTotal = NULL;
     $this->elementsRemaining = NULL;
   }
@@ -448,7 +448,7 @@ class QueueWorker {
    */
   protected function stashResults(): void {
     $this->state->set('simple_sitemap.queue_stashed_results', [
-      'variant' => $this->variantProcessedNow->id(),
+      'variant' => $this->sitemapProcessedNow->id(),
       'results' => $this->results,
       'processed_results' => $this->processedResults,
       'processed_paths' => $this->processedPaths,
@@ -468,7 +468,7 @@ class QueueWorker {
       $this->results = !empty($results['results']) ? $results['results'] : [];
       $this->processedResults = !empty($results['processed_results']) ? $results['processed_results'] : [];
       $this->processedPaths = !empty($results['processed_paths']) ? $results['processed_paths'] : [];
-      $this->variantProcessedNow = $this->entityTypeManager->getStorage('simple_sitemap')->load($results['variant']);
+      $this->sitemapProcessedNow = $this->entityTypeManager->getStorage('simple_sitemap')->load($results['variant']);
     }
   }
 

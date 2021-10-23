@@ -41,9 +41,7 @@ class SimpleSitemapController extends ControllerBase {
   }
 
   /**
-   * Returns the whole sitemap variant, its chunk, or its sitemap index file.
-   *
-   * Caches the response in case of expected output, prevents caching otherwise.
+   * Returns a specific sitemap, its chunk, or its index.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.

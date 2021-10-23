@@ -89,7 +89,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     $form['settings']['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Submit the sitemap to search engines'),
-      '#description' => $this->t("This enables/disables sitemap submitting; don't forget to choose variants below."),
+      '#description' => $this->t("This enables/disables sitemap submitting; don't forget to choose sitemaps below."),
       '#default_value' => $config->get('enabled'),
     ];
 
@@ -120,8 +120,8 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
         '#type' => 'select',
         '#title' => $this->t('Sitemaps'),
         '#options' => array_map(
-          function ($variant) {
-            return $variant->label();
+          function ($sitemap) {
+            return $sitemap->label();
           },
           SimpleSitemap::loadMultiple()
         ),
@@ -160,7 +160,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     $config->save();
 
     if ($enabled && empty($submit)) {
-      $this->messenger()->addWarning($this->t('No sitemap variants have been selected for submission.'));
+      $this->messenger()->addWarning($this->t('No sitemaps have been selected for submission.'));
     }
 
     parent::submitForm($form, $form_state);

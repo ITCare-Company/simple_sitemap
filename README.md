@@ -50,7 +50,7 @@ The module permission 'administer sitemap settings' can be configured under
 It is possible to have several sitemap instances of different sitemap types with
 specific links accessible under certain URLs. These sitemap variants can be
 configured under admin/config/search/simplesitemap. The module comes with the
-default sitemap variant 'default' which is accessible under /sitemap.xml.
+default sitemap 'default' which is accessible under /sitemap.xml.
 
 ### SITEMAP TYPES ###
 
@@ -62,7 +62,7 @@ custom modules. The module comes with the default sitemap type
 
 ### ENTITIES ###
 
-Initially only the home page is indexed in the default sitemap variant. To
+Initially only the home page is indexed in the default sitemap. To
 include content into a sitemap, visit
 /admin/config/search/simplesitemap/entities to enable support for entity types
 of your choosing. Bundleless entity types can be configured right on that page,
@@ -213,7 +213,7 @@ programmatic sitemap generation. These include:
 These service methods can be used/chained like so:
 
 ```php
-// Create a new sitemap variant of the default_hreflang sitemap type.
+// Create a new sitemap of the default_hreflang sitemap type.
 \Drupal\simple_sitemap\Entity\SimpleSitemap::create(['id' => 'test', 'type' => 'default_hreflang', 'label' => 'Test'])->save();
 
 /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
@@ -271,8 +271,7 @@ the use of `hook_simple_sitemap_url_generators_alter(&$url_generators){}`.
 Altering sitemap generators is possible through
 the use of `hook_simple_sitemap_sitemap_generators_alter(&$sitemap_generators){}`.
 
-Sitemap variants as well as sitemap types can be altered through the usual
-entity hooks.
+Sitemaps as well as sitemap types can be altered through the usual entity hooks.
 
 ### WRITING PLUGINS ###
 

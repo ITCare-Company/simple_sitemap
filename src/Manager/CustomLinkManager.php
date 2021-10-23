@@ -56,7 +56,7 @@ class CustomLinkManager {
   /**
    * Stores a custom path along with its settings to configuration.
    *
-   * For the currently set variants.
+   * Does so for the currently set variants.
    *
    * @param string $path
    *   The path to add.

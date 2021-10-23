@@ -154,16 +154,16 @@ class SettingsForm extends SimpleSitemapFormBase {
       '#open' => TRUE,
     ];
 
-    $variants = SimpleSitemap::loadMultiple();
+    $sitemaps = SimpleSitemap::loadMultiple();
     $default_variant = $this->settings->get('default_variant');
     $form['simple_sitemap_settings']['advanced']['default_variant'] = [
       '#type' => 'select',
-      '#title' => $this->t('Default sitemap variant'),
-      '#description' => $this->t('This sitemap variant will be available under <em>/sitemap.xml</em> in addition to its default path <em>/variant-name/sitemap.xml</em>.<br>Variants can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/variants']),
-      '#default_value' => isset($variants[$default_variant]) ? $default_variant : '',
+      '#title' => $this->t('Default sitemap'),
+      '#description' => $this->t('This sitemap will be available under <em>/sitemap.xml</em> in addition to its default path <em>/variant-name/sitemap.xml</em>.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap']),
+      '#default_value' => isset($sitemaps[$default_variant]) ? $default_variant : '',
       '#options' => ['' => $this->t('- None -')] + array_map(function ($variant) {
         return $variant->label();
-      }, $variants),
+      }, $sitemaps),
     ];
 
     $form['simple_sitemap_settings']['advanced']['base_url'] = [
@@ -177,7 +177,7 @@ class SettingsForm extends SimpleSitemapFormBase {
     $form['simple_sitemap_settings']['advanced']['remove_duplicates'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Exclude duplicate links'),
-      '#description' => $this->t('Prevent per-sitemap variant duplicate links.<br>Unchecking this may help avoiding PHP memory errors on huge sites.'),
+      '#description' => $this->t('Prevent per-sitemap duplicate links.<br>Unchecking this may help avoiding PHP memory errors on huge sites.'),
       '#default_value' => $this->settings->get('remove_duplicates', TRUE),
     ];
 

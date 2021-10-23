@@ -17,10 +17,10 @@
         });
 
         if (enabledVariants.length > 0) {
-          return Drupal.t('Included in sitemap variants: ') + enabledVariants.join(', ');
+          return Drupal.t('Included in sitemaps: ') + enabledVariants.join(', ');
         }
         else {
-          return Drupal.t('Excluded from all sitemap variants');
+          return Drupal.t('Excluded from all sitemaps');
         }
 
       });

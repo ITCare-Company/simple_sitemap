@@ -97,10 +97,10 @@ class SimpleSitemapEntityForm extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     if ($this->entity->save() === SAVED_UPDATED) {
-      $this->messenger()->addStatus($this->t('Sitemap variant %label has been updated.', ['%label' => $this->entity->label()]));
+      $this->messenger()->addStatus($this->t('Sitemap %label has been updated.', ['%label' => $this->entity->label()]));
     }
     else {
-      $this->messenger()->addStatus($this->t('Sitemap variant %label has been created.', ['%label' => $this->entity->label()]));
+      $this->messenger()->addStatus($this->t('Sitemap %label has been created.', ['%label' => $this->entity->label()]));
     }
 
     $form_state->setRedirectUrl($this->entity->toUrl('collection'));

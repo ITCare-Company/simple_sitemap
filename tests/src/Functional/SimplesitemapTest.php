@@ -567,8 +567,8 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->generator->entityManager()->setBundleSettings('node', 'page');
     $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
 
-    $variants = SimpleSitemap::loadMultiple();
-    $this->assertArrayHasKey('test', $variants);
+    $sitemaps = SimpleSitemap::loadMultiple();
+    $this->assertArrayHasKey('test', $sitemaps);
 
     $this->drupalGet($this->defaultSitemapUrl);
     $this->assertSession()->responseContains('node/' . $this->node->id());
@@ -586,8 +586,8 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     SimpleSitemap::load('test')->delete();
 
-    $variants = SimpleSitemap::loadMultiple();
-    $this->assertArrayNotHasKey('test', $variants);
+    $sitemaps = SimpleSitemap::loadMultiple();
+    $this->assertArrayNotHasKey('test', $sitemaps);
 
     // Test if sitemap has been removed along with the variant.
     $this->drupalGet('test/sitemap.xml');

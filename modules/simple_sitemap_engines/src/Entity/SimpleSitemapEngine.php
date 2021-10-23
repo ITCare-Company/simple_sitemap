@@ -56,7 +56,7 @@ class SimpleSitemapEngine extends ConfigEntityBase {
   public $url;
 
   /**
-   * List of sitemap variants to be submitted to this search engine.
+   * List of sitemaps to be submitted to this search engine.
    *
    * @var array
    */

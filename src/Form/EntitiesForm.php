@@ -151,7 +151,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
         $indexed_bundles_string = '';
         if (isset($indexed_bundles[$entity_type_id])) {
           foreach ($indexed_bundles[$entity_type_id] as $bundle_data) {
-            $indexed_bundles_string .= '<br><em>' . $bundle_data['bundle_label'] . '</em> <span class="description">(' . $this->t('sitemap variants') . ': <em>' . implode(', ', $bundle_data['variants']) . '</em>)</span>';
+            $indexed_bundles_string .= '<br><em>' . $bundle_data['bundle_label'] . '</em> <span class="description">(' . $this->t('sitemaps') . ': <em>' . implode(', ', $bundle_data['variants']) . '</em>)</span>';
           }
         }
 
@@ -209,15 +209,15 @@ class EntitiesForm extends SimpleSitemapFormBase {
         if ($value) {
           $this->generator->entityManager()->enableEntityType($entity_type_id);
           if ($this->entityHelper->entityTypeIsAtomic($entity_type_id)) {
-            foreach (SimpleSitemap::loadMultiple() as $variant_id => $variant) {
-              if (isset($values['index_' . $variant_id . '_' . $entity_type_id . '_settings'])) {
+            foreach (SimpleSitemap::loadMultiple() as $variant => $sitemap) {
+              if (isset($values['index_' . $variant . '_' . $entity_type_id . '_settings'])) {
                 $this->generator
-                  ->setVariants($variant_id)
+                  ->setVariants($variant)
                   ->entityManager()->setBundleSettings($entity_type_id, $entity_type_id, [
-                    'index' => (bool) $values['index_' . $variant_id . '_' . $entity_type_id . '_settings'],
-                    'priority' => $values['priority_' . $variant_id . '_' . $entity_type_id . '_settings'],
-                    'changefreq' => $values['changefreq_' . $variant_id . '_' . $entity_type_id . '_settings'],
-                    'include_images' => (bool) $values['include_images_' . $variant_id . '_' . $entity_type_id . '_settings'],
+                    'index' => (bool) $values['index_' . $variant . '_' . $entity_type_id . '_settings'],
+                    'priority' => $values['priority_' . $variant . '_' . $entity_type_id . '_settings'],
+                    'changefreq' => $values['changefreq_' . $variant . '_' . $entity_type_id . '_settings'],
+                    'include_images' => (bool) $values['include_images_' . $variant . '_' . $entity_type_id . '_settings'],
                   ]);
               }
             }

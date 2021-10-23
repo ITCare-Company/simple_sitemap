@@ -18,7 +18,7 @@
  * @param array &$links
  *   Array containing multilingual links generated for each path to be indexed.
  * @param string $sitemap_variant
- *   The ID of the sitemap variant.
+ *   The ID of the sitemap.
  */
 function hook_simple_sitemap_links_alter(array &$links, $sitemap_variant) {
 
@@ -46,11 +46,11 @@ function hook_simple_sitemap_links_alter(array &$links, $sitemap_variant) {
  * @param array &$arbitrary_links
  *   An array of arbitrary links.
  * @param string $sitemap_variant
- *   The ID of the sitemap variant.
+ *   The ID of the sitemap.
  */
 function hook_simple_sitemap_arbitrary_links_alter(array &$arbitrary_links, $sitemap_variant) {
 
-  // Add an arbitrary link to all sitemap variants.
+  // Add an arbitrary link to all sitemaps.
   $arbitrary_links[] = [
     'url' => 'http://some-arbitrary-link/',
     'priority' => '0.5',
@@ -89,7 +89,7 @@ function hook_simple_sitemap_arbitrary_links_alter(array &$arbitrary_links, $sit
  * @param array &$attributes
  *   An array of attributes.
  * @param string $sitemap_variant
- *   The ID of the sitemap variant.
+ *   The ID of the sitemap.
  */
 function hook_simple_sitemap_attributes_alter(array &$attributes, $sitemap_variant) {
 
@@ -105,7 +105,7 @@ function hook_simple_sitemap_attributes_alter(array &$attributes, $sitemap_varia
  * @param array &$index_attributes
  *   An array of attributes.
  * @param string $sitemap_variant
- *   The ID of the sitemap variant.
+ *   The ID of the sitemap.
  */
 function hook_simple_sitemap_index_attributes_alter(array &$index_attributes, $sitemap_variant) {
 

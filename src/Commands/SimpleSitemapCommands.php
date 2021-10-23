@@ -32,12 +32,12 @@ class SimpleSitemapCommands extends DrushCommands {
   }
 
   /**
-   * Regenerate all XML sitemap variants or continue generation.
+   * Regenerate all sitemaps or continue generation.
    *
    * @command simple-sitemap:generate
    *
    * @usage drush simple-sitemap:generate
-   *   Regenerate all XML sitemap variants or continue generation.
+   *   Regenerate all sitemaps or continue generation.
    *
    * @validate-module-enabled simple_sitemap
    *
@@ -48,7 +48,7 @@ class SimpleSitemapCommands extends DrushCommands {
   }
 
   /**
-   * Queue all or specific sitemap variants for regeneration.
+   * Queue all or specific sitemaps for regeneration.
    *
    * @param array $options
    *   The command options.
@@ -56,12 +56,12 @@ class SimpleSitemapCommands extends DrushCommands {
    * @command simple-sitemap:rebuild-queue
    *
    * @option variants
-   *   Queue all or specific sitemap variants for regeneration.
+   *   Queue all or specific sitemaps for regeneration.
    *
    * @usage drush simple-sitemap:rebuild-queue
-   *   Rebuild the sitemap queue for all sitemap variants.
+   *   Rebuild the sitemap queue for all sitemaps.
    * @usage drush simple-sitemap:rebuild-queue --variants=default,test
-   *   Rebuild the sitemap queue queuing only variants 'default' and 'test'.
+   *   Rebuild the sitemap queue queuing only sitemaps 'default' and 'test'.
    *
    * @validate-module-enabled simple_sitemap
    *

@@ -120,14 +120,14 @@ class SitemapSubmitter extends QueueWorkerBase implements ContainerFactoryPlugin
   public function processItem($engine_id) {
     if ($engine = SimpleSitemapEngine::load($engine_id)) {
       // Submit all variants that are enabled for this search engine.
-      foreach (SimpleSitemap::loadMultiple($engine->sitemap_variants) as $sitemap_id => $sitemap) {
+      foreach (SimpleSitemap::loadMultiple($engine->sitemap_variants) as $variant => $sitemap) {
         if ($sitemap->status()) {
           $submit_url = str_replace('[sitemap]', $sitemap->toUrl()->toString(), $engine->url);
           try {
             $this->httpClient->request('GET', $submit_url);
             // Log if submission was successful.
             $this->logger->m('Sitemap @variant submitted to @url', [
-              '@variant' => $sitemap_id,
+              '@variant' => $variant,
               '@url' => $submit_url,
             ])->log();
             // Record last submission time. This is purely informational; the

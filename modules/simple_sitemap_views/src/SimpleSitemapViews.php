@@ -161,7 +161,7 @@ class SimpleSitemapViews {
    * @param \Drupal\views\ViewExecutable $view
    *   A view executable instance.
    * @param string $variant
-   *   The name of the sitemap variant.
+   *   The ID of the sitemap.
    * @param string|null $display_id
    *   The display id. If empty uses the current display.
    *
@@ -189,7 +189,7 @@ class SimpleSitemapViews {
    * @param \Drupal\views\ViewExecutable $view
    *   A view executable instance.
    * @param string $variant
-   *   The name of the sitemap variant.
+   *   The ID of the sitemap.
    * @param string|null $display_id
    *   The display id. If empty uses the current display.
    *
@@ -248,8 +248,8 @@ class SimpleSitemapViews {
    * @throws \Exception
    */
   public function addArgumentsToIndex(ViewExecutable $view, array $args, ?string $display_id = NULL): bool {
-    foreach ($this->getVariants() as $variant) {
-      if ($this->addArgumentsToIndexByVariant($view, $variant->id(), $args, $display_id)) {
+    foreach ($this->getSitemaps() as $sitemap) {
+      if ($this->addArgumentsToIndexByVariant($view, $sitemap->id(), $args, $display_id)) {
         return TRUE;
       }
     }
@@ -263,7 +263,7 @@ class SimpleSitemapViews {
    * @param \Drupal\views\ViewExecutable $view
    *   A view executable instance.
    * @param string $variant
-   *   The name of the sitemap variant.
+   *   The ID of the sitemap.
    * @param array $args
    *   Array of arguments to add to the index.
    * @param string|null $display_id
@@ -496,7 +496,7 @@ class SimpleSitemapViews {
         }
 
         // Check that the display is enabled and indexed.
-        if ($view->display_handler->isEnabled() && $this->getIndexableVariants($view)) {
+        if ($view->display_handler->isEnabled() && $this->getIndexableSitemaps($view)) {
           $indexable_views[] = $view;
         }
       }
@@ -506,7 +506,7 @@ class SimpleSitemapViews {
   }
 
   /**
-   * Returns an array of indexable sitemap variants for view display.
+   * Returns an array of indexable sitemaps for view display.
    *
    * @param \Drupal\views\ViewExecutable $view
    *   A view executable instance.
@@ -514,41 +514,41 @@ class SimpleSitemapViews {
    *   The display id. If empty uses the current display.
    *
    * @return \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[]
-   *   An array of sitemap variants.
+   *   An array of sitemap entities.
    */
-  public function getIndexableVariants(ViewExecutable $view, ?string $display_id = NULL): array {
+  public function getIndexableSitemaps(ViewExecutable $view, ?string $display_id = NULL): array {
     // Ensure the display was correctly set.
     if (!$view->setDisplay($display_id)) {
       return [];
     }
 
-    $variants = $this->getVariants();
-    foreach ($variants as $variant_id => $variant) {
-      if (!$this->getSitemapSettings($view, $variant_id)) {
-        unset($variants[$variant_id]);
+    $sitemaps = $this->getSitemaps();
+    foreach ($sitemaps as $variant => $sitemap) {
+      if (!$this->getSitemapSettings($view, $variant)) {
+        unset($sitemaps[$variant]);
       }
     }
 
-    return $variants;
+    return $sitemaps;
   }
 
   /**
-   * Returns an array of correctly configured sitemap variants.
+   * Returns an array of correctly configured sitemaps.
    *
    * @return \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[]
-   *   An array of sitemap variants.
+   *   An array of sitemap entities.
    */
-  public function getVariants(): array {
-    $variants = SimpleSitemap::loadMultiple();
+  public function getSitemaps(): array {
+    $sitemaps = SimpleSitemap::loadMultiple();
 
-    /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $variant */
-    foreach ($variants as $variant_id => $variant) {
-      if (!$variant->getType()->hasUrlGenerator('views')) {
-        unset($variants[$variant_id]);
+    /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap */
+    foreach ($sitemaps as $variant => $sitemap) {
+      if (!$sitemap->getType()->hasUrlGenerator('views')) {
+        unset($sitemaps[$variant]);
       }
     }
 
-    return $variants;
+    return $sitemaps;
   }
 
   /**

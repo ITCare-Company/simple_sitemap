@@ -112,14 +112,20 @@ class Generator {
    *   If no chunk delta is provided, either the sitemap variant is returned,
    *   or its index in case of a chunked sitemap.
    *   If a chunk delta is provided, the relevant chunk is returned.
-   *   Returns null if the sitemap variant is not retrievable from the database.
+   *   Returns null if the sitemap is not retrievable from the database.
    */
   public function getSitemap(?int $delta = NULL): ?string {
     /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap */
     if (empty($variants = $this->getVariants())) {
       return NULL;
     }
-    $sitemap = SimpleSitemap::load(reset($variants));
+
+    $variant = count($variants) > 1
+    && !empty($default_variant = \Drupal::service('simple_sitemap.settings')->get('default_variant', ''))
+      ? $default_variant
+      : reset($variants);
+
+    $sitemap = SimpleSitemap::load($variant);
 
     return $sitemap ? $sitemap->fromPublished()->toString($delta) : NULL;
   }

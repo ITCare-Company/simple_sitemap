@@ -95,7 +95,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
     $form['simple_sitemap_custom']['variants'] = [
       '#type' => 'select',
       '#multiple' => TRUE,
-      '#title' => $this->t('Sitemap variants'),
+      '#title' => $this->t('Sitemaps'),
       '#description' => $this->t('The sitemaps to include the above links in.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap']),
       '#options' => array_map(
         function ($variant) {
@@ -129,7 +129,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     if (!empty($form_state->getValue('custom_links')) && empty($form_state->getValue('variants'))) {
-      $form_state->setErrorByName('variants', $this->t('Custom links must be assigned to at least one sitemap variant.'));
+      $form_state->setErrorByName('variants', $this->t('Custom links must be assigned to at least one sitemap.'));
     }
 
     foreach ($this->stringToCustomLinks($form_state->getValue('custom_links')) as $i => $link_config) {

@@ -69,7 +69,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
   public function buildHeader() {
     $header['label'] = $this->t('Name');
     $header['url'] = $this->t('Submission URL');
-    $header['variants'] = $this->t('Sitemap variants');
+    $header['variants'] = $this->t('Sitemaps');
     $header['last_submitted'] = $this->t('Last submitted');
 
     return $header;

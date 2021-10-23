@@ -352,14 +352,14 @@ class FormHelper {
 
     if ($this->getEntityCategory() === 'instance') {
       // @todo Simplify after getEntityInstanceSettings() works with multiple variants.
-      foreach ($this->bundleSettings as $variant_id => $settings) {
+      foreach ($this->bundleSettings as $variant => $settings) {
         if (NULL !== $instance_id = $this->getInstanceId()) {
-          $this->bundleSettings[$variant_id] = $this->generator
-            ->setVariants($variant_id)
+          $this->bundleSettings[$variant] = $this->generator
+            ->setVariants($variant)
             ->entityManager()
-            ->getEntityInstanceSettings($this->getEntityTypeId(), $instance_id)[$variant_id];
+            ->getEntityInstanceSettings($this->getEntityTypeId(), $instance_id)[$variant];
         }
-        $this->bundleSettings[$variant_id]['bundle_settings'] = $settings;
+        $this->bundleSettings[$variant]['bundle_settings'] = $settings;
       }
     }
 
@@ -381,104 +381,104 @@ class FormHelper {
       ? $this->entityHelper->getBundleLabel($this->getEntityTypeId(), $this->getBundleName())
       : $this->t('undefined');
 
-    $variants = SimpleSitemap::loadMultiple();
-    $form_fragment['settings']['#markup'] = empty($variants)
+    $sitemaps = SimpleSitemap::loadMultiple();
+    $form_fragment['settings']['#markup'] = empty($sitemaps)
       ? $this->t('At least one sitemap needs to be defined for a bundle to be indexable.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap'])
       : '<strong>' . $this->t('Sitemaps') . '</strong>';
 
-    foreach ($variants as $variant_id => $variant) {
-      $form_fragment['settings'][$variant_id] = [
+    foreach ($sitemaps as $variant => $sitemap) {
+      $form_fragment['settings'][$variant] = [
         '#type' => 'details',
-        '#title' => '<em>' . $variant->label() . '</em>',
-        '#open' => !empty($this->bundleSettings[$variant_id]['index']),
+        '#title' => '<em>' . $sitemap->label() . '</em>',
+        '#open' => !empty($this->bundleSettings[$variant]['index']),
       ];
 
       // Disable fields of entity instance whose bundle is not indexed.
-      $form_fragment['settings'][$variant_id]['#disabled'] = $this->getEntityCategory() === 'instance' && empty($this->bundleSettings[$variant_id]['bundle_settings']['index']);
+      $form_fragment['settings'][$variant]['#disabled'] = $this->getEntityCategory() === 'instance' && empty($this->bundleSettings[$variant]['bundle_settings']['index']);
 
       // Index.
-      $form_fragment['settings'][$variant_id]['index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings'] = [
+      $form_fragment['settings'][$variant]['index_' . $variant . '_' . $this->getEntityTypeId() . '_settings'] = [
         '#type' => 'radios',
-        '#default_value' => (int) $this->bundleSettings[$variant_id]['index'],
+        '#default_value' => (int) $this->bundleSettings[$variant]['index'],
         '#options' => [
           $this->getEntityCategory() === 'instance'
-          ? $this->t('Do not index this <em>@bundle</em> entity in variant <em>@variant_label</em>', [
+          ? $this->t('Do not index this <em>@bundle</em> entity in sitemap <em>@sitemap_label</em>', [
             '@bundle' => $bundle_name,
-            '@variant_label' => $variant->label(),
+            '@sitemap_label' => $sitemap->label(),
           ])
-          : $this->t('Do not index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', [
+          : $this->t('Do not index entities of type <em>@bundle</em> in sitemap <em>@sitemap_label</em>', [
             '@bundle' => $bundle_name,
-            '@variant_label' => $variant->label(),
+            '@sitemap_label' => $sitemap->label(),
           ]),
           $this->getEntityCategory() === 'instance'
-          ? $this->t('Index this <em>@bundle entity</em> in variant <em>@variant_label</em>', [
+          ? $this->t('Index this <em>@bundle entity</em> in sitemap <em>@sitemap_label</em>', [
             '@bundle' => $bundle_name,
-            '@variant_label' => $variant->label(),
+            '@sitemap_label' => $sitemap->label(),
           ])
-          : $this->t('Index entities of type <em>@bundle</em> in variant <em>@variant_label</em>', [
+          : $this->t('Index entities of type <em>@bundle</em> in sitemap <em>@sitemap_label</em>', [
             '@bundle' => $bundle_name,
-            '@variant_label' => $variant->label(),
+            '@sitemap_label' => $sitemap->label(),
           ]),
         ],
-        '#attributes' => ['class' => ['enabled-for-variant', $variant_id]],
+        '#attributes' => ['class' => ['enabled-for-sitemap', $variant]],
       ];
 
-      if ($this->getEntityCategory() === 'instance' && isset($this->bundleSettings[$variant_id]['bundle_settings']['index'])) {
-        $form_fragment['settings'][$variant_id]['index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings']['#options'][(int) $this->bundleSettings[$variant_id]['bundle_settings']['index']] .= ' <em>(' . $this->t('default') . ')</em>';
+      if ($this->getEntityCategory() === 'instance' && isset($this->bundleSettings[$variant]['bundle_settings']['index'])) {
+        $form_fragment['settings'][$variant]['index_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][(int) $this->bundleSettings[$variant]['bundle_settings']['index']] .= ' <em>(' . $this->t('default') . ')</em>';
       }
 
       // Priority.
-      $form_fragment['settings'][$variant_id]['priority_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings'] = [
+      $form_fragment['settings'][$variant]['priority_' . $variant . '_' . $this->getEntityTypeId() . '_settings'] = [
         '#type' => 'select',
         '#title' => $this->t('Priority'),
         '#description' => $this->getEntityCategory() === 'instance'
         ? $this->t('The priority this <em>@bundle</em> entity will have in the eyes of search engine bots.', ['@bundle' => $bundle_name])
         : $this->t('The priority entities of this type will have in the eyes of search engine bots.'),
-        '#default_value' => $this->bundleSettings[$variant_id]['priority'],
+        '#default_value' => $this->bundleSettings[$variant]['priority'],
         '#options' => $this->getPrioritySelectValues(),
         '#states' => [
-          'visible' => [':input[name="index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
+          'visible' => [':input[name="index_' . $variant . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
         ],
       ];
 
-      if ($this->getEntityCategory() === 'instance' && isset($this->bundleSettings[$variant_id]['bundle_settings']['priority'])) {
-        $form_fragment['settings'][$variant_id]['priority_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->formatPriority($this->bundleSettings[$variant_id]['bundle_settings']['priority'])] .= ' (' . $this->t('default') . ')';
+      if ($this->getEntityCategory() === 'instance' && isset($this->bundleSettings[$variant]['bundle_settings']['priority'])) {
+        $form_fragment['settings'][$variant]['priority_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->formatPriority($this->bundleSettings[$variant]['bundle_settings']['priority'])] .= ' (' . $this->t('default') . ')';
       }
 
       // Changefreq.
-      $form_fragment['settings'][$variant_id]['changefreq_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings'] = [
+      $form_fragment['settings'][$variant]['changefreq_' . $variant . '_' . $this->getEntityTypeId() . '_settings'] = [
         '#type' => 'select',
         '#title' => $this->t('Change frequency'),
         '#description' => $this->getEntityCategory() === 'instance'
         ? $this->t('The frequency with which this <em>@bundle</em> entity changes. Search engine bots may take this as an indication of how often to index it.', ['@bundle' => $bundle_name])
         : $this->t('The frequency with which entities of this type change. Search engine bots may take this as an indication of how often to index them.'),
-        '#default_value' => isset($this->bundleSettings[$variant_id]['changefreq']) ? $this->bundleSettings[$variant_id]['changefreq'] : NULL,
+        '#default_value' => isset($this->bundleSettings[$variant]['changefreq']) ? $this->bundleSettings[$variant]['changefreq'] : NULL,
         '#options' => $this->getChangefreqSelectValues(),
         '#states' => [
-          'visible' => [':input[name="index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
+          'visible' => [':input[name="index_' . $variant . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
         ],
       ];
 
-      if ($this->getEntityCategory() === 'instance' && isset($this->bundleSettings[$variant_id]['bundle_settings']['changefreq'])) {
-        $form_fragment['settings'][$variant_id]['changefreq_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->bundleSettings[$variant_id]['bundle_settings']['changefreq']] .= ' (' . $this->t('default') . ')';
+      if ($this->getEntityCategory() === 'instance' && isset($this->bundleSettings[$variant]['bundle_settings']['changefreq'])) {
+        $form_fragment['settings'][$variant]['changefreq_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][$this->bundleSettings[$variant]['bundle_settings']['changefreq']] .= ' (' . $this->t('default') . ')';
       }
 
       // Images.
-      $form_fragment['settings'][$variant_id]['include_images_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings'] = [
+      $form_fragment['settings'][$variant]['include_images_' . $variant . '_' . $this->getEntityTypeId() . '_settings'] = [
         '#type' => 'select',
         '#title' => $this->t('Include images'),
         '#description' => $this->getEntityCategory() === 'instance'
         ? $this->t('Determines if images referenced by this <em>@bundle</em> entity should be included in the sitemap.', ['@bundle' => $bundle_name])
         : $this->t('Determines if images referenced by entities of this type should be included in the sitemap.'),
-        '#default_value' => isset($this->bundleSettings[$variant_id]['include_images']) ? (int) $this->bundleSettings[$variant_id]['include_images'] : 0,
+        '#default_value' => isset($this->bundleSettings[$variant]['include_images']) ? (int) $this->bundleSettings[$variant]['include_images'] : 0,
         '#options' => [$this->t('No'), $this->t('Yes')],
         '#states' => [
-          'visible' => [':input[name="index_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
+          'visible' => [':input[name="index_' . $variant . '_' . $this->getEntityTypeId() . '_settings"]' => ['value' => 1]],
         ],
       ];
 
-      if ($this->getEntityCategory() === 'instance' && isset($this->bundleSettings[$variant_id]['bundle_settings']['include_images'])) {
-        $form_fragment['settings'][$variant_id]['include_images_' . $variant_id . '_' . $this->getEntityTypeId() . '_settings']['#options'][(int) $this->bundleSettings[$variant_id]['bundle_settings']['include_images']] .= ' (' . $this->t('default') . ')';
+      if ($this->getEntityCategory() === 'instance' && isset($this->bundleSettings[$variant]['bundle_settings']['include_images'])) {
+        $form_fragment['settings'][$variant]['include_images_' . $variant . '_' . $this->getEntityTypeId() . '_settings']['#options'][(int) $this->bundleSettings[$variant]['bundle_settings']['include_images']] .= ' (' . $this->t('default') . ')';
       }
     }
 
