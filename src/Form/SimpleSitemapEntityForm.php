@@ -63,8 +63,9 @@ class SimpleSitemapEntityForm extends EntityForm {
         'exists' => '\Drupal\simple_sitemap\Entity\SimpleSitemap::load',
         'replace_pattern' => '[^a-z0-9-_.]+',
         'replace' => '-',
+        'error' => $this->t('The sitemap ID will be part of the URL and can only contain lowercase letters, numbers, dashes and underscores.'),
       ],
-      '#description' => $this->t('A unique name that will be part of the sitemap URL. Can only contain lowercase letters, numbers, dashes and underscores.'),
+      '#description' => $this->t('The sitemap ID will be part of the URL and can only contain lowercase letters, numbers, dashes and underscores.'),
     ];
 
     $form['type'] = [
@@ -75,12 +76,13 @@ class SimpleSitemapEntityForm extends EntityForm {
       }, SimpleSitemapType::loadMultiple()),
       '#default_value' => !$this->entity->isNew() ? $this->entity->getType()->id() : NULL,
       '#required' => TRUE,
+      '#description' => $this->t('The sitemap\'s type defines its looks and content. Sitemaps types can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/types']),
     ];
 
     $form['description'] = [
       '#type' => 'textarea',
       '#default_value' => $this->entity->get('description'),
-      '#title' => $this->t('Description'),
+      '#title' => $this->t('Administrative description'),
     ];
 
     $form['actions'] = ['#type' => 'actions'];
