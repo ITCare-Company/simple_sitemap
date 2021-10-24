@@ -84,8 +84,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
    */
   public function getDataSets(): array {
     $arbitrary_links = [];
-    $sitemap_variant = $this->sitemap->id();
-    $this->moduleHandler->alter('simple_sitemap_arbitrary_links', $arbitrary_links, $sitemap_variant);
+    $this->moduleHandler->alter('simple_sitemap_arbitrary_links', $arbitrary_links, $this->sitemap);
 
     return array_values($arbitrary_links);
   }

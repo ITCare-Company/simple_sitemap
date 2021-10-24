@@ -127,7 +127,7 @@ class StatusForm extends SimpleSitemapFormBase {
       '#value' => $this->queueWorker->generationInProgress()
       ? $this->t('Resume generation')
       : $this->t('Rebuild queue & generate'),
-      '#submit' => [self::class . '::generateSitemap'],
+      '#submit' => [self::class . '::generate'],
       '#validate' => [],
     ];
 
@@ -139,7 +139,7 @@ class StatusForm extends SimpleSitemapFormBase {
     $form['status']['progress']['title']['#markup'] = $this->t('Progress of sitemap regeneration');
 
     $total_count = $this->queueWorker->getInitialElementCount();
-    if (!empty($total_count)) {
+    if ($total_count > 0) {
       $indexed_count = $this->queueWorker->getProcessedElementCount();
       $percent = round(100 * $indexed_count / $total_count);
 
@@ -171,9 +171,13 @@ class StatusForm extends SimpleSitemapFormBase {
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public static function generateSitemap(array &$form, FormStateInterface $form_state): void {
-    \Drupal::service('simple_sitemap.generator')->generateSitemap();
+  public static function generate(array &$form, FormStateInterface $form_state): void {
+    /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
+    $generator = \Drupal::service('simple_sitemap.generator');
+    $generator->generate();
   }
 
   /**
@@ -183,9 +187,13 @@ class StatusForm extends SimpleSitemapFormBase {
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public static function rebuildQueue(array &$form, FormStateInterface $form_state): void {
-    \Drupal::service('simple_sitemap.generator')->rebuildQueue();
+    /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
+    $generator = \Drupal::service('simple_sitemap.generator');
+    $generator->rebuildQueue();
   }
 
 }

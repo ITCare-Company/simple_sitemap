@@ -150,8 +150,11 @@ function simple_sitemap_cron() {
 
     $interval = (int) $settings->get('cron_generate_interval', 0) * 60 * 60;
     $request_time = \Drupal::service('datetime.time')->getRequestTime();
-    $generation_in_progress = \Drupal::service('simple_sitemap.queue_worker')->generationInProgress();
     $state = \Drupal::state();
+
+    /** @var QueueWorker $queue_worker */
+    $queue_worker = \Drupal::service('simple_sitemap.queue_worker');
+    $generation_in_progress = $queue_worker->generationInProgress();
 
     if ($interval === 0
       || $generation_in_progress

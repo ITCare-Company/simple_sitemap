@@ -10,5 +10,7 @@
  */
 function simple_sitemap_views_cron() {
   // Create tasks in the garbage collection queue.
-  \Drupal::service('simple_sitemap.views')->executeGarbageCollection();
+  /** @var \Drupal\simple_sitemap_views\SimpleSitemapViews $simple_sitemap_views */
+  $simple_sitemap_views = \Drupal::service('simple_sitemap.views');
+  $simple_sitemap_views->executeGarbageCollection();
 }

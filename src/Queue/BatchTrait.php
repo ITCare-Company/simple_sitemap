@@ -76,14 +76,14 @@ trait BatchTrait {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    *
-   * @todo Variants into generateSitemap().
+   * @todo Variants into generate().
    */
   public static function doBatchGenerateSitemap(&$context): void {
 
     /** @var \Drupal\simple_sitemap\Queue\QueueWorker $queue_worker */
     $queue_worker = \Drupal::service('simple_sitemap.queue_worker');
 
-    $queue_worker->generateSitemap();
+    $queue_worker->generate();
     $processed_element_count = $queue_worker->getProcessedElementCount();
     $original_element_count = $queue_worker->getInitialElementCount();
 
@@ -110,13 +110,15 @@ trait BatchTrait {
    * @see https://api.drupal.org/api/drupal/core!includes!form.inc/group/batch/8
    */
   public static function finishGeneration(bool $success, array $results, array $operations): bool {
+    /** @var \Drupal\simple_sitemap\Logger $logger */
+    $logger = \Drupal::service('simple_sitemap.logger');
     if ($success) {
-      \Drupal::service('simple_sitemap.logger')
+      $logger
         ->m('The XML sitemaps have been regenerated.')
         ->log('info');
     }
     else {
-      \Drupal::service('simple_sitemap.logger')
+      $logger
         ->m(self::$batchErrorMessage)
         ->display('error', 'administer sitemap settings')
         ->log('error');

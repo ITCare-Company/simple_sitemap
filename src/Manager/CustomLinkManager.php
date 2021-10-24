@@ -65,7 +65,7 @@ class CustomLinkManager {
    *
    * @return $this
    *
-   * @todo Validate $settings and throw exceptions
+   * @todo Validate $settings.
    */
   public function add(string $path, array $settings = []): CustomLinkManager {
     if (empty($variants = $this->getVariants())) {
@@ -73,12 +73,10 @@ class CustomLinkManager {
     }
 
     if (!(bool) $this->pathValidator->getUrlIfValidWithoutAccessCheck($path)) {
-      // @todo Log error.
-      return $this;
+      throw new \InvalidArgumentException("The path '$path' must be local and known to Drupal.");
     }
     if ($path[0] !== '/') {
-      // @todo Log error.
-      return $this;
+      throw new \InvalidArgumentException("The path '$path' must start with a '/'.");
     }
 
     $variant_links = $this->get();

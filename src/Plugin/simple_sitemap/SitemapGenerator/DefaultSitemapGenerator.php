@@ -64,8 +64,7 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
     if (!$this->sitemap->isMultilingual()) {
       unset($attributes['xmlns:xhtml']);
     }
-    $sitemap_variant = $this->sitemap->id();
-    $this->moduleHandler->alter('simple_sitemap_attributes', $attributes, $sitemap_variant);
+    $this->moduleHandler->alter('simple_sitemap_attributes', $attributes, $this->sitemap);
     foreach ($attributes as $name => $value) {
       $this->writer->writeAttribute($name, $value);
     }

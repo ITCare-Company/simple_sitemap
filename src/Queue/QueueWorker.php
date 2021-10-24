@@ -266,7 +266,7 @@ class QueueWorker {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function generateSitemap(string $from = self::GENERATE_TYPE_FORM): QueueWorker {
+  public function generate(string $from = self::GENERATE_TYPE_FORM): QueueWorker {
 
     $this->generatorSettings = [
       'base_url' => $this->settings->get('base_url', ''),
@@ -382,9 +382,7 @@ class QueueWorker {
   protected function generateSitemapChunksFromResults(bool $complete = FALSE): void {
     if (!empty($this->results)) {
       $processed_results = $this->results;
-      $variant = $this->sitemapProcessedNow->id();
-      // @todo Context could be sitemap object instead?
-      $this->moduleHandler->alter('simple_sitemap_links', $processed_results, $variant);
+      $this->moduleHandler->alter('simple_sitemap_links', $processed_results, $this->sitemapProcessedNow);
       $this->processedResults = array_merge($this->processedResults, $processed_results);
       $this->results = [];
     }

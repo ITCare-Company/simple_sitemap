@@ -277,8 +277,11 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     $parameters = isset($options['delta']) ? ['page' => $options['delta']] : [];
     unset($options['delta']);
 
-    $options['base_url'] = $options['base_url'] ?? (\Drupal::service('simple_sitemap.settings')
-      ->get('base_url') ?: $GLOBALS['base_url']);
+    if (empty($options['base_url'])) {
+      /** @var \Drupal\simple_sitemap\Settings $settings */
+      $settings = \Drupal::service('simple_sitemap.settings');
+      $options['base_url'] = $settings->get('base_url') ?: $GLOBALS['base_url'];
+    }
 
     $options['language'] = $this->languageManager()->getLanguage(LanguageInterface::LANGCODE_NOT_APPLICABLE);
 
@@ -297,7 +300,9 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
    * {@inheritdoc}
    */
   public function isDefault(): bool {
-    return $this->id() === \Drupal::service('simple_sitemap.settings')->get('default_variant');
+    /** @var \Drupal\simple_sitemap\Settings $settings */
+    $settings = \Drupal::service('simple_sitemap.settings');
+    return $this->id() === $settings->get('default_variant');
   }
 
   /**
@@ -309,6 +314,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
     }
 
     $url_negotiation_method_enabled = FALSE;
+    /** @var \Drupal\language\LanguageNegotiatorInterface $language_negotiator */
     $language_negotiator = \Drupal::service('language_negotiator');
     foreach ($language_negotiator->getNegotiationMethods(LanguageInterface::TYPE_URL) as $method) {
       if ($language_negotiator->isNegotiationMethodEnabled($method['id'])) {
@@ -317,9 +323,11 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
       }
     }
 
+    /** @var \Drupal\simple_sitemap\Settings $settings */
+    $settings = \Drupal::service('simple_sitemap.settings');
     $has_multiple_indexable_languages = count(
         array_diff_key($this->languageManager()->getLanguages(),
-          \Drupal::service('simple_sitemap.settings')->get('excluded_languages', []))
+          $settings->get('excluded_languages', []))
       ) > 1;
 
     return $url_negotiation_method_enabled && $has_multiple_indexable_languages;

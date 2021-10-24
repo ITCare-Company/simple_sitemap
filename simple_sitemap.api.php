@@ -12,15 +12,14 @@
 
 /**
  * Alter the generated link data before the sitemap is saved.
- *
  * This hook gets invoked for every sitemap chunk generated.
  *
  * @param array &$links
  *   Array containing multilingual links generated for each path to be indexed.
- * @param string $sitemap_variant
- *   The ID of the sitemap.
+ * @param \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap
+ *   Sitemap entity.
  */
-function hook_simple_sitemap_links_alter(array &$links, $sitemap_variant) {
+function hook_simple_sitemap_links_alter(array &$links, \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap) {
 
   // Remove German URL for a certain path in the hreflang sitemap.
   foreach ($links as $key => $link) {
@@ -45,14 +44,14 @@ function hook_simple_sitemap_links_alter(array &$links, $sitemap_variant) {
  *
  * @param array &$arbitrary_links
  *   An array of arbitrary links.
- * @param string $sitemap_variant
- *   The ID of the sitemap.
+ * @param \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap
+ *   Sitemap entity.
  */
-function hook_simple_sitemap_arbitrary_links_alter(array &$arbitrary_links, $sitemap_variant) {
+function hook_simple_sitemap_arbitrary_links_alter(array &$arbitrary_links, \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap) {
 
   // Add an arbitrary link to all sitemaps.
   $arbitrary_links[] = [
-    'url' => 'http://some-arbitrary-link/',
+    'url' => 'https://some-arbitrary-link/',
     'priority' => '0.5',
 
     // An ISO8601 formatted date.
@@ -60,22 +59,22 @@ function hook_simple_sitemap_arbitrary_links_alter(array &$arbitrary_links, $sit
 
     'changefreq' => 'weekly',
     'images' => [
-      ['path' => 'http://path-to-image.png'],
+      ['path' => 'https://path-to-image.png'],
     ],
 
     // Add alternate URLs for every language of a multilingual site.
     // Not necessary for monolingual sites.
     'alternate_urls' => [
-      'en' => 'http://this-is-your-life.net/de/tyler',
-      'de' => 'http://this-is-your-life.net/en/tyler',
+      'en' => 'https://this-is-your-life.net/de/tyler',
+      'de' => 'https://this-is-your-life.net/en/tyler',
     ],
   ];
 
   // Add an arbitrary link to the 'fight_club' sitemap variant only.
-  switch ($sitemap_variant) {
+  switch ($sitemap->id()) {
     case 'fight_club':
       $arbitrary_links[] = [
-        'url' => 'http://this-is-your-life.net/tyler',
+        'url' => 'https://this-is-your-life.net/tyler',
       ];
       break;
   }
@@ -88,10 +87,10 @@ function hook_simple_sitemap_arbitrary_links_alter(array &$arbitrary_links, $sit
  *
  * @param array &$attributes
  *   An array of attributes.
- * @param string $sitemap_variant
- *   The ID of the sitemap.
+ * @param \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap
+ *   Sitemap entity.
  */
-function hook_simple_sitemap_attributes_alter(array &$attributes, $sitemap_variant) {
+function hook_simple_sitemap_attributes_alter(array &$attributes, \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap) {
 
   // Remove the xhtml attribute e.g. if no xhtml sitemap elements are present.
   unset($attributes['xmlns:xhtml']);
@@ -104,10 +103,10 @@ function hook_simple_sitemap_attributes_alter(array &$attributes, $sitemap_varia
  *
  * @param array &$index_attributes
  *   An array of attributes.
- * @param string $sitemap_variant
- *   The ID of the sitemap.
+ * @param \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap
+ *   Sitemap entity.
  */
-function hook_simple_sitemap_index_attributes_alter(array &$index_attributes, $sitemap_variant) {
+function hook_simple_sitemap_index_attributes_alter(array &$index_attributes, \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap) {
 
   // Add some attribute to the sitemap index.
   $index_attributes['name'] = 'value';

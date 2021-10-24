@@ -130,8 +130,7 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
 
     // Add attributes to document.
     $attributes = self::$indexAttributes;
-    $sitemap_variant = $this->sitemap;
-    $this->moduleHandler->alter('simple_sitemap_index_attributes', $attributes, $sitemap_variant);
+    $this->moduleHandler->alter('simple_sitemap_index_attributes', $attributes, $this->sitemap);
     foreach ($attributes as $name => $value) {
       $this->writer->writeAttribute($name, $value);
     }

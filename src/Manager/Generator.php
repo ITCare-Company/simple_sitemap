@@ -121,7 +121,7 @@ class Generator {
     }
 
     $variant = count($variants) > 1
-    && !empty($default_variant = \Drupal::service('simple_sitemap.settings')->get('default_variant', ''))
+    && !empty($default_variant = $this->getSetting('default_variant', ''))
       ? $default_variant
       : reset($variants);
 
@@ -153,7 +153,7 @@ class Generator {
 
       case QueueWorker::GENERATE_TYPE_CRON:
       case QueueWorker::GENERATE_TYPE_BACKEND:
-        $this->queueWorker->generateSitemap($from);
+        $this->queueWorker->generate($from);
         break;
     }
 

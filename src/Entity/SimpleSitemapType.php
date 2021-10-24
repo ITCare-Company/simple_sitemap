@@ -73,7 +73,9 @@ class SimpleSitemapType extends ConfigEntityBase implements SimpleSitemapTypeInt
    */
   public function getSitemapGenerator(): SitemapGeneratorInterface {
     if ($this->sitemapGenerator === NULL) {
-      $this->sitemapGenerator = \Drupal::service('plugin.manager.simple_sitemap.sitemap_generator')
+      /** @var \Drupal\Component\Plugin\PluginManagerInterface $manager */
+      $manager = \Drupal::service('plugin.manager.simple_sitemap.sitemap_generator');
+      $this->sitemapGenerator = $manager
         ->createInstance($this->get('sitemap_generator'));
     }
 
@@ -86,9 +88,10 @@ class SimpleSitemapType extends ConfigEntityBase implements SimpleSitemapTypeInt
   public function getUrlGenerators(): array {
     if ($this->urlGenerators === NULL) {
       $this->urlGenerators = [];
-      $url_generator_manager = \Drupal::service('plugin.manager.simple_sitemap.url_generator');
+      /** @var \Drupal\Component\Plugin\PluginManagerInterface $manager */
+      $manager = \Drupal::service('plugin.manager.simple_sitemap.url_generator');
       foreach ($this->get('url_generators') as $generator_id) {
-        $this->urlGenerators[$generator_id] = $url_generator_manager->createInstance($generator_id);
+        $this->urlGenerators[$generator_id] = $manager->createInstance($generator_id);
       }
     }
 

@@ -162,7 +162,7 @@ class EntityHelper {
     $entity_types = $this->entityTypeManager->getDefinitions();
 
     if (!isset($entity_types[$entity_type_id])) {
-      // @todo Throw exception.
+      throw new \InvalidArgumentException("Entity type $entity_type_id does not exist.");
     }
 
     return empty($entity_types[$entity_type_id]->getBundleEntityType());

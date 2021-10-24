@@ -634,7 +634,9 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     $this->generator->rebuildQueue();
     $generate_count = 0;
-    while (\Drupal::service('simple_sitemap.queue_worker')->generationInProgress()) {
+    /** @var QueueWorker $queue_worker */
+    $queue_worker = \Drupal::service('simple_sitemap.queue_worker');
+    while ($queue_worker->generationInProgress()) {
       $generate_count++;
       $this->generator->generate(QueueWorker::GENERATE_TYPE_BACKEND);
     }
