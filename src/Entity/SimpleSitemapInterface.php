@@ -81,17 +81,6 @@ interface SimpleSitemapInterface extends ConfigEntityInterface {
   public function generateIndex(): SimpleSitemapInterface;
 
   /**
-   * Retrieves the content of a specific sitemap chunk.
-   *
-   * @param int $delta
-   *   Delta of the chunk.
-   *
-   * @return string
-   *   The sitemap chunk content.
-   */
-  public function getChunk(int $delta = SimpleSitemapStorage::SITEMAP_CHUNK_FIRST_DELTA): string;
-
-  /**
    * Returns the number of all sitemap content chunks.
    *
    * @return int
@@ -159,7 +148,7 @@ interface SimpleSitemapInterface extends ConfigEntityInterface {
    * @see https://www.drupal.org/project/simple_sitemap/issues/3154570#comment-13730522
    *
    * @return bool
-   *   TRIE if the sitemap is multilingual and FALSE otherwise.
+   *   TRUE if the sitemap is multilingual and FALSE otherwise.
    */
   public function isMultilingual(): bool;
 

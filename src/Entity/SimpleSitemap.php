@@ -201,13 +201,6 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   /**
    * {@inheritdoc}
    */
-  public function getChunk(int $delta = SimpleSitemapStorage::SITEMAP_CHUNK_FIRST_DELTA): string {
-    return $this->entityTypeManager()->getStorage('simple_sitemap')->getChunk($this, $this->fetchByStatus, $delta);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getChunkCount(): int {
     return $this->entityTypeManager()->getStorage('simple_sitemap')->getChunkCount($this, $this->fetchByStatus);
   }
@@ -335,19 +328,19 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   /**
    * {@inheritdoc}
    */
-  public static function purgeContent($variants = NULL, ?bool $status = self::FETCH_BY_STATUS_ALL) {
-    \Drupal::entityTypeManager()->getStorage('simple_sitemap')->purgeContent($variants, $status);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function set($property_name, $value) {
     if ($property_name === 'type') {
       $this->sitemapType = NULL;
     }
 
     return parent::set($property_name, $value);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function purgeContent($variants = NULL, ?bool $status = self::FETCH_BY_STATUS_ALL) {
+    \Drupal::entityTypeManager()->getStorage('simple_sitemap')->purgeContent($variants, $status);
   }
 
 }

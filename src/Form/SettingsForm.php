@@ -249,7 +249,7 @@ class SettingsForm extends SimpleSitemapFormBase {
       $this->generator
         ->setVariants()
         ->rebuildQueue()
-        ->generateSitemap();
+        ->generate();
     }
   }
 

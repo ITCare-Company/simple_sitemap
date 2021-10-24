@@ -235,7 +235,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
       $this->generator
         ->setVariants()
         ->rebuildQueue()
-        ->generateSitemap();
+        ->generate();
     }
   }
 

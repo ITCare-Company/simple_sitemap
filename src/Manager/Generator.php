@@ -109,12 +109,12 @@ class Generator {
    *   Optional delta of the chunk.
    *
    * @return string|null
-   *   If no chunk delta is provided, either the sitemap variant is returned,
-   *   or its index in case of a chunked sitemap.
-   *   If a chunk delta is provided, the relevant chunk is returned.
-   *   Returns null if the sitemap is not retrievable from the database.
+   *   If no chunk delta is provided, either the sitemap string is returned,
+   *   or its index string in case of a chunked sitemap.
+   *   If a chunk delta is provided, the relevant chunk string is returned.
+   *   Returns null if the content is not retrievable from the database.
    */
-  public function getSitemap(?int $delta = NULL): ?string {
+  public function getContent(?int $delta = NULL): ?string {
     /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap */
     if (empty($variants = $this->getVariants())) {
       return NULL;
@@ -140,7 +140,7 @@ class Generator {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function generateSitemap(string $from = QueueWorker::GENERATE_TYPE_FORM): Generator {
+  public function generate(string $from = QueueWorker::GENERATE_TYPE_FORM): Generator {
     if (!$this->lock->lockMayBeAvailable(QueueWorker::LOCK_ID)) {
       $this->logger->m('Unable to acquire a lock for sitemap generation.')->log('error')->display('error');
       return $this;

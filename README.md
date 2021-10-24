@@ -244,7 +244,7 @@ $generator
 // progress.
 $generator
   ->rebuildQueue()
-  ->generateSitemap();
+  ->generate();
 ```
 
 See https://gbyte.dev/projects/simple-xml-sitemap and code documentation for

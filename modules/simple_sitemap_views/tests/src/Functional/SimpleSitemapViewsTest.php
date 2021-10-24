@@ -100,7 +100,7 @@ class SimpleSitemapViewsTest extends SimpleSitemapViewsTestBase {
     $this->sitemapViews->addArgumentsToIndex($this->testView, ['page']);
     $this->sitemapViews->addArgumentsToIndex($this->testView, ['page', $title]);
     $this->sitemapViews->addArgumentsToIndex($this->testView2, ['page', 1]);
-    $this->generator->generateSitemap('backend');
+    $this->generator->generate('backend');
 
     $url1 = $this->testView->getUrl()->toString();
     $url2 = $this->testView->getUrl(['page', NULL, NULL])->toString();
@@ -168,7 +168,7 @@ class SimpleSitemapViewsTest extends SimpleSitemapViewsTestBase {
     $this->assertIndexSize(2);
 
     // Records about pages with empty result must be removed during generation.
-    $this->generator->generateSitemap('backend');
+    $this->generator->generate('backend');
     $this->assertIndexSize(0);
   }
 

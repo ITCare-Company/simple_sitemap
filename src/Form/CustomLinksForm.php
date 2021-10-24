@@ -185,7 +185,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
     if ($form_state->getValue('simple_sitemap_regenerate_now')) {
       $this->generator->setVariants()
         ->rebuildQueue()
-        ->generateSitemap();
+        ->generate();
     }
   }
 

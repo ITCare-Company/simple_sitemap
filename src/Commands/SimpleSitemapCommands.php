@@ -44,7 +44,7 @@ class SimpleSitemapCommands extends DrushCommands {
    * @aliases ssg, simple-sitemap-generate
    */
   public function generate(): void {
-    $this->generator->generateSitemap(QueueWorker::GENERATE_TYPE_DRUSH);
+    $this->generator->generate(QueueWorker::GENERATE_TYPE_DRUSH);
   }
 
   /**

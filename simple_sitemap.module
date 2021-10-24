@@ -134,7 +134,7 @@ function simple_sitemap_entity_form_submit(array $form, FormStateInterface $form
     if (!empty($values['simple_sitemap_regenerate_now'])) {
       $generator->setVariants()
         ->rebuildQueue()
-        ->generateSitemap();
+        ->generate();
     }
   }
 }
@@ -163,7 +163,7 @@ function simple_sitemap_cron() {
 
       /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
       $generator = \Drupal::service('simple_sitemap.generator');
-      $generator->generateSitemap(QueueWorker::GENERATE_TYPE_CRON);
+      $generator->generate(QueueWorker::GENERATE_TYPE_CRON);
     }
   }
 }
