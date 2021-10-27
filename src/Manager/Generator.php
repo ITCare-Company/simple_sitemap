@@ -148,7 +148,7 @@ class Generator {
     switch ($from) {
       case QueueWorker::GENERATE_TYPE_FORM:
       case QueueWorker::GENERATE_TYPE_DRUSH;
-        $this->queueWorker->batchGenerateSitemap($from);
+        $this->queueWorker->batchGenerate($from);
         break;
 
       case QueueWorker::GENERATE_TYPE_CRON:

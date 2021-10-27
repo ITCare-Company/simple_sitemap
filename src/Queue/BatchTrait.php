@@ -36,13 +36,13 @@ trait BatchTrait {
    * @return bool
    *   TRUE if batch was added and FALSE otherwise.
    */
-  public function batchGenerateSitemap(string $from = self::GENERATE_TYPE_FORM, ?array $variants = NULL): bool {
+  public function batchGenerate(string $from = self::GENERATE_TYPE_FORM, ?array $variants = NULL): bool {
     $this->batch = [
       'title' => $this->t('Generating XML sitemaps'),
       'init_message' => $this->t('Initializing...'),
       'error_message' => $this->t(self::$batchErrorMessage),
       'progress_message' => $this->t('Processing items from the queue.<br>Each sitemap gets published after all of its items have been processed.'),
-      'operations' => [[__CLASS__ . '::' . 'doBatchGenerateSitemap', []]],
+      'operations' => [[__CLASS__ . '::' . 'doBatchGenerate', []]],
       'finished' => [__CLASS__, 'finishGeneration'],
     ];
 
@@ -78,7 +78,7 @@ trait BatchTrait {
    *
    * @todo Variants into generate().
    */
-  public static function doBatchGenerateSitemap(&$context): void {
+  public static function doBatchGenerate(&$context): void {
 
     /** @var \Drupal\simple_sitemap\Queue\QueueWorker $queue_worker */
     $queue_worker = \Drupal::service('simple_sitemap.queue_worker');

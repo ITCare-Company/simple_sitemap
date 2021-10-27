@@ -96,7 +96,7 @@ class Tester {
     $batch = new BatchBuilder();
     $relative_path_to_script = (new Filesystem())->makePathRelative(__DIR__, \Drupal::root()) . basename(__FILE__);
     $batch->setFile($relative_path_to_script);
-    $batch->addOperation(__CLASS__ . '::' . 'doBatchGenerateSitemap', [$count_queries]);
+    $batch->addOperation(__CLASS__ . '::' . 'doBatchGenerate', [$count_queries]);
     $batch->setFinishCallback([BatchTrait::class, 'finishGeneration']);
 
     // Start drush batch process.
@@ -122,13 +122,13 @@ class Tester {
    * @param $context
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public static function doBatchGenerateSitemap($count_queries = FALSE, &$context) {
+  public static function doBatchGenerate($count_queries = FALSE, &$context) {
     if ($count_queries) {
       $query_logger = Database::startLog('simple_sitemap');
     }
     // Passes a special object in to $context that outputs every time
     // $context['message'] is set.
-    BatchTrait::doBatchGenerateSitemap($context);
+    BatchTrait::doBatchGenerate($context);
     if ($count_queries) {
       $context['message'] = "Query count: " . count($query_logger->get('simple_sitemap'));
     }
