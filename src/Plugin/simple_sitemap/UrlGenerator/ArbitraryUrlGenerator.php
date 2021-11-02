@@ -55,7 +55,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
       $plugin_id,
       $plugin_definition,
       $logger,
-      $settings,
+      $settings
     );
     $this->moduleHandler = $module_handler;
   }

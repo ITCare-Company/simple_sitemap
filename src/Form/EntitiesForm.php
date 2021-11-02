@@ -74,7 +74,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
       $container->get('simple_sitemap.settings'),
       $container->get('simple_sitemap.form_helper'),
       $container->get('simple_sitemap.entity_helper'),
-      $container->get('simple_sitemap.entity_manager'),
+      $container->get('simple_sitemap.entity_manager')
     );
   }
 
