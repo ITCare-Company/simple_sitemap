@@ -173,6 +173,11 @@ class FormHelper {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function processForm(FormStateInterface $form_state): bool {
+    // Do not alter the form if user lacks certain permissions.
+    if (!$this->currentUser->hasPermission('administer sitemap settings')) {
+      return FALSE;
+    }
+
     $this->formState = $form_state;
     $this->cleanUpFormInfo();
 
@@ -288,11 +293,6 @@ class FormHelper {
 
     // Do not alter the form if it is irrelevant to sitemap generation.
     if (empty($this->getEntityCategory())) {
-      return FALSE;
-    }
-
-    // Do not alter the form if user lacks certain permissions.
-    if (!$this->currentUser->hasPermission('administer sitemap settings')) {
       return FALSE;
     }
 
