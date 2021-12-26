@@ -180,7 +180,7 @@ class EntityHelper {
    * @return bool
    *   TRUE if the entity type is atomic and FALSE otherwise.
    */
-  public function entityTypeIsAtomic($entity_type_id): bool {
+  public function entityTypeIsAtomic(string $entity_type_id): bool {
 
     // Menu fix.
     if ($entity_type_id === 'menu_link_content') {

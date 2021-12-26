@@ -102,9 +102,6 @@ class EntitiesForm extends SimpleSitemapFormBase {
       '#attached' => ['library' => ['simple_sitemap/sitemapEntities']],
     ];
 
-    $table['#prefix'] = FormHelper::getDonationText();
-    $table['#prefix'] .= '<p>' . $this->t('Simple XML Sitemap settings will be added only to entity forms of entity types enabled here. For all entity types featuring bundles (e.g. <em>node</em>) sitemap settings have to be set on their bundle pages (e.g. <em>page</em>).') . '</p>';
-
     $entity_types = $this->entityHelper->getSupportedEntityTypes();
     foreach ($entity_types as $entity_type_id => &$entity_type) {
       $entity_type = $entity_type->getLabel() ?: $entity_type_id;
@@ -152,7 +149,14 @@ class EntitiesForm extends SimpleSitemapFormBase {
       }
     }
 
-    $form['entity_types'] = $table;
+    $form['sitemap_entities'] = [
+      '#prefix' => FormHelper::getDonationText(),
+      '#title' => $this->t('Sitemap entities'),
+      '#type' => 'fieldset',
+      '#markup' => '<div class="description">' . $this->t('Simple XML Sitemap settings will be added only to entity forms of entity types enabled here. For all entity types featuring bundles (e.g. <em>node</em>) sitemap settings have to be set on their bundle pages (e.g. <em>page</em>).') . '</div>',
+      'entity_types' => $table,
+    ];
+
     $this->formHelper->displayRegenerateNow($form);
 
     return parent::buildForm($form, $form_state);
@@ -209,6 +213,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
         }
       }
     }
+
     return $indexed_bundles;
   }
 
@@ -248,6 +253,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
         '%sitemaps' => implode(', ', $bundle_data['sitemaps']),
       ]);
     }
+
     return implode('<br />', $pieces ?? []);
   }
 

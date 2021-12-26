@@ -396,6 +396,7 @@ class FormHelper {
           'visible' => [$selector => ['value' => 1]],
         ];
       }
+
       return $element;
     };
 
