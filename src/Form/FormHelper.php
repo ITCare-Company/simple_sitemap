@@ -387,25 +387,12 @@ class FormHelper {
       ? $this->t('At least one sitemap needs to be defined for a bundle to be indexable.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap'])
       : '<strong>' . $this->t('Sitemaps') . '</strong>';
 
-    // After build callback to set the correct #states.
-    $after_build_callback = function (array $element) {
-      $selector = ':input[name="' . $element['index']['#name'] . '"]';
-
-      foreach (['priority', 'changefreq', 'include_images'] as $key) {
-        $element[$key]['#states'] = [
-          'visible' => [$selector => ['value' => 1]],
-        ];
-      }
-
-      return $element;
-    };
-
     foreach ($sitemaps as $variant => $sitemap) {
       $form_fragment[$variant] = [
         '#type' => 'details',
         '#title' => '<em>' . $sitemap->label() . '</em>',
         '#open' => !empty($this->bundleSettings[$variant]['index']),
-        '#after_build' => [$after_build_callback],
+        '#after_build' => [[self::class, 'displayEntitySettingsAfterBuild']],
       ];
 
       // Disable fields of entity instance whose bundle is not indexed.
@@ -491,6 +478,27 @@ class FormHelper {
     }
 
     return $this;
+  }
+
+  /**
+   * After-build callback to set the correct #states.
+   *
+   * @param array $element
+   *   The element structure.
+   *
+   * @return array
+   *   The element structure.
+   */
+  public static function displayEntitySettingsAfterBuild(array $element): array {
+    $selector = ':input[name="' . $element['index']['#name'] . '"]';
+
+    foreach (['priority', 'changefreq', 'include_images'] as $key) {
+      $element[$key]['#states'] = [
+        'visible' => [$selector => ['value' => 1]],
+      ];
+    }
+
+    return $element;
   }
 
   /**
