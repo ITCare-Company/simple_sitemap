@@ -186,11 +186,11 @@ class QueueWorker {
     $sitemaps = $this->entityTypeManager->getStorage('simple_sitemap')->loadMultiple($variants);
 
     foreach ($sitemaps as $variant => $sitemap) {
-      $data_sets = [];
+      $variant_yields_data = FALSE;
       foreach ($sitemap->getType()->getUrlGenerators() as $url_generator_id => $url_generator) {
         // @todo Automatically set sitemap.
-        $data_sets = $url_generator->setSitemap($sitemap)->getDataSets();
-        foreach ($data_sets as $data_set) {
+        foreach ($url_generator->setSitemap($sitemap)->getDataSets() as $data_set) {
+          $variant_yields_data = TRUE;
           $all_data_sets[] = [
             'data' => $data_set,
             'sitemap' => $variant,
@@ -203,7 +203,7 @@ class QueueWorker {
           }
         }
       }
-      if (empty($data_sets)) {
+      if (!$variant_yields_data) {
         $empty_variants[] = $variant;
       }
     }
