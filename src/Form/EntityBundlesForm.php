@@ -162,7 +162,7 @@ class EntityBundlesForm extends SimpleSitemapFormBase {
     $entity_type_id = $form_state->getValue('entity_type_id');
     $bundles = $form_state->getValue('bundles');
 
-    foreach (SimpleSitemap::loadMultiple() as $variant => $sitemap) {
+    foreach (SimpleSitemap::loadMultiple() as $variant => $sitemap) { // @todo No need to load all sitemaps here.
       $this->entityManager->setVariants($variant);
 
       foreach ($bundles as $bundle_name => $settings) {

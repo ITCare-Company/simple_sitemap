@@ -100,7 +100,7 @@ function simple_sitemap_entity_form_submit(array $form, FormStateInterface $form
     /** @var \Drupal\simple_sitemap\Manager\Generator $generator */
     $generator = \Drupal::service('simple_sitemap.generator');
 
-    foreach (SimpleSitemap::loadMultiple() as $variant => $sitemap) {
+    foreach (SimpleSitemap::loadMultiple() as $variant => $sitemap) { // @todo No need to load all sitemaps here.
 
       // Variants may have changed since form load.
       if (isset($values[$variant])) {
