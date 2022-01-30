@@ -136,7 +136,7 @@ function simple_sitemap_engines_update_8402() {
 }
 
 /**
- * Creating new simple_sitemap_engine Yandex entity.
+ * Creating new simple_sitemap_engine entities.
  */
 function simple_sitemap_engines_update_8403() {
   if (NULL === SimpleSitemapEngine::load('yandex')) {
@@ -144,6 +144,14 @@ function simple_sitemap_engines_update_8403() {
       'id' => 'yandex',
       'label' => 'Yandex',
       'index_now_url' => "https://yandex.com/indexnow?url=[url]&key=[key]",
+    ])->save();
+  }
+
+  if (NULL === SimpleSitemapEngine::load('index_now')) {
+    SimpleSitemapEngine::create([
+      'id' => 'index_now',
+      'label' => 'IndexNow',
+      'index_now_url' => "https://api.indexnow.org/indexnow?url=[url]&key=[key]",
     ])->save();
   }
 }
