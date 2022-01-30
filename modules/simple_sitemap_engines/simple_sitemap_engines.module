@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\simple_sitemap_engines\Entity\SimpleSitemapEngine;
 use Drupal\simple_sitemap_engines\Form\FormHelper;
 
@@ -78,6 +79,38 @@ function simple_sitemap_engines_form_simple_sitemap_entity_bundles_form_alter(&$
       ->displayEntitySettings($bundle_settings);
   }
   FormHelper::addSubmitHandler($form, 'simple_sitemap_engines_entity_bundles_form_submit');
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function simple_sitemap_engines_form_simple_sitemap_entities_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper */
+  $entity_helper = \Drupal::service('simple_sitemap.entity_helper');
+
+  $header = &$form['sitemap_entities']['entity_types']['#header'];
+  array_splice($header, 2, 0, ['index_now' => t('IndexNow')]);
+
+  foreach(Element::children($form['sitemap_entities']['entity_types']) as $type) {
+    $row = &$form['sitemap_entities']['entity_types'][$type];
+    $enabled = $row['enabled']['#default_value'];
+    $bundles = [];
+    if ($enabled) {
+      foreach (\Drupal::configFactory()->listAll("simple_sitemap_engines.bundle_settings.$type.") as $name) {
+        if (\Drupal::configFactory()->get($name)->get('index_now')) {
+          $name_parts = explode('.', $name);
+          $bundles[] = $entity_helper->getBundleLabel($type, array_pop($name_parts));
+        }
+      }
+    }
+    array_splice($row, 2, 0, ['index_now' => [
+      '#type' => 'item',
+      '#input' => FALSE,
+      '#markup' => $bundles
+        ? '<em>' . implode(', ', $bundles) . "</em>"
+        : ($enabled ? t('Excluded') : NULL),
+    ]]);
+  }
 }
 
 /**

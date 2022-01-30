@@ -93,10 +93,10 @@ class EntitiesForm extends SimpleSitemapFormBase {
     $table = [
       '#type' => 'table',
       '#header' => [
-        $this->t('Entity type'),
-        $this->t('Indexed bundles'),
-        $this->t('Enabled'),
-        $this->t('Operations'),
+        'type' => $this->t('Entity type'),
+        'bundles' => $this->t('Indexed bundles'),
+        'enabled' => $this->t('Enabled'),
+        'operations' => $this->t('Operations'),
       ],
       '#empty' => $this->t('No supported entity types available.'),
       '#attached' => ['library' => ['simple_sitemap/sitemapEntities']],

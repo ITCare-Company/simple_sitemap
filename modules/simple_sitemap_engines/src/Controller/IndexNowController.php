@@ -54,7 +54,7 @@ class IndexNowController extends ControllerBase {
   public function getKeyFile(Request $request, ?string $key): Response {
     if ($key
       && ($saved_key = $this->submitter->getKey())
-      && $key == $saved_key) {
+      && $key === $saved_key) {
       $response = new Response($key);
       $response->headers->set('Content-Type', 'text/plain');
 

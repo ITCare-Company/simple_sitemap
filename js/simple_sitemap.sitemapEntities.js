@@ -8,7 +8,7 @@
 
   Drupal.behaviors.simpleSitemapEntities = {
     attach: function () {
-      let $checkboxes = $('table tr.protected input:checkbox:checked').once('simple-sitemap-entities');
+      let $checkboxes = $('table tr input:checkbox:checked').once('simple-sitemap-entities');
 
       if ($checkboxes.length) {
         $checkboxes.on('change', function () {

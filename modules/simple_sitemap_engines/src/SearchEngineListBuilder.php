@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap_engines;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -31,6 +32,13 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
   protected $state;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $config;
+
+  /**
    * SearchEngineListBuilder constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -41,14 +49,18 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
    *   The date formatter service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
    */
   public function __construct(EntityTypeInterface $entity_type,
                               EntityStorageInterface $storage,
                               DateFormatterInterface $date_formatter,
-                              StateInterface $state) {
+                              StateInterface $state,
+                              ConfigFactoryInterface $config_factory) {
     parent::__construct($entity_type, $storage);
     $this->dateFormatter = $date_formatter;
     $this->state = $state;
+    $this->config = $config_factory;
   }
 
   /**
@@ -59,7 +71,8 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
       $entity_type,
       $container->get('entity_type.manager')->getStorage($entity_type->id()),
       $container->get('date.formatter'),
-      $container->get('state')
+      $container->get('state'),
+      $container->get('config.factory')
     );
   }
 
@@ -75,7 +88,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
   }
 
   protected function renderSitemapSubmissionEngines(): array {
-    $enabled = (bool) \Drupal::config('simple_sitemap_engines.settings')->get('enabled');
+    $enabled = (bool) $this->config->get('simple_sitemap_engines.settings')->get('enabled');
     $build = [
       '#type' => 'details',
       '#open' => $enabled,
@@ -116,7 +129,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
   }
 
   protected function renderIndexNowEngines(): array {
-    $enabled = (bool) \Drupal::config('simple_sitemap_engines.settings')->get('index_now_enabled');
+    $enabled = (bool) $this->config->get('simple_sitemap_engines.settings')->get('index_now_enabled');
     $info = $this->state->get('simple_sitemap_engines.index_now.last');
     $build = [
       '#type' => 'details',

@@ -67,19 +67,19 @@ abstract class SubmitterBase {
    *   Drupal state service for last submitted.
    * @param \Drupal\Component\Datetime\TimeInterface $time
    *   The time service.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    */
   public function __construct(ClientInterface $http_client,
                               Logger $logger,
                               StateInterface $state,
                               TimeInterface $time,
-                              ConfigFactoryInterface $config) {
+                              ConfigFactoryInterface $config_factory) {
     $this->httpClient = $http_client;
     $this->logger = $logger;
     $this->state = $state;
     $this->time = $time;
-    $this->config = $config;
+    $this->config = $config_factory;
   }
 
   /**
