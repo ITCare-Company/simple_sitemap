@@ -153,7 +153,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
       '#prefix' => FormHelper::getDonationText(),
       '#title' => $this->t('Sitemap entities'),
       '#type' => 'fieldset',
-      '#markup' => '<div class="description">' . $this->t('Simple XML Sitemap settings will be added only to entity forms of entity types enabled here. For all entity types featuring bundles (e.g. <em>node</em>) sitemap settings have to be set on their bundle pages (e.g. <em>page</em>).') . '</div>',
+      '#markup' => '<div class="description">' . $this->t("Simple XML Sitemap settings will be added only to entity forms of entity types enabled here. Settings for specific entity bundles (e.g. <em>page</em>) can be adjusted here or on the bundle pages.") . '</div>',
       'entity_types' => $table,
     ];
 
