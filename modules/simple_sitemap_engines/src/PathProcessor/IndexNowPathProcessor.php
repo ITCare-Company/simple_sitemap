@@ -40,7 +40,7 @@ class IndexNowPathProcessor implements InboundPathProcessorInterface {
     if (count($args) === 2 && substr($args[1], -4) === '.txt') {
       $key = $this->submitter->getKey();
 
-      if ($key && $key == substr($args[1], 0, -4)) {
+      if ($key && $key === substr($args[1], 0, -4)) {
         return "/simple_sitemap_engines/index_now_key/$key";
       }
     }

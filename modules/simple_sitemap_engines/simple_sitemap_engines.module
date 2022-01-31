@@ -83,6 +83,8 @@ function simple_sitemap_engines_form_simple_sitemap_entity_bundles_form_alter(&$
 
 /**
  * Implements hook_form_FORM_ID_alter().
+ *
+ * @todo Implement form overriding \Drupal\simple_sitemap\Form\EntitiesForm.
  */
 function simple_sitemap_engines_form_simple_sitemap_entities_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   /** @var \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper */

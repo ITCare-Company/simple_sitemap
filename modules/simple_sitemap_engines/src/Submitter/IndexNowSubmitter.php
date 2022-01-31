@@ -67,8 +67,8 @@ class IndexNowSubmitter extends SubmitterBase {
    */
   public function getKey() {
     if ($this->key === NULL
-      && empty($this->key = Settings::get('simple_sitemap_engines.index_now.key'))
-      && empty($this->key = $this->state->get('simple_sitemap_engines.index_now.key'))
+      && empty($this->key = (string) Settings::get('simple_sitemap_engines.index_now.key'))
+      && empty($this->key = (string) $this->state->get('simple_sitemap_engines.index_now.key'))
     ) {
       $this->key = FALSE;
     }
