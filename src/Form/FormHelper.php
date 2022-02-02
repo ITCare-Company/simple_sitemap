@@ -458,7 +458,7 @@ class FormHelper {
         '#description' => $this->getEntityCategory() === 'instance'
         ? $this->t('The frequency with which this <em>@bundle</em> entity changes. Search engine bots may take this as an indication of how often to index it.', ['@bundle' => $bundle_name])
         : $this->t('The frequency with which entities of this type change. Search engine bots may take this as an indication of how often to index them.'),
-        '#default_value' => isset($this->bundleSettings[$variant]['changefreq']) ? $this->bundleSettings[$variant]['changefreq'] : NULL,
+        '#default_value' => $this->bundleSettings[$variant]['changefreq'] ?? NULL,
         '#options' => $this->getChangefreqSelectValues(),
       ];
 
