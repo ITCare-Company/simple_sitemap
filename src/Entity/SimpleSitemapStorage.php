@@ -261,7 +261,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
    *   The sitemap entity to process.
    */
   public function deleteContent(SimpleSitemap $entity): void {
-    $this->purgeContent($entity->id());
+    $this->purgeContent([$entity->id()]);
   }
 
   /**
@@ -541,13 +541,13 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
    * @param bool|null $status
    *   Purge by sitemap status.
    */
-  public function purgeContent($variants = NULL, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_ALL): void {
+  public function purgeContent(?array $variants = NULL, ?bool $status = SimpleSitemap::FETCH_BY_STATUS_ALL): void {
     $query = $this->database->delete('simple_sitemap');
     if ($status !== SimpleSitemap::FETCH_BY_STATUS_ALL) {
       $query->condition('status', $status);
     }
     if ($variants !== NULL) {
-      $query->condition('type', (array) $variants, 'IN');
+      $query->condition('type', $variants, 'IN');
     }
     $query->execute();
   }
