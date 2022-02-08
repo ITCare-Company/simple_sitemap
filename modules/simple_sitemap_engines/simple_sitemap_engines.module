@@ -55,13 +55,6 @@ function simple_sitemap_engines_form_alter(&$form, FormStateInterface $form_stat
   }
   elseif ($f->getEntityCategory() === 'instance') {
     $f->displayEntitySettings($form);
-    $form['index_now']['#group'] = 'footer';
-    if (isset($form['status']['#weight'])) {
-      $form['index_now']['#weight'] = $form['status']['#weight'] + 10;
-    }
-    elseif (isset($form['actions']['submit']['#weight'])) {
-      $form['index_now']['#weight'] = $form['actions']['submit']['#weight'] - 1;
-    }
     FormHelper::addSubmitHandler($form, 'simple_sitemap_engines_entity_form_submit');
   }
 }
