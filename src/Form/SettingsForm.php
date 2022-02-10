@@ -243,14 +243,6 @@ class SettingsForm extends SimpleSitemapFormBase {
     $this->settings->save('generate_duration', $form_state->getValue('generate_duration') * 1000);
 
     parent::submitForm($form, $form_state);
-
-    // Regenerate sitemaps according to user setting.
-    if ($form_state->getValue('simple_sitemap_regenerate_now')) {
-      $this->generator
-        ->setVariants()
-        ->rebuildQueue()
-        ->generate();
-    }
   }
 
 }
