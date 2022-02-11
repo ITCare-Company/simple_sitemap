@@ -180,13 +180,6 @@ class CustomLinksForm extends SimpleSitemapFormBase {
 
     $this->settings->save('custom_links_include_images', (bool) $form_state->getValue('include_images'));
     parent::submitForm($form, $form_state);
-
-    // Regenerate sitemaps according to user setting.
-    if ($form_state->getValue('simple_sitemap_regenerate_now')) {
-      $this->generator->setVariants()
-        ->rebuildQueue()
-        ->generate();
-    }
   }
 
   /**

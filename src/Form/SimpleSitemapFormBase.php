@@ -5,6 +5,7 @@ namespace Drupal\simple_sitemap\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\simple_sitemap\Manager\Generator;
 
@@ -76,6 +77,21 @@ abstract class SimpleSitemapFormBase extends ConfigFormBase {
    */
   protected function getEditableConfigNames(): array {
     return ['simple_sitemap.settings'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    parent::submitForm($form, $form_state);
+
+    // Regenerate sitemaps according to user setting.
+    if ($form_state->getValue('simple_sitemap_regenerate_now')) {
+      $this->generator
+        ->setVariants()
+        ->rebuildQueue()
+        ->generate();
+    }
   }
 
 }
