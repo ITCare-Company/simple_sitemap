@@ -187,6 +187,11 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
         $text = self::getKeyStatusMessage('settings_info');
         break;
 
+      case 'settings_state':
+        $text = self::getKeyStatusMessage('settings_info');
+        $this->messenger()->addWarning(self::getKeyStatusMessage('settings_state_warning'));
+        break;
+
       case 'state':
         $text = self::getKeyStatusMessage('state_info');
         $this->messenger()->addWarning(self::getKeyStatusMessage('state_warning'));
@@ -199,9 +204,13 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
 
     $form['index_now']['key'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Generate new verification key'),
-      '#submit' => [self::class . '::generateKey'],
-      '#disabled' => $key_location === 'settings',
+      '#value' => in_array($key_location, ['state', 'settings_state'])
+        ? $this->t('Remove verification key from state')
+        : $this->t('Generate verification key'),
+      '#submit' => in_array($key_location, ['state', 'settings_state'])
+        ? [self::class . '::removeKey']
+        : [self::class . '::generateKey'],
+      '#disabled' => $key_location === 'settings' ,
       '#validate' => [],
       '#prefix' => '<p>' . $text . '</p>',
     ];
@@ -222,13 +231,16 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     $key = \Drupal::service('simple_sitemap.engines.index_now_submitter')->getKey();
     switch ($type) {
       case 'settings_info':
-        return t('The verification key is saved in <em>settings.php</em>: @key', ['@key' => $key]);
+        return t('The IndexNow verification key is saved in <em>settings.php</em>: @key', ['@key' => $key]);
 
       case 'state_info':
-        return t('The verification key is defined in <em>Drupal state</em>: @key', ['@key' => $key]);
+        return t('The IndexNow verification key is defined in <em>Drupal state</em>: @key', ['@key' => $key]);
 
       case 'state_warning':
         return t('The IndexNow verification key is saved in <em>Drupal state</em>. Consider defining it in <em>settings.php</em> like so:<br/>@code', ['@code' => '$settings[\'simple_sitemap_engines.index_now.key\'] = ' . "'$key';"]);
+
+      case 'settings_state_warning':
+        return t('The IndexNow verification key is saved in <em>settings.php</em> and can be safely removed from <em>Drupal state</em>.');
 
       case 'missing_warning':
       default:
@@ -243,10 +255,16 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
    *   The location of the IndexNow key.
    */
   public static function getKeyLocation(): ?string {
-    if (Settings::get('simple_sitemap_engines.index_now.key')) {
+    $settings = (bool) Settings::get('simple_sitemap_engines.index_now.key');
+    $state = (bool) \Drupal::state()->get('simple_sitemap_engines.index_now.key');
+
+    if ($settings && $state) {
+      return 'settings_state';
+    }
+    if ($settings) {
       return 'settings';
     }
-    if (\Drupal::state()->get('simple_sitemap_engines.index_now.key')) {
+    if ($state) {
       return 'state';
     }
 
@@ -254,7 +272,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
   }
 
   /**
-   * Generates a new IndexNow key.
+   * Generates a new IndexNow key and saves it to state.
    */
   public static function generateKey(): void {
     \Drupal::messenger()->deleteByType(MessengerInterface::TYPE_WARNING);
@@ -262,6 +280,14 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     /** @var \Drupal\Component\Uuid\UuidInterface $uuid */
     $uuid = \Drupal::service('uuid');
     \Drupal::state()->set('simple_sitemap_engines.index_now.key', $uuid->generate());
+  }
+
+  /**
+   * Removes the IndexNow key from state.
+   */
+  public static function removeKey(): void {
+    \Drupal::messenger()->deleteByType(MessengerInterface::TYPE_WARNING);
+    \Drupal::state()->delete('simple_sitemap_engines.index_now.key');
   }
 
   /**
