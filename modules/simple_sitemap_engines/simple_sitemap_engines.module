@@ -45,11 +45,11 @@ function simple_sitemap_engines_cron() {
 function simple_sitemap_engines_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   /** @var Drupal\simple_sitemap_engines\Form\FormHelper $f */
   $f = \Drupal::service('simple_sitemap.engines.form_helper');
-  if (/*!isset($form['simple_sitemap']) || */!$f->processForm($form_state)) {
+  if (!$f->processForm($form_state)) {
     return;
   }
 
-  if ($f->getEntityCategory() === 'bundle') {
+  if ($f->getEntityCategory() === 'bundle' && isset($form['simple_sitemap'])) {
     $f->displayEntitySettings($form['simple_sitemap']);
     FormHelper::addSubmitHandler($form, 'simple_sitemap_engines_bundle_entity_form_submit');
   }
