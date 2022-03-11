@@ -46,38 +46,42 @@ class FormHelper extends BaseFormHelper {
       : 0,
     ];
 
-    // If existing form entity is unpublished on load, assume it is a draft
-    // and uncheck IndexNow. Check IndexNow when changing publishing status.
-    if ($this->entityCategory === 'instance'
-      && !$this->entityIsNew()
-      && $form_fragment['index_now']['#default_value']
-      && isset($form_fragment['status'])
-      && empty($form_fragment['status']['widget']['value']['#default_value'])) {
-      $form_fragment['index_now']['#default_value'] = 0;
-      $form_fragment['index_now']['#states'] = [
-        'checked' => [':input[name="status[value]"]' => ['checked' => TRUE]],
-      ];
-    }
-
-    // If form entity is new, only check IndexNow when publishing status
-    // is checked.
-    if ($this->entityCategory === 'instance'
-      && $this->entityIsNew()
-      && $form_fragment['index_now']['#default_value']
-      && isset($form_fragment['status'])) {
-      $form_fragment['index_now']['#states'] = [
-        'checked' => [':input[name="status[value]"]' => ['checked' => TRUE]],
-      ];
-    }
-
-    // Sensibly place the IndexNow checkbox.
     if ($this->entityCategory === 'instance') {
+      // If existing form entity is unpublished on load, assume it is a draft
+      // and uncheck IndexNow. Check IndexNow when changing publishing status.
+      if (!$this->entityIsNew()
+        && $form_fragment['index_now']['#default_value']
+        && isset($form_fragment['status'])
+        && empty($form_fragment['status']['widget']['value']['#default_value'])) {
+        $form_fragment['index_now']['#default_value'] = 0;
+        $form_fragment['index_now']['#states'] = [
+          'checked' => [':input[name="status[value]"]' => ['checked' => TRUE]],
+        ];
+      }
+
+      // If form entity is new, only check IndexNow when publishing status
+      // is checked.
+      if ($this->entityIsNew()
+        && $form_fragment['index_now']['#default_value']
+        && isset($form_fragment['status'])) {
+        $form_fragment['index_now']['#states'] = [
+          'checked' => [':input[name="status[value]"]' => ['checked' => TRUE]],
+        ];
+      }
+
+      // Sensibly place the IndexNow checkbox.
       $form_fragment['index_now']['#group'] = 'footer';
       if (isset($form_fragment['status']['#weight'])) {
         $form_fragment['index_now']['#weight'] = $form_fragment['status']['#weight'] + 10;
       }
       elseif (isset($form['actions']['submit']['#weight'])) {
         $form_fragment['index_now']['#weight'] = $form_fragment['actions']['submit']['#weight'] - 1;
+      }
+
+      // Remove access to IndexNow override checkbox if no verification key has
+      // been added.
+      if (SimplesitemapEnginesForm::getKeyLocation() === NULL) {
+        $form_fragment['index_now']['#access'] = FALSE;
       }
     }
 
