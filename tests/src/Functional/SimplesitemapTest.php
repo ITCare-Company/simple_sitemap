@@ -33,6 +33,58 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   }
 
   /**
+   * Tests if a disabled sitemap returns a 404 and has no chunks.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function testDisableSitemap() {
+    $this->generator->generate(QueueWorker::GENERATE_TYPE_BACKEND);
+    $this->drupalGet($this->defaultSitemapUrl);
+    $this->assertSession()->statusCodeEquals(200);
+    $sitemap = SimpleSitemap::load('default');
+    $sitemap->disable()->save();
+    $this->assertEmpty($sitemap->fromPublishedAndUnpublished()->getChunkCount());
+    $this->drupalGet($this->defaultSitemapUrl);
+    $this->assertSession()->statusCodeEquals(404);
+  }
+
+  /**
+   * Tests if a deleted sitemap returns a 404.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function testDeleteSitemap() {
+    $this->generator->generate(QueueWorker::GENERATE_TYPE_BACKEND);
+    $this->drupalGet($this->defaultSitemapUrl);
+    $this->assertSession()->statusCodeEquals(200);
+    $sitemap = SimpleSitemap::load('default');
+    $sitemap->delete();
+    $this->drupalGet($this->defaultSitemapUrl);
+    $this->assertSession()->statusCodeEquals(404);
+  }
+
+  /**
+   * Tests if a sitemap with no links returns a 404 and has no chunks.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   */
+  public function testEmptySitemap() {
+    $this->generator->generate(QueueWorker::GENERATE_TYPE_BACKEND);
+    $this->drupalGet($this->defaultSitemapUrl);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->generator->customLinkManager()->remove();
+    $this->generator->generate(QueueWorker::GENERATE_TYPE_BACKEND);
+    $this->assertEmpty(SimpleSitemap::load('default')->fromPublishedAndUnpublished()->getChunkCount());
+    $this->drupalGet($this->defaultSitemapUrl);
+    $this->assertSession()->statusCodeEquals(404);
+  }
+
+  /**
    * Test custom link.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException

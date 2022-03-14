@@ -105,12 +105,22 @@ interface SimpleSitemapInterface extends ConfigEntityInterface {
   public function getIndex(): string;
 
   /**
+   * Returns the enabled status of the sitemap.
+   *
+   * This is different to ::status(), which returns TRUE
+   * only if the sitemap is enabled AND its content published.
+   *
+   * @return bool
+   */
+  public function isEnabled(): bool;
+
+  /**
    * Returns the status of this sitemap's content.
    *
-   * @return int|null
+   * @return int
    *   The content status of this sitemap.
    */
-  public function contentStatus(): ?int;
+  public function contentStatus(): int;
 
   /**
    * Returns the timestamp of the sitemap chunk generation.

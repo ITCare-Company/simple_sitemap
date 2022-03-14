@@ -37,6 +37,7 @@ use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
  *     "uuid" = "uuid",
  *     "label" = "label",
  *     "weight" = "weight",
+ *     "status" = "status"
  *   },
  *   config_export = {
  *     "id",
@@ -44,6 +45,7 @@ use Drupal\simple_sitemap\Exception\SitemapNotExistsException;
  *     "description",
  *     "type",
  *     "weight",
+ *     "status"
  *   },
  *   links = {
  *     "add-form" = "/admin/config/search/simplesitemap/variants/add",
@@ -239,6 +241,13 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   /**
    * {@inheritdoc}
    */
+  public function isEnabled(): bool {
+    return parent::status();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function status(): bool {
     return parent::status() && $this->contentStatus();
   }
@@ -246,7 +255,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   /**
    * {@inheritdoc}
    */
-  public function contentStatus(): ?int {
+  public function contentStatus(): int {
     return $this->entityTypeManager()->getStorage('simple_sitemap')->status($this);
   }
 

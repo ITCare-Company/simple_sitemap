@@ -201,6 +201,11 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
       $entity->set('weight', 0);
     }
 
+    // If disabling the entity, delete sitemap content if any.
+    if (!$entity->isEnabled() && $entity->fromPublishedAndUnpublished()->getChunkCount()) {
+      $this->deleteContent($entity);
+    }
+
     return parent::doSave($id, $entity);
   }
 
