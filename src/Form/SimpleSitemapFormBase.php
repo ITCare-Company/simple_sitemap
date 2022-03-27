@@ -29,7 +29,7 @@ abstract class SimpleSitemapFormBase extends ConfigFormBase {
   protected $settings;
 
   /**
-   * Simple XML Sitemap form helper.
+   * Helper class for working with forms.
    *
    * @var \Drupal\simple_sitemap\Form\FormHelper
    */
@@ -45,7 +45,7 @@ abstract class SimpleSitemapFormBase extends ConfigFormBase {
    * @param \Drupal\simple_sitemap\Settings $settings
    *   The simple_sitemap.settings service.
    * @param \Drupal\simple_sitemap\Form\FormHelper $form_helper
-   *   Simple XML Sitemap form helper.
+   *   Helper class for working with forms.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
@@ -85,13 +85,7 @@ abstract class SimpleSitemapFormBase extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    // Regenerate sitemaps according to user setting.
-    if ($form_state->getValue('simple_sitemap_regenerate_now')) {
-      $this->generator
-        ->setVariants()
-        ->rebuildQueue()
-        ->generate();
-    }
+    $this->formHelper->regenerateNowFormSubmit($form, $form_state);
   }
 
 }

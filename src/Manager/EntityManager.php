@@ -412,7 +412,7 @@ class EntityManager {
     }
 
     $all_bundle_settings = $this->getBundleSettings(
-      $entity_type_id, $this->entityHelper->getEntityInstanceBundleName($entity)
+      $entity_type_id, $this->entityHelper->getEntityBundle($entity)
     );
 
     foreach ($all_bundle_settings as $variant => $bundle_settings) {
@@ -500,7 +500,7 @@ class EntityManager {
 
     $bundle_settings = $this->getBundleSettings(
       $entity_type_id,
-      $this->entityHelper->getEntityInstanceBundleName($entity)
+      $this->entityHelper->getEntityBundle($entity)
     );
 
     return $bundle_settings ?: FALSE;
