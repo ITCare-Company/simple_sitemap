@@ -130,8 +130,8 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
       ],
     ];
 
-    $engines = SimpleSitemapEngine::loadSitemapSubmissionEngines();
-    foreach ($engines as $engine_id => $engine) {
+    $sitemaps = SimpleSitemap::loadMultiple();
+    foreach (SimpleSitemapEngine::loadSitemapSubmissionEngines() as $engine_id => $engine) {
       $form['settings']['engines'][$engine_id] = [
         '#type' => 'select',
         '#title' => $engine->label(),
@@ -139,7 +139,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
           function ($sitemap) {
             return $sitemap->label();
           },
-          SimpleSitemap::loadMultiple()
+          $sitemaps
         ),
         '#default_value' => $engine->sitemap_variants,
         '#multiple' => TRUE,
