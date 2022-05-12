@@ -181,12 +181,12 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
    */
   protected function doSave($id, EntityInterface $entity) {
     /** @var SimpleSitemapInterface $entity */
-    if (!preg_match('/^[\w\-_]+$/', $id)) {
-      throw new \InvalidArgumentException("The sitemap ID can only include alphanumeric characters, dashes and underscores.");
+    if (preg_match('/[^a-z0-9-_]+/', $id)) {
+      throw new \InvalidArgumentException('The sitemap ID can only contain lowercase letters, numbers, dashes and underscores.');
     }
 
     if ($entity->get('type') === NULL || $entity->get('type') === '') {
-      throw new \InvalidArgumentException("The sitemap must define its sitemap type information.");
+      throw new \InvalidArgumentException('The sitemap must define its sitemap type information.');
     }
 
     if ($this->entityTypeManager->getStorage('simple_sitemap_type')->load($entity->get('type')) === NULL) {
