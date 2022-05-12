@@ -2,6 +2,8 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Url;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
@@ -96,6 +98,23 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
     return !empty($base_url = $this->settings->get('base_url'))
       ? str_replace($GLOBALS['base_url'], $base_url, $url)
       : $url;
+  }
+
+  /**
+   * Gets the internal path with URL query from a URL object.
+   *
+   * @param \Drupal\Core\Url $url
+   *   URL object.
+   *
+   * @return string
+   *   Internal path with URL query.
+   */
+  protected function getInternalPathWithQuery(Url $url): string {
+    if (($query = $url->getOption('query')) && is_array($query)) {
+      return $url->getInternalPath() . '?' . UrlHelper::buildQuery($query);
+    }
+
+    return $url->getInternalPath();
   }
 
   /**
