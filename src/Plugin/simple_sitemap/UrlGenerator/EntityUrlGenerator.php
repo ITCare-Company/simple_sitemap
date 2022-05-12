@@ -299,7 +299,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       }
     }
 
-    // Make sure to clear entity memory cache so it does not build up resulting
+    // Make sure to clear entity memory cache, so it does not build up resulting
     // in a constant increase of memory.
     // See https://www.drupal.org/project/simple_sitemap/issues/3170261 and
     // https://www.drupal.org/project/simple_sitemap/issues/3202233

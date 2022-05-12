@@ -699,10 +699,11 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->assertTrue($generate_duration > $element_count || $generate_count > 1, 'This assertion tests if the sitemap generation is split up into batches due to a low generation time limit setting. The failing of this assertion can mean that the sitemap was wrongfully generated in one go, but it can also mean that the assumed low time setting is still high enough for a one pass generation.');
 
     // Test if correct number of sitemaps have been created.
-    $chunks = $this->database->query('SELECT id FROM {simple_sitemap} WHERE delta != 0 AND status = 1');
-    $chunks->allowRowCount = TRUE;
-    $chunk_count = $chunks->rowCount();
-    $this->assertSame($chunk_count, $expected_sitemap_count);
+    $chunk_count = $this->database->select('simple_sitemap')
+      ->condition('delta', 0, '<>')
+      ->condition('status', TRUE)
+      ->countQuery()->execute()->fetchField();
+    $this->assertEquals((int) $chunk_count, $expected_sitemap_count);
 
     // Test if index has been created when necessary.
     $index = $this->database->query('SELECT id FROM {simple_sitemap} WHERE delta = 0 AND status = 1')

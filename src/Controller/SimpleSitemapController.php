@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,13 +23,23 @@ class SimpleSitemapController extends ControllerBase {
   protected $generator;
 
   /**
+   * The module list.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected $moduleList;
+
+  /**
    * SimpleSitemapController constructor.
    *
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
    *   The simple_sitemap.generator service.
+   * @param \Drupal\Core\Extension\ModuleExtensionList $module_list
+   *   The module list.
    */
-  public function __construct(Generator $generator) {
+  public function __construct(Generator $generator, ModuleExtensionList $module_list) {
     $this->generator = $generator;
+    $this->moduleList = $module_list;
   }
 
   /**
@@ -36,7 +47,8 @@ class SimpleSitemapController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): SimpleSitemapController {
     return new static(
-      $container->get('simple_sitemap.generator')
+      $container->get('simple_sitemap.generator'),
+      $container->get('extension.list.module')
     );
   }
 
@@ -72,9 +84,8 @@ class SimpleSitemapController extends ControllerBase {
    *   Returns an XSL response.
    */
   public function getSitemapXsl(): Response {
-
     // Read the XSL content from the file.
-    $module_path = drupal_get_path('module', 'simple_sitemap');
+    $module_path = $this->moduleList->getPath('simple_sitemap');
     $xsl_content = file_get_contents($module_path . '/xsl/simple_sitemap.xsl');
 
     // Replace custom tokens in the XSL content with appropriate values.
