@@ -349,12 +349,22 @@ class SimplesitemapTest extends SimplesitemapTestBase {
    */
   public function testRemoveDuplicatesSetting() {
     $this->generator->entityManager()->setBundleSettings('node', 'page');
-    $this->generator->customLinkManager()->add('/node/1');
+
+    $this->generator->customLinkManager()
+      ->add('/node/1')
+      ->add('/node/2?foo=bar');
+
     $this->generator->saveSetting('remove_duplicates', TRUE)
       ->generate(QueueWorker::GENERATE_TYPE_BACKEND);
 
     $this->drupalGet($this->defaultSitemapUrl);
+
+    // Make sure the duplicate custom link is not included.
     $this->assertUniqueTextWorkaround('node/' . $this->node->id());
+    $this->assertNoUniqueTextWorkaround('node/' . $this->node2->id());
+
+    // Make sure a duplicate path with a different query is included.
+    $this->assertNoUniqueTextWorkaround('node/' . $this->node2->id());
 
     $this->generator->saveSetting('remove_duplicates', FALSE)
       ->generate(QueueWorker::GENERATE_TYPE_BACKEND);

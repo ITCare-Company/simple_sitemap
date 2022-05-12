@@ -276,7 +276,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
 
       // Additional info useful in hooks.
       'meta' => [
-        'path' => $url_object->getInternalPath(),
+        'path' => $this->getInternalPathWithQuery($url_object),
         'entity_info' => [
           'entity_type' => $entity->getEntityTypeId(),
           'id' => $entity->id(),
