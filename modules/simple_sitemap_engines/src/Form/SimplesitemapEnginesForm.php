@@ -4,6 +4,7 @@ namespace Drupal\simple_sitemap_engines\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -28,6 +29,13 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
   protected $entityTypeManager;
 
   /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
    * The date formatter service.
    *
    * @var \Drupal\Core\Datetime\DateFormatter
@@ -48,6 +56,8 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
    *   The config factory service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
    *   The date formatter service.
    * @param \Drupal\Core\State\StateInterface $state
@@ -55,10 +65,12 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
    */
   public function __construct(ConfigFactoryInterface $config_factory,
                               EntityTypeManagerInterface $entity_type_manager,
+                              EntityFieldManagerInterface $entity_field_manager,
                               DateFormatter $date_formatter,
                               StateInterface $state) {
     parent::__construct($config_factory);
     $this->entityTypeManager = $entity_type_manager;
+    $this->entityFieldManager = $entity_field_manager;
     $this->dateFormatter = $date_formatter;
     $this->state = $state;
   }
@@ -70,6 +82,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
+      $container->get('entity_field.manager'),
       $container->get('date.formatter'),
       $container->get('state')
     );
@@ -302,18 +315,23 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
       $engine->save();
     }
 
-    $enabled = (bool) $form_state->getValue(['settings', 'enabled']);
+    $config = $this->config('simple_sitemap_engines.settings');
 
-    $this->config('simple_sitemap_engines.settings')
-      ->set('enabled', $enabled)
+    $enabled = (bool) $form_state->getValue(['settings', 'enabled']);
+    $index_now_enabled = (bool) $form_state->getValue(['index_now', 'enabled']);
+
+    // Clear necessary caches to apply field definition updates.
+    // @see simple_sitemap_engines_entity_extra_field_info()
+    if ($config->get('index_now_enabled') !== $index_now_enabled) {
+      $this->entityFieldManager->clearCachedFieldDefinitions();
+    }
+
+    $config->set('enabled', $enabled)
       ->set('submission_interval', $form_state->getValue([
         'settings',
         'submission_interval',
       ]))
-      ->set('index_now_enabled', $form_state->getValue([
-        'index_now',
-        'enabled',
-      ]))
+      ->set('index_now_enabled', $index_now_enabled)
       ->set('index_now_preferred_engine', $form_state->getValue([
         'index_now',
         'preferred_engine',
