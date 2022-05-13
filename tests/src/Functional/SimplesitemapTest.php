@@ -361,7 +361,6 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     // Make sure the duplicate custom link is not included.
     $this->assertUniqueTextWorkaround('node/' . $this->node->id());
-    $this->assertNoUniqueTextWorkaround('node/' . $this->node2->id());
 
     // Make sure a duplicate path with a different query is included.
     $this->assertNoUniqueTextWorkaround('node/' . $this->node2->id());
