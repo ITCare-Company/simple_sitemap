@@ -156,3 +156,30 @@ function simple_sitemap_page_attachments_alter(array &$attachments) {
     }
   }
 }
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function simple_sitemap_entity_extra_field_info() {
+  $extra = [];
+
+  /** @var \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper */
+  $entity_helper = \Drupal::service('simple_sitemap.entity_helper');
+
+  /** @var \Drupal\simple_sitemap\Manager\EntityManager $entity_manager */
+  $entity_manager = \Drupal::service('simple_sitemap.entity_manager');
+
+  foreach ($entity_helper->getSupportedEntityTypes() as $entity_type_id => $entity_type) {
+    if ($entity_type->get('field_ui_base_route') && $entity_manager->entityTypeIsEnabled($entity_type_id)) {
+
+      foreach ($entity_helper->getBundleInfo($entity_type_id) as $bundle_name => $bundle_info) {
+        $extra[$entity_type_id][$bundle_name]['form']['simple_sitemap'] = [
+          'label' => t('Simple XML Sitemap'),
+          'description' => t('Simple XML Sitemap settings'),
+          'weight' => 10,
+        ];
+      }
+    }
+  }
+  return $extra;
+}
