@@ -411,7 +411,7 @@ class EntityManager {
    * @todo Pass entity object instead of id and entity type?
    */
   public function setEntityInstanceSettings(string $entity_type_id, string $id, array $settings): EntityManager {
-    if (empty($this->getVariants())) {
+    if (empty($variants = $this->getVariants())) {
       return $this;
     }
 
@@ -426,6 +426,9 @@ class EntityManager {
 
     foreach ($all_bundle_settings as $variant => $bundle_settings) {
       if (!empty($bundle_settings)) {
+
+        // Only one variant at a time.
+        $this->setVariants($variant);
 
         // Check if overrides are different from bundle setting before saving.
         $override = FALSE;
@@ -458,6 +461,9 @@ class EntityManager {
         }
       }
     }
+
+    // Restore original variants.
+    $this->setVariants($variants);
 
     return $this;
   }
