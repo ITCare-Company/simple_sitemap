@@ -696,7 +696,8 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->generator
       ->saveSetting('generate_duration', $generate_duration)
       ->saveSetting('max_links', $max_links)
-      ->saveSetting('skip_untranslated', FALSE);
+      ->saveSetting('skip_untranslated', FALSE)
+      ->saveSetting('remove_duplicates', FALSE);
 
     $this->generator->rebuildQueue();
     $generate_count = 0;
