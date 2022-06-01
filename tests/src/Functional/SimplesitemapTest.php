@@ -510,15 +510,18 @@ class SimplesitemapTest extends SimplesitemapTestBase {
    *   The entity type ID.
    * @param string $entity_id
    *   The entity ID.
+   * @param string|array $variant
+   *   A particular variant or an array of variants.
    *
    * @return int
    *   The number of overrides for the given entity type ID and entity ID.
    */
-  protected function getOverridesCount($entity_type_id, $entity_id) {
+  protected function getOverridesCount($entity_type_id, $entity_id, $variant = 'default') {
     return $this->database->select('simple_sitemap_entity_overrides', 'o')
       ->fields('o', ['inclusion_settings'])
       ->condition('o.entity_type', $entity_type_id)
       ->condition('o.entity_id', $entity_id)
+      ->condition('o.type', $variant)
       ->countQuery()
       ->execute()
       ->fetchField();
