@@ -37,9 +37,20 @@ class SitemapIndexUrlGenerator extends UrlGeneratorBase {
     if (($sitemap = SimpleSitemap::load($data_set))
       && $sitemap->status()
       && $sitemap->getType()->getSitemapGenerator()->getPluginId() !== 'index') {
+      $url_object = $sitemap->toUrl()->setAbsolute();
+
       return [
-        'loc' => $sitemap->toUrl()->setAbsolute()->toString(),
+        'loc' => $url_object->toString(),
         'lastmod' => date('c', $sitemap->fromPublished()->getCreated()),
+
+        // Additional info useful in hooks.
+        'meta' => [
+          'path' => $url_object->getInternalPath(),
+          'entity_info' => [
+            'entity_type' => $sitemap->getEntityTypeId(),
+            'id' => $sitemap->id(),
+          ],
+        ],
       ];
     }
 
