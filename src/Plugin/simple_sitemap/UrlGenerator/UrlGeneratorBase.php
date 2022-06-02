@@ -101,23 +101,6 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
   }
 
   /**
-   * Gets the internal path with URL query from a URL object.
-   *
-   * @param \Drupal\Core\Url $url
-   *   URL object.
-   *
-   * @return string
-   *   Internal path with URL query.
-   */
-  protected function getInternalPathWithQuery(Url $url): string {
-    if (($query = $url->getOption('query')) && is_array($query)) {
-      return $url->getInternalPath() . '?' . UrlHelper::buildQuery($query);
-    }
-
-    return $url->getInternalPath();
-  }
-
-  /**
    * {@inheritdoc}
    */
   abstract public function getDataSets(): array;

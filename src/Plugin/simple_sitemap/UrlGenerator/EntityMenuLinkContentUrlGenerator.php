@@ -191,7 +191,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
         throw new SkipElementException();
       }
 
-      $path = $this->getInternalPathWithQuery($url_object);
+      $path = $url_object->getInternalPath();
     }
     // There can be internal paths that are not rooted, like 'base:/path'.
     elseif (strpos($uri = $url_object->toUriString(), 'base:/') === 0) {

@@ -162,7 +162,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
       ? $this->getEntityImageData($entity)
       : [],
       'meta' => [
-        'path' => $this->getInternalPathWithQuery($url_object),
+        'path' => $url_object->getInternalPath(),
       ],
     ];
 
