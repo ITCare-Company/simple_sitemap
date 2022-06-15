@@ -262,6 +262,9 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   /**
    * Removes the content of the specified sitemap.
    *
+   * A sitemap entity can exist without the sitemap (XML) content which lives
+   * in the DB. This purges the sitemap content.
+   *
    * @param \Drupal\simple_sitemap\Entity\SimpleSitemap $entity
    *   The sitemap entity to process.
    */
@@ -299,7 +302,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   }
 
   /**
-   * Generates the index of the specified sitemap's content chunks.
+   * Generates the chunk index of the specified sitemap's content chunks.
    *
    * @param \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $entity
    *   The sitemap entity to process.
@@ -376,7 +379,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   }
 
   /**
-   * Determines whether the specified sitemap has an index.
+   * Determines whether the specified sitemap has a chunk index.
    *
    * @param \Drupal\simple_sitemap\Entity\SimpleSitemap $entity
    *   The sitemap entity to check.
@@ -397,7 +400,7 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   }
 
   /**
-   * Gets the sitemap index content.
+   * Gets the sitemap chunk index content.
    *
    * @param \Drupal\simple_sitemap\Entity\SimpleSitemap $entity
    *   The sitemap entity.
@@ -470,6 +473,9 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
   /**
    * Returns the status of the specified sitemap.
    *
+   * The sitemap can be unpublished (0), published (1), or published and in
+   * regeneration (2).
+   *
    * @param \Drupal\simple_sitemap\Entity\SimpleSitemap $entity
    *   The sitemap entity.
    *
@@ -540,6 +546,9 @@ class SimpleSitemapStorage extends ConfigEntityStorage {
 
   /**
    * Removes the content from all or specified sitemaps.
+   *
+   * A sitemap entity can exist without the sitemap (XML) content which lives
+   * in the DB. This purges the sitemap content.
    *
    * @param array|null $variants
    *   An array of sitemap IDs, or NULL for all sitemaps.

@@ -165,6 +165,9 @@ interface SimpleSitemapInterface extends ConfigEntityInterface {
   /**
    * Removes the content from all or specified sitemaps.
    *
+   * A sitemap entity can exist without the sitemap (XML) content which lives
+   * in the DB. This purges the sitemap content.
+   *
    * @param array|null $variants
    *   An array of sitemap IDs, or NULL for all sitemaps.
    * @param int|null $status
