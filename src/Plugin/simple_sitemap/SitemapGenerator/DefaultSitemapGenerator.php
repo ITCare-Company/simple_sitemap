@@ -81,7 +81,9 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    *   The array of properties for this URL.
    */
   protected function addUrl(array $url_data): void {
-    $this->writer->writeElement('loc', $url_data['url']);
+    if (isset($url_data['url'])) {
+      $this->writer->writeElement('loc', $url_data['url']);
+    }
 
     // If more than one language is enabled, add all translation variant URLs
     // as alternate links to this link turning the sitemap into a hreflang
@@ -90,22 +92,18 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
       $this->addAlternateUrls($url_data['alternate_urls']);
     }
 
-    // Add lastmod if any.
     if (isset($url_data['lastmod'])) {
       $this->writer->writeElement('lastmod', $url_data['lastmod']);
     }
 
-    // Add changefreq if any.
     if (isset($url_data['changefreq'])) {
       $this->writer->writeElement('changefreq', $url_data['changefreq']);
     }
 
-    // Add priority if any.
     if (isset($url_data['priority'])) {
       $this->writer->writeElement('priority', $url_data['priority']);
     }
 
-    // Add images if any.
     if (!empty($url_data['images'])) {
       foreach ($url_data['images'] as $image) {
         $this->writer->startElement('image:image');
