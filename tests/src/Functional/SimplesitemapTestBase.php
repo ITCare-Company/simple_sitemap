@@ -71,7 +71,7 @@ abstract class SimplesitemapTestBase extends BrowserTestBase {
    *
    * @var string
    */
-  protected $defaultTheme = 'classy';
+    protected $defaultTheme = 'stable9';
 
   /**
    * {@inheritdoc}
