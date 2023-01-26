@@ -85,6 +85,12 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
     ];
   }
 
+  /**
+   * Render sitemap submission engines.
+   *
+   * @return array
+   *   The build array.
+   */
   protected function renderSitemapSubmissionEngines(): array {
     $enabled = (bool) $this->config->get('simple_sitemap_engines.settings')->get('enabled');
     $build = [
@@ -106,7 +112,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
     ];
 
     if ($enabled) {
-      foreach (SimpleSitemapEngine::loadSitemapSubmissionEngines()  as $entity) {
+      foreach (SimpleSitemapEngine::loadSitemapSubmissionEngines() as $entity) {
         $last_submitted = $this->state->get("simple_sitemap_engines.simple_sitemap_engine.{$entity->id()}.last_submitted", -1);
         $build['table']['#rows'][$entity->id()] = [
           'label' => $entity->label(),
@@ -126,6 +132,12 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
     return $build;
   }
 
+  /**
+   * Render IndexNow engines.
+   *
+   * @return array
+   *   The build array.
+   */
   protected function renderIndexNowEngines(): array {
     $enabled = (bool) $this->config->get('simple_sitemap_engines.settings')->get('index_now_enabled');
     $info = $this->state->get('simple_sitemap_engines.index_now.last');
@@ -150,7 +162,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
     ];
 
     if ($enabled) {
-      foreach (SimpleSitemapEngine::loadIndexNowEngines()  as $engine) {
+      foreach (SimpleSitemapEngine::loadIndexNowEngines() as $engine) {
         $build['table']['#rows'][$engine->id()] = [
           'label' => $engine->label(),
           'url' => $engine->index_now_url,

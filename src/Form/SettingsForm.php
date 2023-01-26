@@ -146,10 +146,10 @@ class SettingsForm extends SimpleSitemapFormBase {
       '#type' => 'checkboxes',
       '#options' => $language_options,
       '#description' => !empty($language_options)
-      ? $this->t('There will be no links generated for languages checked here.')
-      : $this->t('There are no languages other than the default language <a href="@url">available</a>.', [
-        '@url' => $GLOBALS['base_url'] . '/admin/config/regional/language',
-      ]),
+        ? $this->t('There will be no links generated for languages checked here.')
+        : $this->t('There are no languages other than the default language <a href="@url">available</a>.', [
+          '@url' => $GLOBALS['base_url'] . '/admin/config/regional/language',
+        ]),
       '#default_value' => $this->settings->get('excluded_languages', []),
     ];
 

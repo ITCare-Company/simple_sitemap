@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Hooks provided by the Simple XML Sitemap module.
+ */
+
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 
 /**

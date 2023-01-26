@@ -222,7 +222,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
       '#submit' => in_array($key_location, ['state', 'settings_state'])
         ? [self::class . '::removeKey']
         : [self::class . '::generateKey'],
-      '#disabled' => $key_location === 'settings' ,
+      '#disabled' => $key_location === 'settings',
       '#validate' => [],
       '#prefix' => '<p>' . $text . '</p>',
     ];
