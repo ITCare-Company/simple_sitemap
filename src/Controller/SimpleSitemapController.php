@@ -83,15 +83,16 @@ class SimpleSitemapController extends ControllerBase {
    */
   public function getSitemapXsl(string $sitemap_generator): Response {
     /** @var \Drupal\Component\Plugin\PluginManagerInterface $manager */
+    // @phpcs:ignore DrupalPractice.Objects.GlobalDrupal.GlobalDrupal
     $manager = \Drupal::service('plugin.manager.simple_sitemap.sitemap_generator');
     try {
-      /** @var \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorInterface $sitemap_generator */
       $sitemap_generator = $manager->createInstance($sitemap_generator);
     }
     catch (PluginNotFoundException $ex) {
       throw new NotFoundHttpException();
     }
 
+    /** @var \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorInterface $sitemap_generator */
     if (NULL === ($xsl = $sitemap_generator->getXslContent())) {
       throw new NotFoundHttpException();
     }
