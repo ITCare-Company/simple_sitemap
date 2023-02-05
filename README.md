@@ -136,7 +136,7 @@ programmatically via simple_sitemap_engine entities.
 For the submission to work, a key needs to be generated under
 admin/config/search/simplesitemap/engines/settings. This key will be saved to
 Drupal's state, but it is recommended to store it in the `settings.php` or
-`local.settings.php` file by adding the line
+`settings.local.php` file by adding the line
 `$settings['simple_sitemap_engines.index_now.key'] = xxx;`
 
 Do not forget to include entities under
