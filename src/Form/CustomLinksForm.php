@@ -76,19 +76,21 @@ class CustomLinksForm extends SimpleSitemapFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $form['variants']['#tree'] = TRUE;
+
     foreach ($this->getCustomLinkCapableSitemaps() as $variant => $sitemap) {
-      $custom_link_settings = $this->generator->setVariants($sitemap->id())->customLinkManager()->get();
-      $form['variants']['#tree'] = TRUE;
-      $count = isset($custom_link_settings[$variant]) ? count($custom_link_settings[$variant]) : 0;
+      $custom_link_settings = $this->generator->setVariants($variant)->customLinkManager()->get();
+
+      $count = $custom_link_settings ? count($custom_link_settings[$variant]) : 0;
       $form['variants'][$sitemap->id()] = [
         '#type' => 'details',
         '#title' => $sitemap->label() . ($count ? ' (' . $count . ')' : ''),
-        '#open' => !empty($custom_link_settings),
+        '#open' => (bool) $custom_link_settings,
       ];
 
-      $form['variants'][$sitemap->id()]['custom_links'] = [
+      $form['variants'][$variant]['custom_links'] = [
         '#type' => 'textarea',
-        '#default_value' => $custom_link_settings ? $this->customLinksToString(reset($custom_link_settings)) : '',
+        '#default_value' => $custom_link_settings ? $this->customLinksToString($custom_link_settings[$variant]) : '',
       ];
     }
 
@@ -163,10 +165,10 @@ class CustomLinksForm extends SimpleSitemapFormBase {
   }
 
   /**
-   * Gets sitemaps that are of a type that implements a custom link generator.
+   * Gets sitemaps that are of a type that implements a custom URL generator.
    *
    * @return SimpleSitemap[]
-   *   Array of sitemaps of a type that implements a custom link generator.
+   *   Array of sitemaps of a type that implements a custom URL generator.
    */
   protected function getCustomLinkCapableSitemaps(): array {
     $sitemaps = SimpleSitemap::loadMultiple();
