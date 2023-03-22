@@ -125,8 +125,8 @@ class CustomLinksForm extends SimpleSitemapFormBase {
 
         // Checking if internal path exists.
         if (!$this->pathValidator->getUrlIfValidWithoutAccessCheck($link_config['path'])
-          // Path validator does not see a double slash as an error. Catching this
-          // to prevent breaking path generation.
+          // Path validator does not see a double slash as an error. Catching
+          // this to prevent breaking path generation.
           || strpos($link_config['path'], '//') !== FALSE) {
           $form_state->setError($form['variants'][$variant]['custom_links'], $this->t('<strong>@sitemap, line @line</strong>: The path <em>@path</em> does not exist.', $placeholders));
         }
@@ -167,7 +167,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
   /**
    * Gets sitemaps that are of a type that implements a custom URL generator.
    *
-   * @return SimpleSitemap[]
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemap[]
    *   Array of sitemaps of a type that implements a custom URL generator.
    */
   protected function getCustomLinkCapableSitemaps(): array {
