@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Url;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -147,9 +148,9 @@ class SettingsForm extends SimpleSitemapFormBase {
       '#options' => $language_options,
       '#description' => !empty($language_options)
         ? $this->t('There will be no links generated for languages checked here.')
-        : $this->t('There are no languages other than the default language <a href="@url">available</a>.', [
-          '@url' => $GLOBALS['base_url'] . '/admin/config/regional/language',
-        ]),
+        : $this->t('There are no languages other than the default language <a href="@url">available</a>.',
+          ['@url' => Url::fromRoute('entity.configurable_language.collection')->toString()]
+        ),
       '#default_value' => $this->settings->get('excluded_languages', []),
     ];
 
@@ -164,7 +165,9 @@ class SettingsForm extends SimpleSitemapFormBase {
     $form['advanced']['default_variant'] = [
       '#type' => 'select',
       '#title' => $this->t('Default sitemap'),
-      '#description' => $this->t('This sitemap will be available under <em>/sitemap.xml</em> in addition to its default path <em>/variant-name/sitemap.xml</em>.<br>Sitemaps can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap']),
+      '#description' => $this->t('This sitemap will be available under <em>/sitemap.xml</em> in addition to its default path <em>/variant-name/sitemap.xml</em>.<br>Sitemaps can be configured <a href="@url">here</a>.',
+        ['@url' => Url::fromRoute('entity.simple_sitemap.collection')->toString()]
+      ),
       '#default_value' => isset($sitemaps[$default_variant]) ? $default_variant : '',
       '#options' => ['' => $this->t('- None -')] + array_map(function ($sitemap) {
         return $sitemap->label();

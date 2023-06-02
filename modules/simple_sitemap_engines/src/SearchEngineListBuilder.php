@@ -8,6 +8,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\State\StateInterface;
+use Drupal\Core\Url;
 use Drupal\simple_sitemap_engines\Entity\SimpleSitemapEngine;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -108,7 +109,9 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
         '#rows' => [],
         '#empty' => $this->t('There are no @label yet.', ['@label' => $this->entityType->getPluralLabel()]),
       ],
-      '#description' => $this->t('Submission settings can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/engines/settings']),
+      '#description' => $this->t('Submission settings can be configured <a href="@url">here</a>.',
+        ['@url' => Url::fromRoute('simple_sitemap.engines.settings')->toString()]
+      ),
     ];
 
     if ($enabled) {
@@ -158,7 +161,9 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
         ],
         '#rows' => [],
       ],
-      '#description' => $this->t('IndexNow settings can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/engines/settings']),
+      '#description' => $this->t('IndexNow settings can be configured <a href="@url">here</a>.',
+        ['@url' => Url::fromRoute('simple_sitemap.engines.settings')->toString()]
+      ),
     ];
 
     if ($enabled) {
