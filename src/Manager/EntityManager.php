@@ -254,7 +254,7 @@ class EntityManager {
       $delete_instances = [];
       foreach ($query->execute()->fetchAll() as $result) {
         $delete = TRUE;
-        $instance_settings = unserialize($result->inclusion_settings);
+        $instance_settings = unserialize($result->inclusion_settings, ['allowed_classes' => FALSE]);
         foreach ($instance_settings as $setting_key => $instance_setting) {
           if ($instance_setting != $settings[$setting_key]) {
             $delete = FALSE;
@@ -510,7 +510,7 @@ class EntityManager {
       ->fetchField();
 
     if (!empty($results)) {
-      return [$variant => unserialize($results)];
+      return [$variant => unserialize($results, ['allowed_classes' => FALSE])];
     }
 
     if (($entity = $this->entityTypeManager->getStorage($entity_type_id)->load($id)) === NULL) {
