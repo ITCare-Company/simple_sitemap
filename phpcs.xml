@@ -6,10 +6,7 @@
   <file>.</file>
 
   <rule ref="Drupal"/>
-  <rule ref="DrupalPractice">
-    <!-- unserialize() is already used in many places. -->
-    <exclude name="DrupalPractice.FunctionCalls.InsecureUnserialize"/>
-  </rule>
+  <rule ref="DrupalPractice"/>
   <!-- Update hooks may have long descriptions. -->
   <rule ref="Drupal.Files.LineLength.TooLong">
     <exclude-pattern>\.install</exclude-pattern>
