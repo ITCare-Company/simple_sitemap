@@ -145,7 +145,7 @@ abstract class EntityFormHandlerBase implements EntityFormHandlerInterface {
     }
     else {
       $form['#markup'] = $this->t('At least one sitemap needs to be defined for a bundle to be indexable.<br>Sitemaps can be configured <a href="@url">here</a>.',
-        ['@url' => Url::fromRoute('entity.simple_sitemap.collection')->toString(),]
+        ['@url' => Url::fromRoute('entity.simple_sitemap.collection')->toString()]
       );
     }
 
