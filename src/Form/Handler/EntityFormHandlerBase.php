@@ -2,18 +2,17 @@
 
 namespace Drupal\simple_sitemap\Form\Handler;
 
-use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\simple_sitemap\Entity\SimpleSitemap;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
 use Drupal\simple_sitemap\Entity\EntityHelper;
-use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Form\FormHelper;
+use Drupal\simple_sitemap\Manager\Generator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a base class for altering an entity form.
@@ -139,7 +138,7 @@ abstract class EntityFormHandlerBase implements EntityFormHandlerInterface {
    * {@inheritdoc}
    */
   public function settingsForm(array $form): array {
-    $sitemaps = SimpleSitemap::loadMultiple();
+    $sitemaps = $this->generator->entityManager()->getSitemaps();
     $settings = $this->getSettings();
     if ($sitemaps) {
       $form['#markup'] = '<strong>' . $this->t('Sitemaps') . '</strong>';
@@ -151,26 +150,29 @@ abstract class EntityFormHandlerBase implements EntityFormHandlerInterface {
     }
 
     foreach ($sitemaps as $variant => $sitemap) {
-      $variant_form = &$form[$variant];
+      if ($settings[$variant]) {
+        $variant_form = &$form[$variant];
 
-      $variant_form = [
-        '#type' => 'details',
-        '#title' => '<em>' . $sitemap->label() . '</em>',
-        '#open' => !empty($settings[$variant]['index']),
-      ];
+        $variant_form = [
+          '#type' => 'details',
+          '#title' => '<em>' . $sitemap->label() . '</em>',
+          '#open' => !empty($settings[$variant]['index']),
+        ];
 
-      $variant_form = $this->formHelper
-        ->settingsForm($variant_form, $settings[$variant]);
+        $variant_form = $this->formHelper
+          ->settingsForm($variant_form, $settings[$variant]);
 
-      $variant_form['index']['#attributes']['data-simple-sitemap-label'] = $sitemap->label();
-      $variant_form['index']['#type'] = 'radios';
-      $variant_form['index']['#title'] = NULL;
+        $variant_form['index']['#attributes']['data-simple-sitemap-label'] = $sitemap->label();
+        $variant_form['index']['#type'] = 'radios';
+        $variant_form['index']['#title'] = NULL;
 
-      $variant_form['index']['#options'] = [
-        $this->t('Do not index entities of this type in sitemap <em>@sitemap</em>', ['@sitemap' => $sitemap->label()]),
-        $this->t('Index entities of this type in sitemap <em>@sitemap</em>', ['@sitemap' => $sitemap->label()]),
-      ];
+        $variant_form['index']['#options'] = [
+          $this->t('Do not index entities of this type in sitemap <em>@sitemap</em>', ['@sitemap' => $sitemap->label()]),
+          $this->t('Index entities of this type in sitemap <em>@sitemap</em>', ['@sitemap' => $sitemap->label()]),
+        ];
+      }
     }
+
     return $form;
   }
 
@@ -238,10 +240,11 @@ abstract class EntityFormHandlerBase implements EntityFormHandlerInterface {
   protected function getSettings(): array {
     if (!isset($this->settings)) {
       $this->settings = $this->generator
-        ->setVariants()
         ->entityManager()
+        ->setSitemaps()
         ->getBundleSettings($this->entityTypeId, $this->bundleName);
     }
+
     return $this->settings;
   }
 
