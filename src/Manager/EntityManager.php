@@ -256,7 +256,7 @@ class EntityManager implements SitemapGetterInterface {
       $delete_instances = [];
       foreach ($query->execute()->fetchAll() as $result) {
         $delete = TRUE;
-        $instance_settings = unserialize($result->inclusion_settings, ['allowed_classes' => FALSE]);
+        $instance_settings = unserialize($result->inclusion_settings);
         foreach ($instance_settings as $setting_key => $instance_setting) {
           if ($instance_setting != $settings[$setting_key]) {
             $delete = FALSE;
@@ -512,7 +512,7 @@ class EntityManager implements SitemapGetterInterface {
       ->fetchField();
 
     if (!empty($results)) {
-      return [$variant => unserialize($results, ['allowed_classes' => FALSE])];
+      return [$variant => unserialize($results)];
     }
 
     if (($entity = $this->entityTypeManager->getStorage($entity_type_id)->load($id)) === NULL) {
