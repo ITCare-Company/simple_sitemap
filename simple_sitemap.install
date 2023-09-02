@@ -5,8 +5,8 @@
  * Module install and update procedures.
  */
 
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
 
 /**
@@ -925,4 +925,13 @@ function simple_sitemap_update_8406() {
   }
 
   return t('A sitemap index which lists all other sitemaps is now available and can be enabled.');
+}
+
+/**
+ * Delete the sitemap queue.
+ */
+function simple_sitemap_update_8407() {
+  \Drupal::service('simple_sitemap.queue_worker')->deleteQueue();
+
+  return t('The sitemaps need to be regenerated.');
 }
