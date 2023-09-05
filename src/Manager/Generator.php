@@ -108,12 +108,20 @@ class Generator implements SitemapGetterInterface {
    * @return string|null
    *   The default variant or NULL if there are no variants.
    *
-   * @deprecated Use getDefaultSitemap() instead.
+   * @deprecated in simple_sitemap:4.1.7 and is removed from simple_sitemap:5.0.0.
+   *   Use getDefaultSitemap() instead.
+   * @see https://www.drupal.org/project/simple_sitemap/issues/3375932
    */
   public function getDefaultVariant(): ?string {
     return $this->getDefaultSitemap()?->id();
   }
 
+  /**
+   * Gets the default sitemap from the currently set sitemaps.
+   *
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemap|null
+   *   The default sitemap or NULL if there are no sitemaps.
+   */
   public function getDefaultSitemap(): ?SimpleSitemap {
     if (empty($sitemaps = $this->getSitemaps())) {
       return NULL;
@@ -249,6 +257,12 @@ class Generator implements SitemapGetterInterface {
     return $custom_link_manager;
   }
 
+  /**
+   * Gets all compatible sitemaps.
+   *
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemap[]
+   *   Array of sitemaps.
+   */
   protected function getCompatibleSitemaps(): array {
     return SimpleSitemap::loadMultiple();
   }

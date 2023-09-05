@@ -154,7 +154,6 @@ class EntityBundlesForm extends SimpleSitemapFormBase {
     $entity_type_id = $form_state->getValue('entity_type_id');
     $bundles = $form_state->getValue('bundles');
 
-    // @todo
     foreach ($this->entityManager->getSitemaps() as $variant => $sitemap) {
       $this->entityManager->setSitemaps($sitemap);
 

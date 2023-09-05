@@ -188,10 +188,9 @@ class CustomLinkManager implements SitemapGetterInterface {
   }
 
   /**
-   * Gets sitemaps that are of a type that implements a custom URL
-   * generator.
+   * Gets all compatible sitemaps.
    *
-   * @return SimpleSitemap[]
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemap[]
    *   Array of sitemaps of a type that implements a custom URL
    *   generator.
    */

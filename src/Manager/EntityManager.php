@@ -598,10 +598,9 @@ class EntityManager implements SitemapGetterInterface {
   }
 
   /**
-   * Gets sitemaps that are of a type that uses a URL generator which
-   * extends EntityUrlGeneratorBase.
+   * Gets all compatible sitemaps.
    *
-   * @return SimpleSitemap[]
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemap[]
    *   Array of sitemaps of a type that uses a URL generator which
    *   extends EntityUrlGeneratorBase. Keyed by variant.
    *
@@ -611,7 +610,7 @@ class EntityManager implements SitemapGetterInterface {
    */
   protected function getCompatibleSitemaps(): array {
     foreach (SimpleSitemap::loadMultiple() as $variant => $sitemap) {
-      foreach ($sitemap->getType()->getUrlGenerators() as $url_generator)  {
+      foreach ($sitemap->getType()->getUrlGenerators() as $url_generator) {
         if ($url_generator instanceof EntityUrlGeneratorBase) {
           $sitemaps[$variant] = $sitemap;
           break;

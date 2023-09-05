@@ -26,12 +26,17 @@ trait SitemapGetterTrait {
    *
    * @return $this
    *
-   * @deprecated Use setSitemaps() instead.
+   * @deprecated in simple_sitemap:4.1.7 and is removed from simple_sitemap:5.0.0.
+   *    Use setSitemaps() instead.
+   * @see https://www.drupal.org/project/simple_sitemap/issues/3375932
    */
   public function setVariants($variants = NULL): self {
     return $this->setSitemaps($variants);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setSitemaps($sitemaps = NULL): self {
     if ($sitemaps === NULL) {
       $this->sitemaps = static::getCompatibleSitemaps();
@@ -46,7 +51,7 @@ trait SitemapGetterTrait {
       }
       else {
         // Make sure the array keys are sitemap IDs.
-        foreach ($sitemaps as $sitemap)  {
+        foreach ($sitemaps as $sitemap) {
           $sitemaps_by_id[$sitemap->id()] = $sitemap;
         }
       }
@@ -56,6 +61,9 @@ trait SitemapGetterTrait {
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getSitemaps(): array {
     if (NULL === $this->sitemaps) {
       $this->setSitemaps();

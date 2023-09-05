@@ -169,7 +169,7 @@ class QueueWorker {
   /**
    * Queues links from sitemaps.
    *
-   * @param SimpleSitemap[] $sitemaps
+   * @param \Drupal\simple_sitemap\Entity\SimpleSitemap[] $sitemaps
    *   The sitemaps.
    *
    * @return $this
@@ -218,7 +218,7 @@ class QueueWorker {
   /**
    * Deletes the queue and queues links from sitemaps.
    *
-   * @param SimpleSitemap[] $sitemaps
+   * @param \Drupal\simple_sitemap\Entity\SimpleSitemap[] $sitemaps
    *   The sitemaps.
    *
    * @return $this
