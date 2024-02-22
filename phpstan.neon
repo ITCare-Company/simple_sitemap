@@ -1,0 +1,13 @@
+includes:
+    - phpstan-baseline.neon
+parameters:
+    level: 0
+    paths:
+        - .
+    excludePaths:
+        - tests/scripts/performance_test.php
+    ignoreErrors:
+        # new static() is a best practice in Drupal, so we cannot fix that.
+        - "#^Unsafe usage of new static#"
+        # The paragraphs module is not required.
+        - '#^Class Drupal\\paragraphs\\ParagraphInterface not found\.$#'

@@ -129,7 +129,9 @@ class SimpleSitemapTypeEntityForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    if ($this->entity->save() === SAVED_UPDATED) {
+    $return = $this->entity->save();
+
+    if ($return === SAVED_UPDATED) {
       $this->messenger()->addStatus($this->t('Sitemap type %label has been updated.', ['%label' => $this->entity->label()]));
     }
     else {
@@ -137,6 +139,7 @@ class SimpleSitemapTypeEntityForm extends EntityForm {
     }
 
     $form_state->setRedirectUrl($this->entity->toUrl('collection'));
+    return $return;
   }
 
 }
