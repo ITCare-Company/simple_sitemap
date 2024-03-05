@@ -248,10 +248,8 @@ class EntityManager implements SitemapGetterInterface {
       $query = $this->database->select('simple_sitemap_entity_overrides', 'o')
         ->fields('o', ['id', 'inclusion_settings'])
         ->condition('o.entity_type', $entity_type_id)
-        ->condition('o.type', $variants[0]);
-      if (!empty($entity_ids)) {
-        $query->condition('o.entity_id', $entity_ids, 'IN');
-      }
+        ->condition('o.type', $variants[0])
+        ->condition('o.entity_id', $entity_ids, 'IN');
 
       $delete_instances = [];
       foreach ($query->execute()->fetchAll() as $result) {
