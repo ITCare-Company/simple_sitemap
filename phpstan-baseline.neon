@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$_simple_sitemap_index_now\\.$#"
+			count: 1
+			path: modules/simple_sitemap_engines/src/Form/Handler/EntityFormHandler.php
+
+		-
 			message: """
 				#^Call to deprecated function watchdog_exception\\(\\)\\:
 				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
@@ -18,6 +23,16 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: src/Manager/Generator.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\Plugin\\\\Field\\\\FieldType\\\\EntityReferenceItem\\<mixed\\>\\:\\:\\$alt\\.$#"
+			count: 1
+			path: src/Plugin/simple_sitemap/UrlGenerator/EntityUrlGeneratorBase.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\Plugin\\\\Field\\\\FieldType\\\\EntityReferenceItem\\<mixed\\>\\:\\:\\$title\\.$#"
+			count: 1
+			path: src/Plugin/simple_sitemap/UrlGenerator/EntityUrlGeneratorBase.php
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"

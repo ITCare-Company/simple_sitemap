@@ -16,6 +16,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SimpleSitemapEntityForm extends EntityForm {
 
   /**
+   * The entity being used by this form.
+   *
+   * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface
+   */
+  protected $entity;
+
+  /**
    * Entity type manager service.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
