@@ -79,7 +79,7 @@ class QueueWorker {
   /**
    * The sitemap entity.
    *
-   * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface
+   * @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface|null
    */
   protected $sitemapProcessedNow;
 

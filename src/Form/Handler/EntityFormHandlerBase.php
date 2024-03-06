@@ -46,7 +46,7 @@ abstract class EntityFormHandlerBase implements EntityFormHandlerInterface {
   /**
    * The entity being used by this form handler.
    *
-   * @var \Drupal\Core\Entity\EntityInterface
+   * @var \Drupal\Core\Entity\EntityInterface|null
    */
   protected $entity;
 

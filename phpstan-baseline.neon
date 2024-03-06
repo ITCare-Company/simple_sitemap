@@ -20,6 +20,11 @@ parameters:
 			path: src/Controller/SimpleSitemapController.php
 
 		-
+			message: "#^Method Drupal\\\\simple_sitemap\\\\Entity\\\\EntityHelper\\:\\:getSupportedEntityTypes\\(\\) should return array\\<Drupal\\\\Core\\\\Entity\\\\ContentEntityTypeInterface\\> but returns array\\<Drupal\\\\Core\\\\Entity\\\\EntityTypeInterface\\>\\.$#"
+			count: 1
+			path: src/Entity/EntityHelper.php
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: src/Manager/Generator.php
