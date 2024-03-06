@@ -4,6 +4,7 @@ namespace Drupal\simple_sitemap\Manager;
 
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
+use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\simple_sitemap\Settings;
@@ -119,10 +120,10 @@ class Generator implements SitemapGetterInterface {
   /**
    * Gets the default sitemap from the currently set sitemaps.
    *
-   * @return \Drupal\simple_sitemap\Entity\SimpleSitemap|null
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemapInterface|null
    *   The default sitemap or NULL if there are no sitemaps.
    */
-  public function getDefaultSitemap(): ?SimpleSitemap {
+  public function getDefaultSitemap(): ?SimpleSitemapInterface {
     if (empty($sitemaps = $this->getSitemaps())) {
       return NULL;
     }
@@ -259,7 +260,7 @@ class Generator implements SitemapGetterInterface {
   /**
    * Gets all compatible sitemaps.
    *
-   * @return \Drupal\simple_sitemap\Entity\SimpleSitemap[]
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[]
    *   Array of sitemaps.
    */
   protected function getCompatibleSitemaps(): array {

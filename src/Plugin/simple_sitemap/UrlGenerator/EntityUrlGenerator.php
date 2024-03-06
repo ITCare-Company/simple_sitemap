@@ -223,6 +223,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    * {@inheritdoc}
    */
   protected function processDataSet($data_set): array {
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     foreach ($this->entityTypeManager->getStorage($data_set['entity_type'])->loadMultiple((array) $data_set['id']) as $entity) {
       try {
         $paths[] = $this->processEntity($entity);

@@ -598,7 +598,7 @@ class EntityManager implements SitemapGetterInterface {
   /**
    * Gets all compatible sitemaps.
    *
-   * @return \Drupal\simple_sitemap\Entity\SimpleSitemap[]
+   * @return \Drupal\simple_sitemap\Entity\SimpleSitemapInterface[]
    *   Array of sitemaps of a type that uses a URL generator which
    *   extends EntityUrlGeneratorBase. Keyed by variant.
    *

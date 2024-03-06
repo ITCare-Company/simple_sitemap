@@ -266,7 +266,7 @@ class SimpleSitemap extends ConfigEntityBase implements SimpleSitemapInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCreated(): ?string {
+  public function getCreated(): ?int {
     return $this->entityTypeManager()->getStorage('simple_sitemap')->getCreated($this, $this->fetchByStatus);
   }
 
