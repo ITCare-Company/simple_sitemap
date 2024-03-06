@@ -67,7 +67,7 @@ abstract class EntityFormHandlerBase implements EntityFormHandlerInterface {
   /**
    * The sitemap settings.
    *
-   * @var array
+   * @var array|null
    */
   protected $settings;
 

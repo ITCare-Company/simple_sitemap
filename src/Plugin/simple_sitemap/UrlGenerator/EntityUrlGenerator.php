@@ -247,6 +247,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityMalformedException
+   * @throws \Drupal\simple_sitemap\Exception\SkipElementException
    */
   protected function processEntity(ContentEntityInterface $entity): array {
     $entity_settings = $this->entitiesManager

@@ -153,7 +153,6 @@ class Generator implements SitemapGetterInterface {
   public function getContent(?int $delta = NULL): ?string {
     $sitemap = $this->getDefaultSitemap();
 
-    /** @var \Drupal\simple_sitemap\Entity\SimpleSitemapInterface $sitemap */
     if ($sitemap
       && $sitemap->isEnabled()
       && ($sitemap_string = $sitemap->fromPublished()->toString($delta))) {

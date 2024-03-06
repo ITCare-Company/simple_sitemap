@@ -57,3 +57,8 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: src/SimpleSitemapListBuilder.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEmpty\\(\\) with non\\-empty\\-array\\<Behat\\\\Mink\\\\Element\\\\NodeElement\\> will always evaluate to false\\.$#"
+			count: 1
+			path: tests/src/Functional/SimplesitemapTest.php
