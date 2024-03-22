@@ -190,3 +190,12 @@ function simple_sitemap_engines_update_8404() {
     ])->save();
   }
 }
+
+/**
+ * Removing the Google engine, as it supports neither sitemap pinging nor IndexNow.
+ */
+function simple_sitemap_engines_update_8405() {
+  if ($engine = SimpleSitemapEngine::load('google')) {
+    $engine->delete();
+  }
+}
