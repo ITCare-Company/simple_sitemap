@@ -47,7 +47,7 @@ function simple_sitemap_engines_requirements(string $phase): array {
  * Using hook_modules_installed instead of hook_install, as this module's routes do not seem to be available yet.
  */
 function simple_sitemap_engines_modules_installed($modules) {
-  if (in_array('simple_sitemap_engines', $modules, true)) {
+  if (in_array('simple_sitemap_engines', $modules, TRUE)) {
     \Drupal::messenger()->addWarning(t('In order to generate a verification key for the IndexNow service and choose which sitemaps are to be submitted to search engines, visit <a href="@url">this</a> configuration page.',
       ['@url' => Url::fromRoute('simple_sitemap.engines.settings')->toString()]));
   }

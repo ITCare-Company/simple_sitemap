@@ -131,8 +131,8 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
       '#description' => $this->t('All IndexNow requests will be sent to the engine selected here. Only one engine needs to be notified, as it will notify other IndexNow compatible engines for you.<br/>For the sake of equality of opportunity, <strong>consider leaving this at <em>Random</em></strong>, so a random engine can be picked on each submission.'),
       '#default_value' => $config->get('index_now_preferred_engine'),
       '#options' => ['' => '- ' . $this->t('Random') . ' -'] + array_map(function ($engine) {
-          return $engine->label();
-        }, SimpleSitemapEngine::loadIndexNowEngines()),
+        return $engine->label();
+      }, SimpleSitemapEngine::loadIndexNowEngines()),
       '#states' => [
         'visible' => [':input[name="index_now[enabled]"]' => ['checked' => TRUE]],
       ],

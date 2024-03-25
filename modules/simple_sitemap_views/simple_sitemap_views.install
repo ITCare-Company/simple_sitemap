@@ -13,7 +13,7 @@ use Drupal\Core\Url;
  * Using hook_modules_installed instead of hook_install, as this module's routes do not seem to be available yet.
  */
 function simple_sitemap_views_modules_installed($modules) {
-  if (in_array('simple_sitemap_views', $modules, true)) {
+  if (in_array('simple_sitemap_views', $modules, TRUE)) {
     // Enable views display extender plugin.
     /** @var \Drupal\simple_sitemap_views\SimpleSitemapViews $simple_sitemap_views */
     $simple_sitemap_views = \Drupal::service('simple_sitemap.views');
