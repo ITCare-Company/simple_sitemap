@@ -37,7 +37,7 @@ services:
     public: true
     arguments:
       - '@simple_sitemap.settings'
-      - '@state'
+      - '@keyvalue'
       - '@simple_sitemap.queue'
       - '@simple_sitemap.logger'
       - '@module_handler'

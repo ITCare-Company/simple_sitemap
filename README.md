@@ -338,7 +338,7 @@ This plugin defines a way of generating URLs for a sitemap type.
 
 Note:
 Overwriting the default EntityUrlGenerator for a single entity type is possible
-through the flag "overrides_entity_type" = "[entity_type_to_be_overwritten]" in
+through the flag `"overrides_entity_type" = "[entity_type_to_be_overwritten]"` in
 the settings array of the new generator plugin's annotation. See how the
 EntityUrlGenerator is overwritten by the EntityMenuLinkContentUrlGenerator to
 facilitate a different logic for menu links.
