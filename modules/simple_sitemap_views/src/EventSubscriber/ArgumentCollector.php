@@ -54,7 +54,7 @@ class ArgumentCollector implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::TERMINATE] = 'onTerminate';
     return $events;
   }
