@@ -51,7 +51,7 @@ class FormHelper extends BaseFormHelper {
     EntityHelper $entity_helper,
     AccountProxyInterface $current_user,
     ClassResolverInterface $class_resolver,
-    ConfigFactoryInterface $config_factory
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct($generator, $settings, $entity_helper, $current_user, $class_resolver);
     $this->configFactory = $config_factory;

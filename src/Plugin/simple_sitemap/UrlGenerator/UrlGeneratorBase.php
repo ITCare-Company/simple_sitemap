@@ -54,7 +54,7 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
     $plugin_id,
     $plugin_definition,
     Logger $logger,
-    Settings $settings
+    Settings $settings,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->logger = $logger;

@@ -48,7 +48,7 @@ class CustomLinkManager implements SitemapGetterInterface {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    PathValidatorInterface $path_validator
+    PathValidatorInterface $path_validator,
   ) {
     $this->configFactory = $config_factory;
     $this->pathValidator = $path_validator;

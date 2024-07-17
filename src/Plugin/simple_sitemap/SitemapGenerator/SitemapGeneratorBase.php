@@ -85,7 +85,7 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
     ModuleHandlerInterface $module_handler,
     SitemapWriter $sitemap_writer,
     Settings $settings,
-    ModuleExtensionList $module_list
+    ModuleExtensionList $module_list,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;

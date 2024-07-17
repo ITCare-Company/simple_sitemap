@@ -153,13 +153,15 @@ class QueueWorker {
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   The lock backend that should be used.
    */
-  public function __construct(Settings $settings,
-                              KeyValueFactoryInterface $key_value,
-                              SimpleSitemapQueue $element_queue,
-                              Logger $logger,
-                              ModuleHandlerInterface $module_handler,
-                              EntityTypeManagerInterface $entity_type_manager,
-                              LockBackendInterface $lock) {
+  public function __construct(
+    Settings $settings,
+    KeyValueFactoryInterface $key_value,
+    SimpleSitemapQueue $element_queue,
+    Logger $logger,
+    ModuleHandlerInterface $module_handler,
+    EntityTypeManagerInterface $entity_type_manager,
+    LockBackendInterface $lock,
+  ) {
     $this->settings = $settings;
     $this->store = $key_value->get('simple_sitemap');
     $this->queue = $element_queue;

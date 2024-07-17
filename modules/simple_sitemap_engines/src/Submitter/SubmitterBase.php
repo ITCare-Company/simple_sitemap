@@ -74,11 +74,13 @@ abstract class SubmitterBase {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    */
-  public function __construct(ClientInterface $http_client,
-                              Logger $logger,
-                              StateInterface $state,
-                              TimeInterface $time,
-                              ConfigFactoryInterface $config_factory) {
+  public function __construct(
+    ClientInterface $http_client,
+    Logger $logger,
+    StateInterface $state,
+    TimeInterface $time,
+    ConfigFactoryInterface $config_factory,
+  ) {
     $this->httpClient = $http_client;
     $this->logger = $logger;
     $this->state = $state;

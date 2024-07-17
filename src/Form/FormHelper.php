@@ -92,7 +92,7 @@ class FormHelper {
     Settings $settings,
     EntityHelper $entity_helper,
     AccountProxyInterface $current_user,
-    ClassResolverInterface $class_resolver
+    ClassResolverInterface $class_resolver,
   ) {
     $this->generator = $generator;
     $this->settings = $settings;

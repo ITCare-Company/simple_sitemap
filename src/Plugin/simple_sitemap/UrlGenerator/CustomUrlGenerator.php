@@ -84,7 +84,8 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entity_helper,
     CustomLinkManager $custom_links,
-    PathValidatorInterface $path_validator) {
+    PathValidatorInterface $path_validator,
+  ) {
     parent::__construct(
       $configuration,
       $plugin_id,
@@ -106,7 +107,8 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition): SimpleSitemapPluginBase {
+    $plugin_definition,
+  ): SimpleSitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,

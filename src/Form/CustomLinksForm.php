@@ -44,7 +44,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
     Generator $generator,
     Settings $settings,
     FormHelper $form_helper,
-    PathValidatorInterface $path_validator
+    PathValidatorInterface $path_validator,
   ) {
     parent::__construct(
       $config_factory,

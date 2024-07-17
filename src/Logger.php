@@ -72,7 +72,7 @@ class Logger {
   public function __construct(
     LoggerInterface $logger,
     MessengerInterface $messenger,
-    AccountProxyInterface $current_user
+    AccountProxyInterface $current_user,
   ) {
     $this->logger = $logger;
     $this->messenger = $messenger;

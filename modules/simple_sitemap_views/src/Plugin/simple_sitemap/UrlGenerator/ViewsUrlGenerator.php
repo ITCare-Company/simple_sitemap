@@ -76,7 +76,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entity_helper,
     SimpleSitemapViews $sitemap_views,
-    RouteProviderInterface $route_provider
+    RouteProviderInterface $route_provider,
   ) {
     parent::__construct(
       $configuration,
