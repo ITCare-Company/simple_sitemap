@@ -28,7 +28,7 @@
   // eslint-disable-next-line func-names
   Drupal.simpleSitemapViewsUi.Arguments = function ($checkboxes) {
     this.$checkboxes = $checkboxes;
-    this.$checkboxes.on('change', $.proxy(this, 'changeHandler'));
+    this.$checkboxes.on('change', this.changeHandler.bind(this));
   };
 
   // eslint-disable-next-line func-names
