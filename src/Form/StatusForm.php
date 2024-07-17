@@ -4,14 +4,14 @@ namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
 use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
-use Drupal\Core\Database\Connection;
 
 /**
  * Provides form to manage sitemap status.

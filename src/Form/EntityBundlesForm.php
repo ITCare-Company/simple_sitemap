@@ -2,16 +2,16 @@
 
 namespace Drupal\simple_sitemap\Form;
 
-use Drupal\Core\Config\TypedConfigManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Manager\EntityManager;
 use Drupal\simple_sitemap\Manager\Generator;
-use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Settings;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Provides form to manage entity bundles settings.

@@ -2,8 +2,8 @@
 
 namespace Drupal\simple_sitemap\Manager;
 
-use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
 
 /**

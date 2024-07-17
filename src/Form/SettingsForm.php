@@ -2,16 +2,16 @@
 
 namespace Drupal\simple_sitemap\Form;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\simple_sitemap\Manager\Generator;
-use Drupal\Component\Utility\UrlHelper;
-use Drupal\Core\Language\LanguageManagerInterface;
 
 /**
  * Provides form to manage settings.

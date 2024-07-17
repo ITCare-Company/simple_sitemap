@@ -2,16 +2,16 @@
 
 namespace Drupal\simple_sitemap\Form;
 
-use Drupal\Core\Config\TypedConfigManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\simple_sitemap\Entity\EntityHelper;
+use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Manager\EntityManager;
 use Drupal\simple_sitemap\Manager\Generator;
-use Drupal\simple_sitemap\Entity\SimpleSitemap;
-use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Settings;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides form to manage entity settings.
