@@ -164,7 +164,7 @@ display:
           break_phrase: false
           entity_type: node
           entity_field: type
-          plugin_id: node_type
+          plugin_id: entity_bundle:node
         title:
           id: title
           table: node_field_data
@@ -335,7 +335,7 @@ display:
           break_phrase: false
           entity_type: node
           entity_field: type
-          plugin_id: node_type
+          plugin_id: entity_bundle:node
       defaults:
         arguments: false
     cache_metadata:
