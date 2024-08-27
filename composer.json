@@ -20,11 +20,7 @@
   "require": {
     "ext-xmlwriter": "*"
   },
-  "extra": {
-    "drush": {
-      "services": {
-        "drush.services.yml": ">=9"
-      }
+    "conflict": {
+        "drush/drush": "<12.5.1"
     }
-  }
 }

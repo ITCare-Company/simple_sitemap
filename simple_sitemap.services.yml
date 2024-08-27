@@ -7,6 +7,7 @@ services:
       - '@simple_sitemap.queue_worker'
       - '@lock'
       - '@simple_sitemap.logger'
+  Drupal\simple_sitemap\Manager\Generator: '@simple_sitemap.generator'
 
   simple_sitemap.entity_manager:
     class: Drupal\simple_sitemap\Manager\EntityManager
