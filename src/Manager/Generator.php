@@ -231,6 +231,7 @@ class Generator implements SitemapGetterInterface {
    */
   public function entityManager(): EntityManager {
     /** @var \Drupal\simple_sitemap\Manager\EntityManager $entity_manager */
+    // phpcs:ignore DrupalPractice.Objects.GlobalDrupal.GlobalDrupal
     $entity_manager = \Drupal::service('simple_sitemap.entity_manager');
 
     if ($this->sitemaps !== NULL) {
@@ -248,6 +249,7 @@ class Generator implements SitemapGetterInterface {
    */
   public function customLinkManager(): CustomLinkManager {
     /** @var \Drupal\simple_sitemap\Manager\CustomLinkManager $custom_link_manager */
+    // phpcs:ignore DrupalPractice.Objects.GlobalDrupal.GlobalDrupal
     $custom_link_manager = \Drupal::service('simple_sitemap.custom_link_manager');
 
     if ($this->sitemaps !== NULL) {

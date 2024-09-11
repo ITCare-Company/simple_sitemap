@@ -26,7 +26,6 @@ function simple_sitemap_post_update_8403(&$sandbox) {
   }
 }
 
-
 /**
  * Clear cache as service definitions changed.
  *

@@ -78,6 +78,7 @@ class EntityHelper {
       if ($entity_type_id === 'menu_link_content') {
         $bundle_info = [];
 
+        // phpcs:ignore DrupalPractice.Objects.GlobalClass.GlobalClass
         foreach (Menu::loadMultiple() as $menu) {
           $bundle_info[$menu->id()]['label'] = $menu->label();
         }
