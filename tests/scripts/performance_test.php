@@ -123,7 +123,7 @@ class Tester {
    * @param $context
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public static function doBatchGenerate($count_queries = FALSE, &$context) {
+  public static function doBatchGenerate($count_queries, &$context) {
     if ($count_queries) {
       $query_logger = Database::startLog('simple_sitemap');
     }
