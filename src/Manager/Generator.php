@@ -55,16 +55,16 @@ class Generator implements SitemapGetterInterface {
    *   The simple_sitemap.settings service.
    * @param \Drupal\simple_sitemap\Queue\QueueWorker $queue_worker
    *   The simple_sitemap.queue_worker service.
-   * @param \Drupal\Core\Lock\LockBackendInterface|null $lock
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   The lock backend that should be used.
-   * @param \Drupal\simple_sitemap\Logger|null $logger
+   * @param \Drupal\simple_sitemap\Logger $logger
    *   Simple XML Sitemap logger.
    */
   public function __construct(
     Settings $settings,
     QueueWorker $queue_worker,
-    LockBackendInterface $lock = NULL,
-    Logger $logger = NULL,
+    LockBackendInterface $lock,
+    Logger $logger,
   ) {
     $this->settings = $settings;
     $this->queueWorker = $queue_worker;
