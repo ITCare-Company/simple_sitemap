@@ -44,7 +44,7 @@ final class SimpleSitemapCommands extends DrushCommands {
   #[CLI\Command(name: 'simple-sitemap:rebuild-queue', aliases: ['ssr', 'simple-sitemap-rebuild-queue'])]
   #[CLI\Option(name: 'variants', description: 'Queue all or specific sitemaps for regeneration.')]
   #[CLI\Usage(name: 'drush simple-sitemap:rebuild-queue', description: 'Rebuild the sitemap queue for all sitemaps.')]
-  #[CLI\Usage(name: 'drush simple-sitemap:rebuild-queue --variants=default,test', description: "Rebuild the sitemap queue queuing only sitemaps <info>default</info> and <info>test</info>.")]
+  #[CLI\Usage(name: 'drush simple-sitemap:rebuild-queue --variants=default,test', description: "Rebuild the sitemap queue queueing only sitemaps <info>default</info> and <info>test</info>.")]
   public function rebuildQueue(array $options = ['variants' => '']): void {
     $variants = array_keys(SimpleSitemap::loadMultiple());
     if (isset($options['variants']) && (string) $options['variants'] !== '') {

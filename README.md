@@ -163,7 +163,7 @@ Further things that can be tweaked are unchecking 'Exclude duplicate links' and
 increasing 'Maximum links in a sitemap'.
 
 These settings will increase the demand for PHP  execution time and memory, so
-please make sure to test the sitemap generation behaviour. See
+please make sure to test the sitemap generation behavior. See
 'PERFORMANCE TEST'.
 
 ### OTHER SETTINGS ###

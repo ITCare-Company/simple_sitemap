@@ -12,7 +12,7 @@ use Drupal\simple_sitemap\Settings;
 /**
  * Main managing service.
  *
- * Capable of setting/loading module settings, queuing elements and generating
+ * Capable of setting/loading module settings, queueing elements and generating
  * the sitemap. Services for custom link and entity link generation can be
  * fetched from this service as well.
  */

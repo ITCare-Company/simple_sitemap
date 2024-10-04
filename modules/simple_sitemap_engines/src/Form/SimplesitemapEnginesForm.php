@@ -126,7 +126,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     $form['index_now']['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Submit changes to IndexNow capable engines'),
-      '#description' => $this->t('Send change notice to IndexNow compatible search engines right after submitting entity forms. Changes include creating, deleting and updating of an entity.<br/>This behaviour can be overridden on entity forms. Don\'t forget to <a href="@inclusion_url">include entities</a>.',
+      '#description' => $this->t('Send change notice to IndexNow compatible search engines right after submitting entity forms. Changes include creating, deleting and updating of an entity.<br/>This behavior can be overridden on entity forms. Don\'t forget to <a href="@inclusion_url">include entities</a>.',
         ['@inclusion_url' => Url::fromRoute('simple_sitemap.entities')->toString()]
       ),
       '#default_value' => $config->get('index_now_enabled'),
