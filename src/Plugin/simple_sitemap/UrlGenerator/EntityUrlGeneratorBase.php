@@ -12,6 +12,7 @@ use Drupal\Core\Url;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 use Drupal\paragraphs\ParagraphInterface;
+use Drupal\paragraphs_library\LibraryItemInterface;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
@@ -287,7 +288,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
               ];
             }
           }
-          elseif ($item->entity instanceof MediaInterface || $item->entity instanceof ParagraphInterface) {
+          elseif ($item->entity instanceof MediaInterface || $item->entity instanceof ParagraphInterface || $item->entity instanceof LibraryItemInterface) {
             $image_data = array_merge($image_data, $this->getEntityImageData($item->entity));
           }
         }
