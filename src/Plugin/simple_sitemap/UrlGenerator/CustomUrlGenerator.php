@@ -44,13 +44,6 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
   protected $pathValidator;
 
   /**
-   * Include images of custom links.
-   *
-   * @var bool
-   */
-  protected $includeImages;
-
-  /**
    * CustomUrlGenerator constructor.
    *
    * @param array $configuration
@@ -127,8 +120,6 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    * {@inheritdoc}
    */
   public function getDataSets(): array {
-    $this->includeImages = $this->settings->get('custom_links_include_images', FALSE);
-
     $custom_link_settings = $this->customLinks->setSitemaps($this->sitemap)->get();
     $custom_link_settings = $custom_link_settings ? reset($custom_link_settings) : [];
 
@@ -153,6 +144,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     $url_object = Url::fromUserInput($data_set['path'])->setAbsolute();
 
     $entity = $this->entityHelper->getEntityFromUrlObject($url_object);
+    $include_images = $this->settings->get('custom_links_include_images', FALSE);
 
     $path_data = [
       'url' => $url_object,
@@ -161,7 +153,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
         : NULL,
       'priority' => $data_set['priority'] ?? NULL,
       'changefreq' => !empty($data_set['changefreq']) ? $data_set['changefreq'] : NULL,
-      'images' => $this->includeImages && !empty($entity) && $entity instanceof ContentEntityInterface
+      'images' => $include_images && !empty($entity) && $entity instanceof ContentEntityInterface
         ? $this->getEntityImageData($entity)
         : [],
       'meta' => [
