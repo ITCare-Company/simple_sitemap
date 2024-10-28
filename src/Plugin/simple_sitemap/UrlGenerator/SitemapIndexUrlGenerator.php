@@ -49,6 +49,7 @@ class SitemapIndexUrlGenerator extends UrlGeneratorBase {
       // Additional info useful in hooks.
       $path_data['meta']['entity_info'] = [
         'entity_type' => $sitemap->getEntityTypeId(),
+        'bundle' => $sitemap->bundle(),
         'id' => $sitemap->id(),
       ];
 

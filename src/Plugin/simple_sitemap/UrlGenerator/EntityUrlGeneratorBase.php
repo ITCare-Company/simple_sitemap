@@ -314,7 +314,11 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       }
 
       // Additional info useful in hooks.
-      $path_data['meta']['entity_info'] = ['entity_type' => $entity->getEntityTypeId(), 'id' => $entity->id()];
+      $path_data['meta']['entity_info'] = [
+        'entity_type' => $entity->getEntityTypeId(),
+        'bundle' => $entity->bundle(),
+        'id' => $entity->id(),
+      ];
     }
 
     return $path_data;
