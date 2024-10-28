@@ -195,7 +195,7 @@ class EntityHelper {
   /**
    * Gets the entity from URL object.
    *
-   * @param \Drupal\Core\Url $url_object
+   * @param \Drupal\Core\Url $url
    *   The URL object.
    *
    * @return \Drupal\Core\Entity\EntityInterface|null
@@ -204,17 +204,17 @@ class EntityHelper {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getEntityFromUrlObject(Url $url_object): ?EntityInterface {
-    if ($url_object->isRouted()) {
+  public function getEntityFromUrlObject(Url $url): ?EntityInterface {
+    if ($url->isRouted()) {
 
       // Fix for the homepage, see
       // https://www.drupal.org/project/simple_sitemap/issues/3194130.
-      if ($url_object->getRouteName() === '<front>' &&
+      if ($url->getRouteName() === '<front>' &&
         !empty($uri = $this->configFactory->get('system.site')->get('page.front'))) {
-        $url_object = Url::fromUri('internal:' . $uri);
+        $url = Url::fromUri('internal:' . $uri);
       }
 
-      foreach ($url_object->getRouteParameters() as $entity_type_id => $entity_id) {
+      foreach ($url->getRouteParameters() as $entity_type_id => $entity_id) {
         if ($entity_id && $this->entityTypeManager->hasDefinition($entity_type_id)
           && $entity = $this->entityTypeManager->getStorage($entity_type_id)->load($entity_id)) {
           return $entity;

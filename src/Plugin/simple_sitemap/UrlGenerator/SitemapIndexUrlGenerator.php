@@ -33,7 +33,8 @@ class SitemapIndexUrlGenerator extends UrlGeneratorBase {
   /**
    * {@inheritdoc}
    *
-   * @todo May need to implement a way of saving which sitemaps to index with
+   * @todo
+   * May need to implement a way of saving which sitemaps to index with
    * each sitemap index. Right now all sitemaps that are not of a type that
    * implements the sitemap index generator are indexed.
    */
@@ -41,21 +42,17 @@ class SitemapIndexUrlGenerator extends UrlGeneratorBase {
     if (($sitemap = SimpleSitemap::load($data_set))
       && $sitemap->status()
       && $sitemap->getType()->getSitemapGenerator()->getPluginId() !== 'index') {
-      $url_object = $sitemap->toUrl()->setAbsolute();
 
-      return [
-        'url' => $url_object->toString(),
-        'lastmod' => date('c', $sitemap->fromPublished()->getCreated()),
+      $settings = ['lastmod' => date('c', $sitemap->fromPublished()->getCreated())];
+      $path_data = $this->constructPathData($sitemap->toUrl(), $settings);
 
-        // Additional info useful in hooks.
-        'meta' => [
-          'path' => $url_object->getInternalPath(),
-          'entity_info' => [
-            'entity_type' => $sitemap->getEntityTypeId(),
-            'id' => $sitemap->id(),
-          ],
-        ],
+      // Additional info useful in hooks.
+      $path_data['meta']['entity_info'] = [
+        'entity_type' => $sitemap->getEntityTypeId(),
+        'id' => $sitemap->id(),
       ];
+
+      return $path_data;
     }
 
     throw new SkipElementException();

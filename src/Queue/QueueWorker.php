@@ -431,7 +431,7 @@ class QueueWorker {
   /**
    * Resets the local cache.
    */
-  protected function resetWorker() {
+  protected function resetWorker(): void {
     $this->results = [];
     $this->processedPaths = [];
     $this->processedResults = [];

@@ -2,8 +2,6 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
-use Drupal\Component\Utility\UrlHelper;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\PathValidatorInterface;
@@ -141,39 +139,11 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
       throw new SkipElementException();
     }
 
-    $url_object = Url::fromUserInput($data_set['path'])->setAbsolute();
+    $url = Url::fromUserInput($data_set['path']);
 
-    $entity = $this->entityHelper->getEntityFromUrlObject($url_object);
-    $include_images = $this->settings->get('custom_links_include_images', FALSE);
+    $data_set['include_images'] = $this->settings->get('custom_links_include_images', FALSE);
 
-    $path_data = [
-      'url' => $url_object,
-      'lastmod' => !empty($entity) && method_exists($entity, 'getChangedTime')
-        ? date('c', $entity->getChangedTime())
-        : NULL,
-      'priority' => $data_set['priority'] ?? NULL,
-      'changefreq' => !empty($data_set['changefreq']) ? $data_set['changefreq'] : NULL,
-      'images' => $include_images && !empty($entity) && $entity instanceof ContentEntityInterface
-        ? $this->getEntityImageData($entity)
-        : [],
-      'meta' => [
-        'path' => $url_object->getInternalPath(),
-      ],
-    ];
-
-    if (($query = $url_object->getOption('query')) && is_array($query)) {
-      $path_data['meta']['query'] = UrlHelper::buildQuery($query);
-    }
-
-    // Additional info useful in hooks.
-    if (!empty($entity)) {
-      $path_data['meta']['entity_info'] = [
-        'entity_type' => $entity->getEntityTypeId(),
-        'id' => $entity->id(),
-      ];
-    }
-
-    return $path_data;
+    return $this->constructPathData($url, $data_set);
   }
 
 }
