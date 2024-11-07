@@ -4,29 +4,24 @@ services:
 
   simple_sitemap.generator:
     class: Drupal\simple_sitemap\Manager\Generator
-    public: true
     arguments:
       $lock: '@lock'
   Drupal\simple_sitemap\Manager\Generator: '@simple_sitemap.generator'
 
   simple_sitemap.entity_manager:
     class: Drupal\simple_sitemap\Manager\EntityManager
-    public: true
   Drupal\simple_sitemap\Manager\EntityManager: '@simple_sitemap.entity_manager'
 
   simple_sitemap.custom_link_manager:
     class: Drupal\simple_sitemap\Manager\CustomLinkManager
-    public: true
   Drupal\simple_sitemap\Manager\CustomLinkManager: '@simple_sitemap.custom_link_manager'
 
   simple_sitemap.settings:
     class: Drupal\simple_sitemap\Settings
-    public: true
   Drupal\simple_sitemap\Settings: '@simple_sitemap.settings'
 
   simple_sitemap.queue_worker:
     class: Drupal\simple_sitemap\Queue\QueueWorker
-    public: true
     arguments:
       $key_value: '@keyvalue'
       $lock: '@lock'
@@ -34,29 +29,24 @@ services:
 
   simple_sitemap.queue:
     class: Drupal\simple_sitemap\Queue\SimpleSitemapQueue
-    public: true
     arguments:
       $name: 'simple_sitemap_elements'
   Drupal\simple_sitemap\Queue\SimpleSitemapQueue: '@simple_sitemap.queue'
 
   simple_sitemap.sitemap_writer:
     class: Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter
-    public: true
   Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter: '@simple_sitemap.sitemap_writer'
 
   simple_sitemap.entity_helper:
     class: Drupal\simple_sitemap\Entity\EntityHelper
-    public: true
   Drupal\simple_sitemap\Entity\EntityHelper: '@simple_sitemap.entity_helper'
 
   simple_sitemap.form_helper:
     class: Drupal\simple_sitemap\Form\FormHelper
-    public: true
   Drupal\simple_sitemap\Form\FormHelper: '@simple_sitemap.form_helper'
 
   simple_sitemap.logger:
     class: Drupal\simple_sitemap\Logger
-    public: true
     arguments:
       # @todo Can be removed.
       # See https://www.drupal.org/node/3395436
@@ -71,7 +61,6 @@ services:
 
   logger.channel.simple_sitemap:
     parent: logger.channel_base
-    public: true
     arguments:
       - simple_sitemap
 

@@ -4,7 +4,6 @@ services:
 
   simple_sitemap.engines.sitemap_submitter:
     class: Drupal\simple_sitemap_engines\Submitter\SitemapSubmitter
-    public: true
   Drupal\simple_sitemap_engines\Submitter\SitemapSubmitter: '@simple_sitemap.engines.sitemap_submitter'
 
   simple_sitemap.engines.index_now_submitter:
