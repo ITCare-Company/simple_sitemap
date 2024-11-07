@@ -128,6 +128,17 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
     }
   }
 
+  /**
+   * Constructs the path data.
+   *
+   * @param \Drupal\Core\Url $url
+   *   The URL to process.
+   * @param array $settings
+   *   The sitemap settings.
+   *
+   * @return array
+   *   The path data.
+   */
   protected function constructPathData(Url $url, array $settings = []): array {
     $url = $url->setAbsolute();
 
@@ -158,7 +169,7 @@ abstract class UrlGeneratorBase extends SimpleSitemapPluginBase implements UrlGe
     ];
 
     // Additional info useful in hooks.
-    $path_data ['meta']['path'] = $path;
+    $path_data['meta']['path'] = $path;
     if (($query = $url->getOption('query')) && is_array($query)) {
       $path_data['meta']['query'] = UrlHelper::buildQuery($query);
     }

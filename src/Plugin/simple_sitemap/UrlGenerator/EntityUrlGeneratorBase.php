@@ -298,11 +298,14 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     return $image_data;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function constructPathData(Url $url, array $settings = []): array {
     $path_data = parent::constructPathData($url, $settings);
 
-    // For paths based on entities we require the URL object instead of a URL string so
-    // alternate URLs can be calculated later on.
+    // For paths based on entities we require the URL object instead of a URL
+    // string so alternate URLs can be calculated later on.
     $path_data['url'] = $url;
 
     if (($entity = $this->entityHelper->getEntityFromUrlObject($url)) && $entity instanceof ContentEntityInterface) {

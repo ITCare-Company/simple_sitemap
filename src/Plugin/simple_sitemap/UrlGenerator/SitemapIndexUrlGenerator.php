@@ -33,8 +33,7 @@ class SitemapIndexUrlGenerator extends UrlGeneratorBase {
   /**
    * {@inheritdoc}
    *
-   * @todo
-   * May need to implement a way of saving which sitemaps to index with
+   * @todo May need to implement a way of saving which sitemaps to index with
    * each sitemap index. Right now all sitemaps that are not of a type that
    * implements the sitemap index generator are indexed.
    */
