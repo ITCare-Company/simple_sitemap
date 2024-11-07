@@ -8,16 +8,19 @@ services:
       - '@state'
       - '@datetime.time'
       - '@config.factory'
+  Drupal\simple_sitemap_engines\Submitter\SitemapSubmitter: '@simple_sitemap.engines.sitemap_submitter'
 
   simple_sitemap.engines.index_now_submitter:
     class: Drupal\simple_sitemap_engines\Submitter\IndexNowSubmitter
     parent: simple_sitemap.engines.sitemap_submitter
+  Drupal\simple_sitemap_engines\Submitter\IndexNowSubmitter: '@simple_sitemap.engines.index_now_submitter'
 
   simple_sitemap.engines.form_helper:
     class: Drupal\simple_sitemap_engines\Form\FormHelper
     parent: simple_sitemap.form_helper
     arguments:
       - '@config.factory'
+  Drupal\simple_sitemap_engines\Form\FormHelper: '@simple_sitemap.engines.form_helper'
 
   simple_sitemap.engines.path_processor:
     class: Drupal\simple_sitemap_engines\PathProcessor\IndexNowPathProcessor

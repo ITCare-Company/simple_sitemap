@@ -19,6 +19,7 @@ services:
       - '@database'
       - '@entity_type.manager'
       - '@entity_field.manager'
+  Drupal\simple_sitemap\Manager\EntityManager: '@simple_sitemap.entity_manager'
 
   simple_sitemap.custom_link_manager:
     class: Drupal\simple_sitemap\Manager\CustomLinkManager
@@ -26,12 +27,14 @@ services:
     arguments:
       - '@config.factory'
       - '@path.validator'
+  Drupal\simple_sitemap\Manager\CustomLinkManager: '@simple_sitemap.custom_link_manager'
 
   simple_sitemap.settings:
     class: Drupal\simple_sitemap\Settings
     public: true
     arguments:
       - '@config.factory'
+  Drupal\simple_sitemap\Settings: '@simple_sitemap.settings'
 
   simple_sitemap.queue_worker:
     class: Drupal\simple_sitemap\Queue\QueueWorker
@@ -44,6 +47,7 @@ services:
       - '@module_handler'
       - '@entity_type.manager'
       - '@lock'
+  Drupal\simple_sitemap\Queue\QueueWorker: '@simple_sitemap.queue_worker'
 
   simple_sitemap.queue:
     class: Drupal\simple_sitemap\Queue\SimpleSitemapQueue
@@ -52,12 +56,14 @@ services:
       - 'simple_sitemap_elements'
       - '@database'
       - '@datetime.time'
+  Drupal\simple_sitemap\Queue\SimpleSitemapQueue: '@simple_sitemap.queue'
 
   simple_sitemap.sitemap_writer:
     class: Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter
     public: true
     arguments:
       - '@router.route_provider'
+  Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter: '@simple_sitemap.sitemap_writer'
 
   simple_sitemap.entity_helper:
     class: Drupal\simple_sitemap\Entity\EntityHelper
@@ -66,6 +72,7 @@ services:
       - '@entity_type.manager'
       - '@entity_type.bundle.info'
       - '@config.factory'
+  Drupal\simple_sitemap\Entity\EntityHelper: '@simple_sitemap.entity_helper'
 
   simple_sitemap.form_helper:
     class: Drupal\simple_sitemap\Form\FormHelper
@@ -76,6 +83,7 @@ services:
       - '@simple_sitemap.entity_helper'
       - '@current_user'
       - '@class_resolver'
+  Drupal\simple_sitemap\Form\FormHelper: '@simple_sitemap.form_helper'
 
   simple_sitemap.logger:
     class: Drupal\simple_sitemap\Logger
@@ -84,6 +92,7 @@ services:
       - '@logger.channel.simple_sitemap'
       - '@messenger'
       - '@current_user'
+  Drupal\simple_sitemap\Logger: '@simple_sitemap.logger'
 
   simple_sitemap.path_processor:
     class: Drupal\simple_sitemap\PathProcessor\SitemapPathProcessor
@@ -100,7 +109,9 @@ services:
   plugin.manager.simple_sitemap.url_generator:
     class: Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager
     parent: default_plugin_manager
+  Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager: '@plugin.manager.simple_sitemap.url_generator'
 
   plugin.manager.simple_sitemap.sitemap_generator:
     class: Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorManager
     parent: default_plugin_manager
+  Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorManager: '@plugin.manager.simple_sitemap.sitemap_generator'

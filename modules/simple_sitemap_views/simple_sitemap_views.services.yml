@@ -6,6 +6,7 @@ services:
       - '@config.factory'
       - '@queue'
       - '@database'
+  Drupal\simple_sitemap_views\SimpleSitemapViews: '@simple_sitemap.views'
 
   simple_sitemap.views.argument_collector:
     class: Drupal\simple_sitemap_views\EventSubscriber\ArgumentCollector
