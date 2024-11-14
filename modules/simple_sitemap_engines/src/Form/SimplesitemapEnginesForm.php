@@ -4,7 +4,8 @@ namespace Drupal\simple_sitemap_engines\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -16,12 +17,13 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap_engines\Entity\SimpleSitemapEngine;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form for managing search engine submission settings.
  */
 class SimplesitemapEnginesForm extends ConfigFormBase {
+
+  use AutowireTrait;
 
   /**
    * The entity type manager service.
@@ -40,7 +42,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
   /**
    * The date formatter service.
    *
-   * @var \Drupal\Core\Datetime\DateFormatter
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;
 
@@ -62,7 +64,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
    *   The entity type manager service.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
-   * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
@@ -72,7 +74,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     TypedConfigManagerInterface $typedConfigManager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityFieldManagerInterface $entity_field_manager,
-    DateFormatter $date_formatter,
+    DateFormatterInterface $date_formatter,
     StateInterface $state,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
@@ -80,20 +82,6 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
     $this->entityFieldManager = $entity_field_manager;
     $this->dateFormatter = $date_formatter;
     $this->state = $state;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('config.typed'),
-      $container->get('entity_type.manager'),
-      $container->get('entity_field.manager'),
-      $container->get('date.formatter'),
-      $container->get('state')
-    );
   }
 
   /**

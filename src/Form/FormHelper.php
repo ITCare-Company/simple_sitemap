@@ -405,7 +405,7 @@ class FormHelper {
    *   Cron intervals.
    */
   public static function getCronIntervalOptions(): array {
-    /** @var \Drupal\Core\Datetime\DateFormatter $formatter */
+    /** @var \Drupal\Core\Datetime\DateFormatterInterface $formatter */
     $formatter = \Drupal::service('date.formatter');
     $intervals = array_flip(static::$cronIntervals);
     foreach ($intervals as $interval => &$label) {
