@@ -45,8 +45,8 @@ for instructions on how to install or update Drupal modules.
 
 ### PERMISSIONS ###
 
-The module permission 'administer sitemap settings' can be configured under
-admin/people/permissions.
+The module permissions can be configured under
+admin/people/permissions/module/simple_sitemap.
 
 ### SITEMAPS ###
 
