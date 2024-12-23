@@ -26,7 +26,7 @@ class Logger {
   /**
    * The messenger.
    *
-   * @var MessengerInterface
+   * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
 
@@ -56,7 +56,7 @@ class Logger {
    *
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
-   * @param MessengerInterface $messenger
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
@@ -107,7 +107,6 @@ class Logger {
    *
    * @param \Throwable $exception
    *   The exception.
-   *
    * @param string $logSeverityLevel
    *   The severity level.
    *
