@@ -16,4 +16,5 @@ tymchuk
 unstash
 unstashes
 urlset
+varchar
 xmlwriter
