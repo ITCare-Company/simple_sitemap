@@ -268,12 +268,24 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to process.
+   * @param array $processed
+   *   Internal use only. An array of processed entities.
    *
    * @return array
    *   The image data.
    */
-  protected function getEntityImageData(ContentEntityInterface $entity): array {
+  protected function getEntityImageData(ContentEntityInterface $entity, array &$processed = []): array {
+    $entity_type_id = $entity->getEntityTypeId();
+    $entity_id = $entity->id();
     $image_data = [];
+
+    // Skip already processed entities.
+    if (isset($processed[$entity_type_id][$entity_id])) {
+      return $image_data;
+    }
+
+    // Mark the entity as processed.
+    $processed[$entity_type_id][$entity_id] = $entity_id;
 
     foreach ($entity->getFields(FALSE) as $field) {
       if ($field instanceof EntityReferenceFieldItemListInterface && !$field->getFieldDefinition()->isReadOnly()) {
@@ -289,7 +301,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
             }
           }
           elseif ($item->entity instanceof MediaInterface || $item->entity instanceof ParagraphInterface || $item->entity instanceof LibraryItemInterface) {
-            $image_data = array_merge($image_data, $this->getEntityImageData($item->entity));
+            $image_data = array_merge($image_data, $this->getEntityImageData($item->entity, $processed));
           }
         }
       }
