@@ -67,11 +67,9 @@ abstract class SimplesitemapTestBase extends BrowserTestBase {
   protected $defaultSitemapUrl = 'sitemap.xml';
 
   /**
-   * Use the stable9 theme.
-   *
-   * @var string
+   * {@inheritdoc}
    */
-  protected $defaultTheme = 'stable9';
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
