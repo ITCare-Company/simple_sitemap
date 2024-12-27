@@ -177,6 +177,11 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
             // See https://www.drupal.org/project/simple_sitemap/issues/3102450.
             $query->accessCheck(FALSE);
 
+            // Add tag and metadata to the query.
+            $query->addTag('simple_sitemap')
+              ->addMetaData('sitemap', $this->sitemap)
+              ->addMetaData('bundle', $bundle_name);
+
             $data_set = [
               'entity_type' => $entity_type_name,
               'id' => [],
