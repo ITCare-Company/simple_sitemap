@@ -9,7 +9,7 @@ use Drupal\language\Entity\ConfigurableLanguage;
 /**
  * Provides the base class for web tests for Simple sitemap.
  */
-abstract class SimplesitemapTestBase extends BrowserTestBase {
+abstract class SimpleSitemapTestBase extends BrowserTestBase {
 
   use StringTranslationTrait;
 

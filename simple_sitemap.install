@@ -30,7 +30,7 @@ function simple_sitemap_requirements($phase) {
 
       // @todo Implement for 4.x
       // phpcs:disable
-//      /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
+//      /** @var \Drupal\simple_sitemap\SimpleSitemap $generator */
 //      $generator = \Drupal::service('simple_sitemap.generator');
 //      $generated_ago = $generator->getGeneratedAgo();
 //      $cron_generation = $generator->getSetting('cron_generate');

@@ -7,7 +7,7 @@
 
 use Drupal\Core\Url;
 use Drupal\simple_sitemap_engines\Entity\SimpleSitemapEngine;
-use Drupal\simple_sitemap_engines\Form\SimplesitemapEnginesForm;
+use Drupal\simple_sitemap_engines\Form\SimpleSitemapEnginesForm;
 
 /**
  * Implements hook_requirements().
@@ -17,12 +17,12 @@ function simple_sitemap_engines_requirements(string $phase): array {
 
   if ($phase === 'runtime'
     && \Drupal::config('simple_sitemap_engines.settings')->get('index_now_enabled')) {
-    switch (SimplesitemapEnginesForm::getKeyLocation()) {
+    switch (SimpleSitemapEnginesForm::getKeyLocation()) {
       case 'state':
         $requirements['simple_sitemap_engines_index_now'] = [
           'title' => t('Simple XML Sitemap IndexNow'),
           'value' => t('Verification key in Drupal State'),
-          'description' => SimplesitemapEnginesForm::getKeyStatusMessage('state_warning'),
+          'description' => SimpleSitemapEnginesForm::getKeyStatusMessage('state_warning'),
           'severity' => REQUIREMENT_WARNING,
         ];
         break;
@@ -31,7 +31,7 @@ function simple_sitemap_engines_requirements(string $phase): array {
         $requirements['simple_sitemap_engines_index_now'] = [
           'title' => t('Simple XML Sitemap IndexNow'),
           'value' => t('Verification key not available'),
-          'description' => SimplesitemapEnginesForm::getKeyStatusMessage('missing_warning'),
+          'description' => SimpleSitemapEnginesForm::getKeyStatusMessage('missing_warning'),
           'severity' => REQUIREMENT_WARNING,
         ];
         break;

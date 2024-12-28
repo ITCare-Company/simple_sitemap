@@ -49,7 +49,7 @@ class Generator implements SitemapGetterInterface {
   protected $logger;
 
   /**
-   * Simplesitemap constructor.
+   * Generator constructor.
    *
    * @param \Drupal\simple_sitemap\Settings $settings
    *   The simple_sitemap.settings service.
