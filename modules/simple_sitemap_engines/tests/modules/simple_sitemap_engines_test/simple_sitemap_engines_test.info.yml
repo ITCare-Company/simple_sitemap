@@ -1,0 +1,6 @@
+name: 'Simple XML Sitemap (Search engines) Test'
+type: module
+description: 'Test module for Simple XML Sitemap (Search engines).'
+package: Testing
+dependencies:
+  - simple_sitemap:simple_sitemap_engines
