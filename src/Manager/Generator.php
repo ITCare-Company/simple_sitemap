@@ -180,7 +180,7 @@ class Generator implements SitemapGetterInterface {
     }
     switch ($from) {
       case QueueWorker::GENERATE_TYPE_FORM:
-      case QueueWorker::GENERATE_TYPE_DRUSH;
+      case QueueWorker::GENERATE_TYPE_DRUSH:
         $this->queueWorker->batchGenerate($from);
         break;
 
