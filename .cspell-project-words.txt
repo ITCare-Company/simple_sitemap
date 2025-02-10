@@ -6,7 +6,6 @@ indexnow
 lastmod
 naver
 pawel
-phplint
 seznam
 simplesitemap
 sitemapindex
