@@ -31,7 +31,7 @@ parameters:
 			path: src/Manager/Generator.php
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\Plugin\\\\Field\\\\FieldType\\\\EntityReferenceItem\\<mixed\\>\\:\\:\\$alt\\.$#"
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\Plugin\\\\Field\\\\FieldType\\\\EntityReferenceItem\\<mixed\\>\\:\\:\\$description\\.$#"
 			count: 1
 			path: src/Plugin/simple_sitemap/UrlGenerator/EntityUrlGeneratorBase.php
 

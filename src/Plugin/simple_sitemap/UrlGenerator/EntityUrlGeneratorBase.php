@@ -295,7 +295,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
             if ($path) {
               $image_data[] = [
                 'path' => $this->replaceBaseUrlWithCustom($path),
-                'alt' => $item->alt,
+                'alt' => $item->alt ?? $item->description,
                 'title' => $item->title,
               ];
             }
