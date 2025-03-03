@@ -1,7 +1,7 @@
 name: 'Simple XML Sitemap (Search engines)'
 type: module
 description: 'Submits sitemaps to search engines and notifies IndexNow compatible engines about changes to entities.'
-configure: simple_sitemap_engines.settings
+configure: simple_sitemap.engines.settings
 package: SEO
 core_version_requirement: ^10.3 || ^11
 dependencies:

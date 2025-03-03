@@ -1,7 +1,7 @@
 name: 'Simple XML Sitemap (Views)'
 type: module
 description: 'Provides integration of the Simple XML Sitemap module with the Views module.'
-configure: simple_sitemap.settings_views
+configure: simple_sitemap.views
 package: SEO
 core_version_requirement: ^10.3 || ^11
 dependencies:
