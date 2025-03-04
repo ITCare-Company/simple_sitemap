@@ -180,14 +180,6 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
               $query->condition($keys['bundle'], $bundle_name);
             }
 
-            // @todo Remove the below and add hooks for greater flexibility.
-            if (!empty($keys['published'])) {
-              $query->condition($keys['published'], 1);
-            }
-            elseif (!empty($keys['status'])) {
-              $query->condition($keys['status'], 1);
-            }
-
             // Shift access check to EntityUrlGeneratorBase for language
             // specific access.
             // See https://www.drupal.org/project/simple_sitemap/issues/3102450.
