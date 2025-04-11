@@ -308,6 +308,13 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       $this->entityMemoryCache->deleteAll();
     }
 
+    // Make sure to clear cached access check results, so it does not build up
+    // resulting in a constant increase of memory.
+    // See https://www.drupal.org/project/simple_sitemap/issues/3518739
+    $this->entityTypeManager
+      ->getAccessControlHandler($data_set['entity_type'])
+      ->resetCache();
+
     return array_merge([], ...$url_variant_sets);
   }
 
