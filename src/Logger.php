@@ -32,16 +32,6 @@ class Logger implements LoggerAwareInterface {
    */
   protected $substitutions = [];
 
-  /**
-   * Logger constructor.
-   *
-   * @param \Psr\Log\LoggerInterface $logger
-   *   A logger instance.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
-   *   The current user.
-   */
   public function __construct(
     protected MessengerInterface $messenger,
     protected AccountProxyInterface $currentUser,
