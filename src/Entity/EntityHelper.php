@@ -122,7 +122,10 @@ class EntityHelper {
    *   The bundle of the entity.
    */
   public function getEntityBundle(EntityInterface $entity): string {
-    return $entity->getEntityTypeId() === 'menu_link_content' && method_exists($entity, 'getMenuName') ? $entity->getMenuName() : $entity->bundle();
+    $bundle = $entity->getEntityTypeId() === 'menu_link_content' && method_exists($entity, 'getMenuName')
+      ? ($entity->getMenuName() ?? $entity->bundle())
+      : $entity->bundle();
+    return $bundle ?? $entity->getEntityTypeId();
   }
 
   /**
