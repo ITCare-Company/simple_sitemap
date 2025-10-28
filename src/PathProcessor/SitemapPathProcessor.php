@@ -18,7 +18,12 @@ class SitemapPathProcessor implements InboundPathProcessorInterface, OutboundPat
    */
   public function processInbound($path, Request $request) {
     $args = explode('/', $path ?? '');
-    if (count($args) === 3 && $args[2] === 'sitemap.xml' && SimpleSitemap::load($args[1])) {
+    if (count($args) === 3 && $args[2] === 'sitemap.xml'
+    // Ensure variant is ASCII, becase core doesn't yet.
+    // @see https://www.drupal.org/project/simple_sitemap/issues/3554196
+    // @see https://www.drupal.org/project/drupal/issues/3475540
+    && mb_check_encoding($args[1], 'ASCII')
+    && SimpleSitemap::load($args[1])) {
       $path = '/sitemaps/' . $args[1] . '/sitemap.xml';
     }
 
