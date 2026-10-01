@@ -23,7 +23,7 @@ function simple_sitemap_engines_requirements(string $phase): array {
           'title' => t('Simple XML Sitemap IndexNow'),
           'value' => t('Verification key in Drupal State'),
           'description' => SimpleSitemapEnginesForm::getKeyStatusMessage('state_warning'),
-          'severity' => REQUIREMENT_WARNING,
+          'severity' => (class_exists('\\Drupal\\Core\\Extension\\Requirement\\RequirementSeverity') ? \Drupal\Core\Extension\Requirement\RequirementSeverity::Warning : REQUIREMENT_WARNING),
         ];
         break;
 
@@ -32,7 +32,7 @@ function simple_sitemap_engines_requirements(string $phase): array {
           'title' => t('Simple XML Sitemap IndexNow'),
           'value' => t('Verification key not available'),
           'description' => SimpleSitemapEnginesForm::getKeyStatusMessage('missing_warning'),
-          'severity' => REQUIREMENT_WARNING,
+          'severity' => (class_exists('\\Drupal\\Core\\Extension\\Requirement\\RequirementSeverity') ? \Drupal\Core\Extension\Requirement\RequirementSeverity::Warning : REQUIREMENT_WARNING),
         ];
         break;
     }
