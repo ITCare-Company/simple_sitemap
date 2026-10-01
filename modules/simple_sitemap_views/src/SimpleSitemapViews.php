@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap_views;
 
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Database;
@@ -642,7 +643,7 @@ class SimpleSitemapViews {
     static $plugin_ids = [];
 
     if (empty($plugin_ids)) {
-      $display_plugins = Views::pluginManager('display')->getDefinitions();
+      $display_plugins = DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => \Drupal::service('views.plugin_managers')->get('display')->getDefinitions(), fn() => Views::pluginManager('display')->getDefinitions());
 
       // Get all display plugins that use the route.
       foreach ($display_plugins as $plugin_id => $definition) {
