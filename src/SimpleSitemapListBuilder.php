@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\Entity\DraggableListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -80,7 +81,7 @@ class SimpleSitemapListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity): array {
+  public function getDefaultOperations(EntityInterface $entity, CacheableMetadata $cacheability): array {
     return [
       ['title' => $this->t('Edit'), 'url' => $entity->toUrl('edit-form')],
       ['title' => $this->t('Delete'), 'url' => $entity->toUrl('delete-form')],
