@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\simple_sitemap\Annotation\UrlGenerator;
+use Drupal\simple_sitemap\Attribute\UrlGenerator as UrlGeneratorAttribute;
 
 /**
  * Manages discovery of UrlGenerator plugins.
@@ -33,6 +34,7 @@ class UrlGeneratorManager extends DefaultPluginManager {
       $namespaces,
       $module_handler,
       UrlGeneratorInterface::class,
+      UrlGeneratorAttribute::class,
       UrlGenerator::class
     );
 

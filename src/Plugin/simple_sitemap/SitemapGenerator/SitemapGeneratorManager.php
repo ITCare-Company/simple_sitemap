@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\simple_sitemap\Annotation\SitemapGenerator;
+use Drupal\simple_sitemap\Attribute\SitemapGenerator as SitemapGeneratorAttribute;
 
 /**
  * Manages discovery of SitemapGenerator plugins.
@@ -33,6 +34,7 @@ class SitemapGeneratorManager extends DefaultPluginManager {
       $namespaces,
       $module_handler,
       SitemapGeneratorInterface::class,
+      SitemapGeneratorAttribute::class,
       SitemapGenerator::class
     );
 
