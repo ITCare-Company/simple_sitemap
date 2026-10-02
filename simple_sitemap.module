@@ -18,7 +18,17 @@ use Drupal\system\MenuInterface;
 function simple_sitemap_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'help.page.simple_sitemap':
-      return check_markup(file_get_contents(__DIR__ . '/README.md'));
+      // check_markup() is deprecated with no direct OOP replacement
+      // (CR#3588040); render through the same text-filtering pipeline and
+      // return the markup as a string to preserve this hook's existing
+      // contract. No format was passed to the original check_markup() call,
+      // so filter_fallback_format() reproduces its default exactly.
+      $build = [
+        '#type' => 'processed_text',
+        '#text' => file_get_contents(__DIR__ . '/README.md'),
+        '#format' => filter_fallback_format(),
+      ];
+      return (string) \Drupal::service('renderer')->renderInIsolation($build);
 
     case 'simple_sitemap.entities':
       return '<p>' . t('Simple XML Sitemap settings will be added only to entity forms of entity types enabled here. Settings for specific entity bundles (e.g. <em>page</em>) can be adjusted here or on the bundle pages.') . '</p>';
